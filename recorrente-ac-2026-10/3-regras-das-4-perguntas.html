@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Regras das 4 Perguntas</title>
+<style>@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@500;600;700&display=swap');
+:root{--bg:#F6F7F9;--card:#FFFFFF;--ink:#151B26;--mute:#5B6475;--line:#E3E6EC;--verde:#41B592;--verde-bg:#E8F6F1;--coral:#DD4530;--coral-bg:#FCEBE8;--ambar:#F5A623;--ambar-bg:#FEF4E3;--azul:#0D6EFD;--azul-bg:#E9F1FE}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#10141C;--card:#171C26;--ink:#E8EBF1;--mute:#9AA3B5;--line:#2A3140;--verde-bg:#16322A;--coral-bg:#3A1E1A;--ambar-bg:#3A2E16;--azul-bg:#15243D}}
+:root[data-theme="dark"]{--bg:#10141C;--card:#171C26;--ink:#E8EBF1;--mute:#9AA3B5;--line:#2A3140;--verde-bg:#16322A;--coral-bg:#3A1E1A;--ambar-bg:#3A2E16;--azul-bg:#15243D}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:500 15px/1.55 Quicksand,system-ui,sans-serif}
+main{max-width:980px;margin:0 auto;padding:32px 16px 64px}
+h1{font-size:28px;line-height:1.2;margin:0 0 6px}
+h2{font-size:20px;margin:40px 0 12px;padding-top:20px;border-top:1px solid var(--line)}
+h3{font-size:16px;margin:22px 0 8px}
+p{margin:8px 0}
+.sub{color:var(--mute);margin:0 0 18px}
+blockquote{margin:14px 0;padding:10px 14px;border-left:4px solid var(--verde);background:var(--card);border-radius:0 8px 8px 0}
+blockquote.alerta{border-color:var(--coral);background:var(--coral-bg)}
+blockquote.atencao{border-color:var(--ambar);background:var(--ambar-bg)}
+table{width:100%;border-collapse:collapse;background:var(--card);border:1px solid var(--line);border-radius:10px;overflow:hidden;margin:10px 0;font-size:14px}
+th,td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+th{background:var(--bg);font-weight:700;font-size:13px}
+tr:last-child td{border-bottom:0}
+.tabela{overflow-x:auto}
+figure{margin:14px 0;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px}
+figure img{width:100%;height:auto;display:block;border-radius:6px}
+figcaption{font-size:13px;color:var(--mute);margin-top:8px}
+.tag{display:inline-block;padding:1px 9px;border-radius:99px;font-size:12px;font-weight:700;white-space:nowrap}
+.ok{background:var(--verde-bg);color:#1F7A5C}.nao{background:var(--coral-bg);color:var(--coral)}.meio{background:var(--ambar-bg);color:#9A6200}.info{background:var(--azul-bg);color:var(--azul)}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .ok{color:#7FD9B8}:root:not([data-theme="light"]) .meio{color:#F5C46B}}
+ol.etapas{padding-left:22px}ol.etapas li{margin:4px 0}
+.num{font-size:26px;font-weight:700}
+.grade{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;margin:12px 0}
+.grade>div{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px}
+.grade small{color:var(--mute);display:block}
+.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin:8px 0 18px;font-size:13px}
+.cal .dow{font-weight:700;color:var(--mute);text-align:center}
+.cal .d{background:var(--card);border:1px solid var(--line);border-radius:6px;min-height:58px;padding:4px 6px}
+.cal .d b{display:block;font-size:12px}
+.cal .d span{display:block;font-size:11px;line-height:1.25;margin-top:2px}
+.cal .vazio{background:transparent;border:0}
+.cal .fer{background:var(--bg);color:var(--mute)}
+.cal .m-com{background:var(--azul-bg)}.cal .m-abre{background:var(--verde-bg);border-color:var(--verde)}.cal .m-prazo{background:var(--coral-bg);border-color:var(--coral)}.cal .m-regua{background:var(--ambar-bg)}
+.ano{display:grid;grid-template-columns:repeat(6,1fr);gap:4px;font-size:12px;margin:10px 0}
+.ano div{background:var(--card);border:1px solid var(--line);border-radius:6px;padding:6px 4px;min-height:74px}
+.ano b{display:block}.ano .bloq{background:var(--bg);color:var(--mute)}.ano .agora{border:2px solid var(--verde)}
+@media (max-width:640px){.ano{grid-template-columns:repeat(3,1fr)}.cal .d{min-height:48px}.cal .d span{display:none}.cal .d.marca span{display:block}}
+footer{margin-top:40px;color:var(--mute);font-size:13px}
+</style></head><body><main>
+
+<h1>Quais imóveis entram: as 4 perguntas</h1>
+<p class="sub">Ciclo do ar-condicionado · abertura em 01/10/2026 · ordem ditada pela Ray em 15/09, com a pergunta mais barata primeiro · v2.3 de 30/09/2026</p>
+
+<blockquote>O imóvel que passa pelas quatro perguntas <b>recebe um card</b>. Se ele é barrado em qualquer uma, não recebe card neste ciclo. Todas as datas usam o dia do disparo como referência: <b>01/10/2026</b>.</blockquote>
+
+<h2>O funil</h2>
+<div class="tabela"><table>
+<tr><th>Etapa</th><th>Medição de 16/09 (pelo anúncio do Airbnb)</th><th>API de produção, 30/09, 13h23</th></tr>
+<tr><td>Imóveis ativos</td><td>3.496</td><td>3.559</td></tr>
+<tr><td>1 · Barrados por ter menos de 12 meses</td><td>−1.782</td><td>−1.794 (e 1 sem data de ativação)</td></tr>
+<tr><td>2 · Barrados por não ter ar</td><td>−20</td><td><span class="tag nao">0</span> a pergunta está desligada</td></tr>
+<tr><td>3 · Barrados por já ter despesa</td><td>−526</td><td>−426 (recebem card já concluído, com mensagem ✅)</td></tr>
+<tr><td>4 · Barrados por já ter manutenção registrada</td><td>−4</td><td>−191</td></tr>
+<tr><td>Sem anúncio para conferir</td><td>−73</td><td>entram no ciclo</td></tr>
+<tr><td><b>Recebem card aberto</b></td><td><b>1.091</b></td><td><b>1.147</b></td></tr>
+</table></div>
+<p>A diferença, de 56 cards, fecha assim: +50 imóveis maduros a mais (mais imóveis ativos, com o corte em 30/09/2025), +20 sem ar (pergunta 2 desligada), +73 sem anúncio (entram no ciclo), +100 pela diferença no critério de despesa e −187 pela pergunta 4, que hoje enxerga manutenção de qualquer origem.</p>
+<p><b>Faixa aceitável no disparo: 1.050 a 1.250</b> (decisão do Vinicius, 30/09). Fora dela, não dispara. A estimativa de ~1.188 da validação da Ray (30/09) supunha que a pergunta 4 só via os cards da própria regra; isso não vale mais.</p>
+
+<h2>Pergunta 1 · O imóvel está ativo há mais de 12 meses?</h2>
+<div class="tabela"><table>
+<tr><th>Regra</th><td>Entra o imóvel com status Ativo no dia do disparo e com data de ativação <b>até 01/10/2025</b></td></tr>
+<tr><th>Por quê</th><td>Imóvel com menos de um ano ainda está no primeiro ciclo de uso: o aparelho foi conferido na implantação</td></tr>
+<tr><th>Fonte</th><td>Data de ativação no cadastro do imóvel no Sapron</td></tr>
+<tr><th>Sistema hoje</th><td><span class="tag ok">funciona</span></td></tr>
+</table></div>
+<h3>Casos de borda</h3>
+<ul>
+<li><b>Ativado entre 02/10/2025 e 30/11/2025:</b> completa 12 meses durante o ciclo, mas não entra nele. Entra no ar-condicionado de setembro de 2027.</li>
+<li><b>Sem data de ativação</b> (1 imóvel em 30/09): fica fora, e a Manutenção confere o cadastro.</li>
+<li><b>Inativado depois de o card abrir:</b> o card é excluído com o motivo "imóvel saiu da carteira".</li>
+</ul>
+
+<h2>Pergunta 2 · O imóvel tem ar-condicionado?</h2>
+<div class="tabela"><table>
+<tr><th>Regra</th><td>Entra o imóvel cujo anúncio diz que tem ar-condicionado. Ar-condicionado e split são o mesmo item</td></tr>
+<tr><th>Fonte</th><td><b>Anúncio do Airbnb</b> (data lake). A ficha de amenities do Sapron não serve: 78% das fichas têm todos os campos falsos (medição de 16/09)</td></tr>
+<tr><th>Sistema hoje</th><td><span class="tag meio">desligada</span> A regra está como "Todos os imóveis", então todo imóvel maduro é tratado como se tivesse ar</td></tr>
+<tr><th>Efeito</th><td>Perto de 20 imóveis sem ar recebem card (medição de 16/09). Dá para rodar assim neste ciclo</td></tr>
+</table></div>
+<h3>Casos de borda</h3>
+<ul>
+<li><b>A franquia diz que o imóvel não tem ar:</b> o card é excluído com o motivo, e o cadastro é corrigido.</li>
+<li><b>Imóvel sem anúncio no Airbnb</b> (73 em 16/09): entra no ciclo, e a franquia confirma no card.</li>
+</ul>
+
+<h2>Pergunta 3 · Há despesa de ar-condicionado lançada no ciclo?</h2>
+<div class="tabela"><table>
+<tr><th>Regra</th><td>Fica fora o imóvel com despesa de higienização de ar-condicionado <b>aprovada ou paga</b>, com data entre <b>01/10/2025 e 01/10/2026</b></td></tr>
+<tr><th>Não conta</th><td>Despesa pendente ou recusada · despesa de conserto ou de peça de ar-condicionado, porque conserto não é limpeza</td></tr>
+<tr><th>Fonte</th><td>Despesas do Sapron, pelo item financeiro. Uma IA lê a descrição da despesa que não tem item</td></tr>
+<tr><th>Sistema hoje</th><td><span class="tag ok">funciona</span> Itens financeiros 298 e 405 e as palavras "ar condicionado", "ar-condicionado" e "split" cadastrados em 28/09. Barra 426 imóveis (30/09, 13h23)</td></tr>
+<tr><th>Atenção</th><td>O sistema só confere a despesa <b>na abertura</b>. Despesa lançada depois de 30/09 não fecha o card sozinha enquanto o agente "Despesa prova o card" estiver desligado em produção. Aí fecha pela evidência (agentes de IA ou pessoa)</td></tr>
+
+</table></div>
+
+<h2>Pergunta 4 · Há manutenção registrada, mesmo sem despesa?</h2>
+<div class="tabela"><table>
+<tr><th>Regra</th><td>Fica fora o imóvel com card <b>concluído</b> nos últimos 12 meses, de qualquer origem (corretiva, UTI, consultoria ou outra), que fale de ar-condicionado e de limpeza, higienização ou filtro. <b>Card corretivo ainda aberto não barra</b>: o imóvel recebe o card recorrente também</td></tr>
+<tr><th>Por quê</th><td>O proprietário pode ter pago por conta própria, e aí o serviço aparece como manutenção, e não como despesa</td></tr>
+<tr><th>Sistema hoje</th><td><span class="tag ok">funciona</span> Em produção desde 28/09</td></tr>
+<tr><th>Efeito</th><td>191 imóveis barrados (API de produção, 30/09, 13h23). Eram 4 na medição de 16/09, que olhava só a higienização registrada. Se escapar algum, a franquia responde no card com a nota ou a foto do serviço, e a Manutenção dá baixa</td></tr>
+</table></div>
+
+<h2>Depois das 4 perguntas</h2>
+<ul>
+<li><b>Um card por imóvel</b>, com todos os aparelhos dentro dele.</li>
+<li><b>Ninguém entra no meio do ciclo.</b> A lista é a do disparo, à 23h de 30/09, feito uma vez só. O imóvel que amadurecer depois espera o próximo ciclo.</li>
+<li><b>Mudança de regra só na retro.</b> Se aparecer um caso novo, ele é anotado e decidido na retro de 15/10, sem mudar a regra no meio do ciclo.</li>
+</ul>
+
+<footer>Fontes: medição do funil do ar-condicionado de 16/09/2026, com a lista imóvel a imóvel em /root/manutencao/lista-elegibilidade/elegibilidade-ar-condicionado.csv · contagem da regra "Ar-condicionado · Higienização" (id 2) na API de produção em 30/09/2026, 13h23 de Brasília (16h23 UTC) · código em produção v1.117.6 · validação da Ray de 30/09/2026.</footer>
+</main></body></html>

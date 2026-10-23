@@ -1,0 +1,183 @@
+<title>Triagem Automática</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&amp;family=Newsreader:opsz,wght@6..72,500;6..72,600&amp;family=Source+Sans+3:wght@400;600&amp;display=swap">
+<style>
+:root{
+  --ground:#F6F6F3; --surface:#FFFFFF; --line:#DEDFD8; --line-soft:#EAEBE4;
+  --ink:#17201C; --ink-2:#4A574F; --ink-3:#7D8981;
+  --accent:#0B6B62; --accent-soft:rgba(11,107,98,.09);
+  --ok-fg:#15803D; --ok-bg:rgba(22,163,74,.12);
+  --wait-fg:#B45309; --wait-bg:rgba(217,119,6,.13);
+  --stop-fg:#B91C1C; --stop-bg:rgba(220,38,38,.11);
+  --code-bg:#EDEEE8;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --ground:#0E1311; --surface:#161D1A; --line:#2A3531; --line-soft:#1F2825;
+    --ink:#E9EEEA; --ink-2:#A9B6AF; --ink-3:#74837B;
+    --accent:#4FB3A6; --accent-soft:rgba(79,179,166,.13);
+    --ok-fg:#5FD68A; --ok-bg:rgba(22,163,74,.17);
+    --wait-fg:#F0B429; --wait-bg:rgba(217,119,6,.17);
+    --stop-fg:#FCA5A5; --stop-bg:rgba(220,38,38,.17);
+    --code-bg:#1E2622;
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#0E1311; --surface:#161D1A; --line:#2A3531; --line-soft:#1F2825;
+  --ink:#E9EEEA; --ink-2:#A9B6AF; --ink-3:#74837B;
+  --accent:#4FB3A6; --accent-soft:rgba(79,179,166,.13);
+  --ok-fg:#5FD68A; --ok-bg:rgba(22,163,74,.17);
+  --wait-fg:#F0B429; --wait-bg:rgba(217,119,6,.17);
+  --stop-fg:#FCA5A5; --stop-bg:rgba(220,38,38,.17);
+  --code-bg:#1E2622;
+}
+body{background:var(--ground);color:var(--ink);font-family:'Source Sans 3',system-ui,-apple-system,sans-serif;font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased;}
+.wrap{max-width:760px;margin:0 auto;padding:0 16px;padding-block:40px 72px;}
+.eyebrow{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);font-weight:600;margin:0 0 10px;}
+h1{font-family:'Newsreader',Georgia,serif;font-weight:600;font-size:clamp(30px,6vw,42px);line-height:1.12;margin:0 0 14px;text-wrap:balance;letter-spacing:-.01em;}
+.lede{font-size:18px;color:var(--ink-2);margin:0 0 28px;max-width:62ch;}
+h2{font-family:'Newsreader',Georgia,serif;font-weight:600;font-size:24px;line-height:1.25;margin:0 0 14px;text-wrap:balance;}
+h3{font-size:15px;font-weight:600;margin:22px 0 8px;letter-spacing:-.005em;}
+p{margin:0 0 14px;max-width:66ch;}
+section{margin-top:38px;}
+.rule{height:1px;background:var(--line);border:0;margin:0 0 26px;}
+.sec-head{display:flex;align-items:baseline;gap:12px;margin-bottom:14px;}
+.sec-head h2{margin:0;}
+.sec-n{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--ink-3);padding-top:4px;}
+code,.mono{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:.88em;background:var(--code-bg);padding:.12em .38em;border-radius:3px;}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:18px 20px;}
+.meta{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:6px;overflow:hidden;margin-bottom:34px;}
+.meta div{background:var(--surface);padding:12px 14px;}
+.meta dt{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3);margin:0 0 4px;}
+.meta dd{margin:0;font-size:14px;font-weight:600;}
+.tag{display:inline-block;font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;padding:3px 8px;border-radius:3px;vertical-align:1px;}
+.t-ok{color:var(--ok-fg);background:var(--ok-bg);}
+.t-wait{color:var(--wait-fg);background:var(--wait-bg);}
+.t-stop{color:var(--stop-fg);background:var(--stop-bg);}
+.tbl-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:6px;background:var(--surface);}
+table{width:100%;border-collapse:collapse;font-size:14.5px;}
+th{text-align:left;font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-3);font-weight:600;padding:11px 14px;border-bottom:1px solid var(--line);white-space:nowrap;}
+td{padding:11px 14px;border-bottom:1px solid var(--line-soft);vertical-align:top;}
+tr:last-child td{border-bottom:0;}
+td.num{font-variant-numeric:tabular-nums;white-space:nowrap;}
+.flow{list-style:none;counter-reset:s;margin:0;padding:0;}
+.flow li{counter-increment:s;position:relative;padding:0 0 20px 44px;border-left:1px solid var(--line);margin-left:13px;}
+.flow li:last-child{border-left-color:transparent;padding-bottom:0;}
+.flow li::before{content:counter(s);position:absolute;left:-13px;top:-2px;width:26px;height:26px;border-radius:50%;background:var(--accent-soft);color:var(--accent);border:1px solid var(--accent);display:grid;place-items:center;font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:500;}
+.flow b{display:block;font-size:15px;margin-bottom:3px;}
+.flow p{margin:0;color:var(--ink-2);font-size:14.5px;}
+.callout{border-left:3px solid var(--accent);background:var(--accent-soft);padding:14px 16px;border-radius:0 5px 5px 0;margin:20px 0;}
+.callout.warn{border-left-color:var(--wait-fg);background:var(--wait-bg);}
+.callout.stop{border-left-color:var(--stop-fg);background:var(--stop-bg);}
+.callout p:last-child{margin-bottom:0;}
+.callout b{font-weight:600;}
+ul.plain{margin:0 0 14px;padding-left:20px;}
+ul.plain li{margin-bottom:7px;max-width:64ch;}
+pre{background:var(--code-bg);border:1px solid var(--line);border-radius:5px;padding:13px 15px;overflow-x:auto;font-family:'IBM Plex Mono',monospace;font-size:13px;line-height:1.55;margin:0 0 16px;}
+pre code{background:none;padding:0;font-size:inherit;}
+.foot{margin-top:48px;padding-top:18px;border-top:1px solid var(--line);font-size:13px;color:var(--ink-3);}
+.foot p{max-width:none;margin-bottom:6px;}
+@media (max-width:520px){.flow li{padding-left:36px;}}
+</style>
+<div class="wrap">
+
+<p class="eyebrow">Central de Manutenção · Processo do agente</p>
+<h1>Triagem Automática</h1>
+<p class="lede">Tira da coluna de triagem o card que já tem nota e o coloca em <b>Urgente</b> ou em <b>Não urgente</b>, a corretiva comum. É o passo que transforma o que o classificador sabe em algo que acontece — e é, ao mesmo tempo, o agente com o efeito mais difícil de desfazer.</p>
+
+<dl class="meta">
+  <div><dt>Linha do quadro</dt><dd>Agente de triagem e priorização</dd></div>
+  <div><dt>Código</dt><dd><span class="mono">maintenance/actions/auto_triage.py</span></dd></div>
+  <div><dt>No ar em</dt><dd>staging <span class="tag t-wait">flag desligada</span></dd></div>
+  <div><dt>Depende de</dt><dd>classificador ligado</dd></div>
+</dl>
+
+<hr class="rule">
+
+<div class="callout stop">
+  <p><b>Mover o card é abrir chamado com a franquia.</b> Quando um card sai da triagem para uma coluna ativa, o sistema cria (ou reabre) o chamado individual com a franquia — e em card urgente o texto sai com o aviso de manutenção URGENTE. Ligar esta flag não é mudar cards de coluna: é iniciar conversas em lote, sem ninguém ter lido card nenhum. É por isso que ela nasceu separada da flag do classificador.</p>
+</div>
+
+<section>
+  <div class="sec-head"><span class="sec-n">01</span><h2>O caminho do card</h2></div>
+  <ol class="flow">
+    <li><b>O card está em “Solicitação recebida” e já tem nota</b><p>Os dois ao mesmo tempo. Card sem <code>ai_classified_at</code> não é candidato — o agente nunca decide por conta própria.</p></li>
+    <li><b>O beat recolhe o lote</b><p>Nos minutos 05, 20, 35 e 50 — a mesma cadência do classificador, deslocada em 5 minutos. O card classificado às :00 é triado às :05, e não na volta completa. Até 200 por execução, do mais antigo para o mais novo.</p></li>
+    <li><b>A linha é travada e relida</b><p>Entre recolher o lote e escrever, alguém pode ter arrastado o card na tela. O agente relê sob trava: se o card já saiu da triagem, ele passa adiante sem tocar.</p></li>
+    <li><b>Status e booleano são escritos juntos</b><p>Nunca um sem o outro — veja a seção 03.</p></li>
+    <li><b>O chamado com a franquia é aberto</b><p>Consequência direta do movimento, não um passo opcional.</p></li>
+  </ol>
+</section>
+
+<section>
+  <div class="sec-head"><span class="sec-n">02</span><h2>Para onde vai, e de onde ele não tira card</h2></div>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>Situação</th><th>Destino</th><th>Por quê</th></tr></thead>
+      <tbody>
+        <tr><td>Solicitação recebida, nota ≥ 70</td><td><b>Urgente</b></td><td>é o corte que o classificador já usa para o booleano</td></tr>
+        <tr><td>Solicitação recebida, nota &lt; 70</td><td><b>Não urgente</b></td><td>a corretiva comum: precisa de conserto, não pode esperar a recorrente, mas não para o imóvel</td></tr>
+        <tr><td>Solicitada pela franquia</td><td><span class="tag t-stop">não move</span></td><td>é triagem também, mas mover dali é <b>aprovar o pedido em silêncio</b> — decisão de gente, não de nota</td></tr>
+        <tr><td>Qualquer outra coluna</td><td><span class="tag t-stop">não move</span></td><td>card que uma pessoa já colocou numa coluna não é reclassificado. A nota entra na dúvida inicial, não por cima de quem decidiu</td></tr>
+        <tr><td>Recorrente e Programada</td><td><span class="tag t-stop">nunca são destino</span></td><td>têm dono próprio — a regra de recorrência e a declaração da franquia</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head"><span class="sec-n">03</span><h2>Por que status e <code>urgent</code> andam juntos</h2></div>
+  <p>O board inteiro lê as duas coisas em OR: o dashboard de urgentes, os KPIs diários e a aba do imóvel aceitam tanto <code>status == urgente</code> quanto o booleano <code>urgent</code>. E o chamado individual espelha o booleano no ícone de prioridade.</p>
+  <p>Mover a coluna sem escrever o booleano produziria um card urgente que <b>não aparece na contagem de urgentes</b> e um chamado <b>sem o ícone</b>. Divergência silenciosa — do tipo que só se descobre numa reunião de números, semanas depois.</p>
+  <pre><code>status  ->  URGENTE  ou  NAO_URGENTE     pelo ai_is_urgent
+urgent  ->  o mesmo booleano</code></pre>
+</section>
+
+<section>
+  <div class="sec-head"><span class="sec-n">04</span><h2>O que protege o lote</h2></div>
+  <ul class="plain">
+    <li><b>Trava por linha, com releitura.</b> O card é relido dentro da transação; se mudou de status no meio, o agente desiste dele. A triagem automática não desfaz a decisão de uma pessoa.</li>
+    <li><b>Um card ruim não derruba o lote.</b> A exceção no meio devolveria erro e <i>descartaria o que já tinha sido movido</i> — e o próximo lote reabriria chamado para quem já tinha recebido. Cada falha é contada e registrada, o lote segue.</li>
+    <li><b>Uma leitura de flag por lote, não por card.</b> Mover 100 cards faria 100 idas ao PostHog dentro da trava.</li>
+    <li><b>Trava global no Redis (10 min).</b> O beat é de 15 em 15 minutos; um lote lento não atravessa a execução seguinte.</li>
+  </ul>
+</section>
+
+<section>
+  <div class="sec-head"><span class="sec-n">05</span><h2>Ligar com segurança</h2></div>
+  <p>Flag: <code>ff_sapron_backend_enable_maintenance_auto_triage</code>, no PostHog, a 100% de todos os usuários e sem filtro de propriedade. <b>Fail-closed</b>: qualquer erro na leitura da flag e ninguém se move. Isso importa mais aqui que no classificador — lá o pior caso é uma nota a menos, aqui é um chamado aberto com a franquia que não dá para fechar de volta como se não tivesse acontecido.</p>
+  <ol class="flow">
+    <li><b>Simular primeiro, sem escrever nada</b><p>O mesmo caminho, sem gravação: dá o volume do lote e a divisão entre urgente e corretiva antes de qualquer movimento — e sem um segundo deploy.</p>
+      <pre style="margin-top:10px"><code>from maintenance.actions.auto_triage import auto_triage_cards
+auto_triage_cards(simular=True)
+# {'avaliados': N, 'urgentes': N, 'corretivas': N, 'simulacao': True}</code></pre></li>
+    <li><b>Conferir a divisão contra o board de hoje</b><p>Se a simulação propuser dezenas de urgentes onde o board tem poucos, o problema é do corte da nota, não da triagem — e essa conversa tem que acontecer antes, não depois dos chamados abertos.</p></li>
+    <li><b>Uma leva pequena pelo shell, com a flag ainda desligada</b><p>A função de lote não consulta a flag; quem consulta é a task do beat. Dá para mover 10 cards e ler os 10 chamados que foram abertos.</p>
+      <pre style="margin-top:10px"><code>auto_triage_cards(limit=10)</code></pre></li>
+    <li><b>Só então ligar a flag</b><p>A partir daí o beat assume, de 15 em 15 minutos.</p></li>
+  </ol>
+  <div class="callout warn">
+    <p><b>O classificador precisa estar ligado antes.</b> Sem nota, o lote da triagem é sempre vazio: a fila dela é exatamente a dos cards com <code>ai_classified_at</code> preenchido. Ligar a triagem primeiro não quebra nada — simplesmente não faz nada.</p>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head"><span class="sec-n">06</span><h2>Desligar</h2></div>
+  <p>Desligar a flag para o beat na execução seguinte. O que já foi movido <b>continua movido</b> e os chamados abertos continuam abertos — não há rollback automático, e é por isso que a leva simulada não é formalidade. Reverter significa arrastar card de volta na mão e explicar a conversa que já começou.</p>
+</section>
+
+<section>
+  <div class="sec-head"><span class="sec-n">07</span><h2>A decisão que ficou em aberto</h2></div>
+  <p>A linha do quadro diz “Urgente vs programada”. O agente entrega <b>Urgente vs corretiva</b> — e de propósito: <i>programada</i> é a declaração da franquia de que o reparo não cabe no prazo, com data e justificativa. Um agente que colocasse card em programada estaria declarando pela franquia.</p>
+  <p>São dois caminhos, e vale escolher um antes de fechar a linha:</p>
+  <ul class="plain">
+    <li><b>Renomear a linha</b> para “Urgente vs corretiva” e fechá-la — é o que está pronto e testado.</li>
+    <li><b>Estender o agente</b> para propor programada em casos com data clara no texto (“o eletricista só vem dia 12”), o que exige definir quem confirma a proposta.</li>
+  </ul>
+</section>
+
+<div class="foot">
+  <p>Código: <span class="mono">maintenance/actions/auto_triage.py</span> · task <span class="mono">maintenance.auto_triage_cards</span> · 19 testes em <span class="mono">tests/test_auto_triage.py</span></p>
+  <p>Entrega: #4858, em <span class="mono">staging</span> desde 21/09/2026 pela promoção #4851 · Vinicius Satores</p>
+</div>
+
+</div>

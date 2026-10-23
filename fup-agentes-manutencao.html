@@ -1,0 +1,185 @@
+<title>FUP dos Agentes</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&amp;family=Newsreader:opsz,wght@6..72,500;6..72,600&amp;family=Source+Sans+3:wght@400;600&amp;display=swap">
+<style>
+:root{
+  --ground:#F6F6F3; --surface:#FFFFFF; --line:#DEDFD8; --line-soft:#EAEBE4;
+  --ink:#17201C; --ink-2:#4A574F; --ink-3:#7D8981;
+  --accent:#0B6B62; --accent-soft:rgba(11,107,98,.09);
+  --ok-fg:#15803D; --ok-bg:rgba(22,163,74,.12);
+  --wait-fg:#B45309; --wait-bg:rgba(217,119,6,.13);
+  --stop-fg:#B91C1C; --stop-bg:rgba(220,38,38,.11);
+  --code-bg:#EDEEE8;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --ground:#0E1311; --surface:#161D1A; --line:#2A3531; --line-soft:#1F2825;
+    --ink:#E9EEEA; --ink-2:#A9B6AF; --ink-3:#74837B;
+    --accent:#4FB3A6; --accent-soft:rgba(79,179,166,.13);
+    --ok-fg:#5FD68A; --ok-bg:rgba(22,163,74,.17);
+    --wait-fg:#F0B429; --wait-bg:rgba(217,119,6,.17);
+    --stop-fg:#FCA5A5; --stop-bg:rgba(220,38,38,.17);
+    --code-bg:#1E2622;
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#0E1311; --surface:#161D1A; --line:#2A3531; --line-soft:#1F2825;
+  --ink:#E9EEEA; --ink-2:#A9B6AF; --ink-3:#74837B;
+  --accent:#4FB3A6; --accent-soft:rgba(79,179,166,.13);
+  --ok-fg:#5FD68A; --ok-bg:rgba(22,163,74,.17);
+  --wait-fg:#F0B429; --wait-bg:rgba(217,119,6,.17);
+  --stop-fg:#FCA5A5; --stop-bg:rgba(220,38,38,.17);
+  --code-bg:#1E2622;
+}
+body{background:var(--ground);color:var(--ink);font-family:'Source Sans 3',system-ui,-apple-system,sans-serif;font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased;}
+.wrap{max-width:760px;margin:0 auto;padding:0 16px;padding-block:40px 72px;}
+.eyebrow{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);font-weight:600;margin:0 0 10px;}
+h1{font-family:'Newsreader',Georgia,serif;font-weight:600;font-size:clamp(30px,6vw,42px);line-height:1.12;margin:0 0 14px;text-wrap:balance;letter-spacing:-.01em;}
+.lede{font-size:18px;color:var(--ink-2);margin:0 0 28px;max-width:62ch;}
+h2{font-family:'Newsreader',Georgia,serif;font-weight:600;font-size:24px;line-height:1.25;margin:0 0 14px;text-wrap:balance;}
+h3{font-size:15px;font-weight:600;margin:22px 0 8px;letter-spacing:-.005em;}
+p{margin:0 0 14px;max-width:66ch;}
+section{margin-top:38px;}
+.rule{height:1px;background:var(--line);border:0;margin:0 0 26px;}
+.sec-head{display:flex;align-items:baseline;gap:12px;margin-bottom:14px;}
+.sec-head h2{margin:0;}
+.sec-n{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--ink-3);padding-top:4px;}
+code,.mono{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:.88em;background:var(--code-bg);padding:.12em .38em;border-radius:3px;}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:18px 20px;}
+.meta{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:6px;overflow:hidden;margin-bottom:34px;}
+.meta div{background:var(--surface);padding:12px 14px;}
+.meta dt{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3);margin:0 0 4px;}
+.meta dd{margin:0;font-size:14px;font-weight:600;}
+.tag{display:inline-block;font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;padding:3px 8px;border-radius:3px;vertical-align:1px;}
+.t-ok{color:var(--ok-fg);background:var(--ok-bg);}
+.t-wait{color:var(--wait-fg);background:var(--wait-bg);}
+.t-stop{color:var(--stop-fg);background:var(--stop-bg);}
+.tbl-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:6px;background:var(--surface);}
+table{width:100%;border-collapse:collapse;font-size:14.5px;}
+th{text-align:left;font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-3);font-weight:600;padding:11px 14px;border-bottom:1px solid var(--line);white-space:nowrap;}
+td{padding:11px 14px;border-bottom:1px solid var(--line-soft);vertical-align:top;}
+tr:last-child td{border-bottom:0;}
+td.num{font-variant-numeric:tabular-nums;white-space:nowrap;}
+.flow{list-style:none;counter-reset:s;margin:0;padding:0;}
+.flow li{counter-increment:s;position:relative;padding:0 0 20px 44px;border-left:1px solid var(--line);margin-left:13px;}
+.flow li:last-child{border-left-color:transparent;padding-bottom:0;}
+.flow li::before{content:counter(s);position:absolute;left:-13px;top:-2px;width:26px;height:26px;border-radius:50%;background:var(--accent-soft);color:var(--accent);border:1px solid var(--accent);display:grid;place-items:center;font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:500;}
+.flow b{display:block;font-size:15px;margin-bottom:3px;}
+.flow p{margin:0;color:var(--ink-2);font-size:14.5px;}
+.callout{border-left:3px solid var(--accent);background:var(--accent-soft);padding:14px 16px;border-radius:0 5px 5px 0;margin:20px 0;}
+.callout.warn{border-left-color:var(--wait-fg);background:var(--wait-bg);}
+.callout.stop{border-left-color:var(--stop-fg);background:var(--stop-bg);}
+.callout p:last-child{margin-bottom:0;}
+.callout b{font-weight:600;}
+ul.plain{margin:0 0 14px;padding-left:20px;}
+ul.plain li{margin-bottom:7px;max-width:64ch;}
+pre{background:var(--code-bg);border:1px solid var(--line);border-radius:5px;padding:13px 15px;overflow-x:auto;font-family:'IBM Plex Mono',monospace;font-size:13px;line-height:1.55;margin:0 0 16px;}
+pre code{background:none;padding:0;font-size:inherit;}
+.foot{margin-top:48px;padding-top:18px;border-top:1px solid var(--line);font-size:13px;color:var(--ink-3);}
+.foot p{max-width:none;margin-bottom:6px;}
+@media (max-width:520px){.flow li{padding-left:36px;}}
+</style>
+<div class="wrap">
+
+<p class="eyebrow">Central de Manutenção · Acompanhamento</p>
+<h1>FUP dos Agentes</h1>
+<p class="lede">Fase 3 do quadro — automações e IA de ponta a ponta. Quatro entregas fecharam nesta semana e estão em <span class="mono">staging</span>. Nenhum agente está rodando em produção, e a causa é uma só: a flag do classificador não existe no projeto de produção do PostHog.</p>
+
+<dl class="meta">
+  <div><dt>Data</dt><dd>21/09/2026</dd></div>
+  <div><dt>Quadro</dt><dd>Projeto Central de manutenção</dd></div>
+  <div><dt>Linhas abertas na Fase 3</dt><dd>9</dd></div>
+  <div><dt>Bloqueio</dt><dd><span class="tag t-stop">1 flag</span></dd></div>
+</dl>
+
+<hr class="rule">
+
+<section>
+  <div class="sec-head"><span class="sec-n">01</span><h2>O que fechou nesta semana</h2></div>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>Entrega</th><th>PR</th><th>Onde está</th></tr></thead>
+      <tbody>
+        <tr><td>Busca acha o card pelo prefixo do prédio, e não só pelo código exato</td><td class="num">#4842</td><td><span class="tag t-ok">main</span> 18/09</td></tr>
+        <tr><td>Barra de rolagem nas abas e a aba ativa entrando em cena sozinha</td><td class="num">#3536</td><td><span class="tag t-ok">main</span> 18/09</td></tr>
+        <tr><td>Triagem automática: o card classificado sai da triagem</td><td class="num">#4858</td><td><span class="tag t-ok">staging</span> 21/09</td></tr>
+        <tr><td>Classificador sugere os itens a cobrar</td><td class="num">#4860</td><td><span class="tag t-ok">staging</span> 21/09</td></tr>
+        <tr><td>Classificador lê as fotos do chamado</td><td class="num">#4861</td><td><span class="tag t-ok">staging</span> 21/09</td></tr>
+        <tr><td>Resposta sem a sugestão de itens deixa de derrubar a classificação</td><td class="num">#4862</td><td><span class="tag t-ok">staging</span> 21/09</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p style="margin-top:14px">As quatro de 21/09 subiram juntas na promoção <span class="mono">#4851</span>, mergeada em staging às <b>06:29 de 21/09</b> com a suíte completa de 9.512 testes verde. A correção <span class="mono">#4862</span> entrou <b>antes</b> da promoção fechar, e é ela que faz a leva passar: a primeira tentativa quebrou 16 testes que já existiam porque a leitura da sugestão de itens era direta e a resposta da IA pode vir sem esse campo. Nenhum teste foi alterado para o verde — o defeito era o acesso, não o contrato.</p>
+  <div class="callout warn">
+    <p><b>Recado para quem cuida do CI.</b> Esta promoção precisou de duas rodadas. A primeira foi <b>cortada pelo teto de 40 minutos</b> do workflow de testes aos 41m13 — não houve teste quebrado. As três últimas rodadas levaram 24, 35 e 41 minutos: o limite virou moeda ao ar, e vale levantar o teto ou paralelizar mais antes que isso custe uma janela de deploy. <span class="mono">(GitHub Actions, 20–21/09/2026)</span></p>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head"><span class="sec-n">02</span><h2>O bloqueio, inteiro</h2></div>
+  <div class="callout stop">
+    <p><b>O classificador nunca rodou em produção.</b> A flag <code>ff_sapron_backend_enable_maintenance_card_classifier</code> existe no projeto <i>Sapron Staging</i> a 100% e <b>não existe</b> no projeto <i>Sapron Production</i>. Sem ela, o beat de 15 minutos é inerte lá desde o primeiro dia. Na última consulta ao banco: <b>0 de 5.917 cards</b> com nota. <span class="mono">(produção, semana de 20/09/2026)</span></p>
+  </div>
+  <p>Sem o classificador ligado, a triagem automática também não faz nada — a fila dela é exatamente a dos cards com nota. Uma flag destrava as duas linhas do quadro.</p>
+  <h3>Criar a flag: passo a passo</h3>
+  <ol class="flow">
+    <li><b>PostHog → projeto Sapron Production</b><p>Confirmar o projeto no seletor do topo antes de tudo. Criar no projeto errado é o erro fácil aqui.</p></li>
+    <li><b>Feature flags → New feature flag</b><p>Chave exata: <span class="mono">ff_sapron_backend_enable_maintenance_card_classifier</span>. Tipo: <b>Boolean</b>.</p></li>
+    <li><b>Release condition: 100% of all users, sem nenhum filtro</b><p>Isto não é preferência. O backend consulta o PostHog usando o <b>nome do ambiente</b> como identificador da pessoa — <span class="mono">PRODUCTION</span>, e não um e-mail. Qualquer condição por usuário ou grupo não casa com nada e a flag responde “desligada” para todo mundo.</p></li>
+    <li><b>Salvar com Enabled marcado</b><p>Vale na hora: não há chave pessoal de API, logo não há avaliação local em cache. Sem restart de pod e sem deploy.</p></li>
+    <li><b>Conferir em 15 minutos</b><p>No log da fila <span class="mono">maintenance</span>, a linha <span class="mono">[classify] lote:</span> com <span class="mono">classificados</span> maior que zero. Desligar a flag é o rollback.</p></li>
+  </ol>
+  <p><b>Quem faz:</b> Vinicius — não consigo criar flag de produção por aqui; a escrita de feature flag é bloqueada nesta sessão, por qualquer caminho.</p>
+</section>
+
+<section>
+  <div class="sec-head"><span class="sec-n">03</span><h2>As linhas da Fase 3, uma a uma</h2></div>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>Linha do quadro</th><th>Situação real</th><th>Falta</th></tr></thead>
+      <tbody>
+        <tr><td>Auto-classificação de categoria e urgência</td><td><span class="tag t-wait">pronto, inerte</span></td><td>criar a flag em produção</td></tr>
+        <tr><td>Agente de triagem e priorização</td><td><span class="tag t-wait">pronto, inerte</span></td><td>rodar a simulação, decidir o nome da linha (urgente vs corretiva), ligar a flag</td></tr>
+        <tr><td>Agente de preenchimento automático de cards</td><td><span class="tag t-wait">parcial</span></td><td>itens a cobrar já é sugerido; descrição e comentários não</td></tr>
+        <tr><td>Auditoria amostral dos agentes</td><td><span class="tag t-stop">não iniciada</span></td><td>é o par obrigatório de ligar os dois agentes acima — sem ela não há como medir acerto</td></tr>
+        <tr><td>Agente de encerramento inteligente</td><td><span class="tag t-stop">não iniciada</span></td><td>lê evidência e move para Finalizado</td></tr>
+        <tr><td>Agente que verifica cards duplicados</td><td><span class="tag t-stop">não iniciada</span></td><td>—</td></tr>
+        <tr><td>Agente que finaliza o card quando a despesa foi lançada</td><td><span class="tag t-stop">não iniciada</span></td><td>—</td></tr>
+        <tr><td>Score da franquia (lead time × SLA × reincidência)</td><td><span class="tag t-stop">não iniciada</span></td><td>integra com Ocorrências</td></tr>
+        <tr><td>Anti-fraude na evidência</td><td><span class="tag t-stop">não iniciada</span></td><td>—</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p style="margin-top:14px">As duas primeiras linhas têm documento de processo próprio — é o que sai junto com este FUP.</p>
+</section>
+
+<section>
+  <div class="sec-head"><span class="sec-n">04</span><h2>Decisões que dependem de gente</h2></div>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>Decisão</th><th>Por que agora</th></tr></thead>
+      <tbody>
+        <tr><td>A linha “Urgente vs programada” vira “Urgente vs corretiva”?</td><td>o agente entrega urgente e corretiva. <i>Programada</i> é a franquia declarando que o reparo não cabe no prazo — um agente que preenchesse isso estaria declarando pela franquia</td></tr>
+        <tr><td>Ligar a triagem automática junto com o classificador, ou depois?</td><td>mover card é <b>abrir chamado com a franquia</b>. Ligar as duas no mesmo dia significa iniciar conversas em lote antes de ter uma amostra de notas conferida a olho</td></tr>
+        <tr><td>Quem confere a amostra</td><td>a auditoria amostral é o que transforma “o agente rodou” em “o agente acerta”. Sem dono, ela não existe</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head"><span class="sec-n">05</span><h2>Ordem sugerida</h2></div>
+  <ol class="flow">
+    <li><b>Criar a flag do classificador em produção</b><p>Destrava tudo o mais. Efeito visível em 15 minutos.</p></li>
+    <li><b>Ler 20 cards classificados a olho</b><p>Categoria e a frase da nota. É a primeira evidência de acerto, e ela vem de graça no primeiro lote.</p></li>
+    <li><b>Simular a triagem</b><p>Sem escrever nada: dá o volume e a divisão entre urgente e corretiva antes de qualquer chamado ser aberto.</p></li>
+    <li><b>Ligar a triagem, e só então fechar as duas linhas do quadro</b><p>Fechar linha de agente que nunca rodou é fechar no papel.</p></li>
+    <li><b>Abrir a auditoria amostral</b><p>Com os agentes rodando, ela deixa de ser teórica.</p></li>
+  </ol>
+</section>
+
+<div class="foot">
+  <p>Fonte dos números: banco de produção do Sapron e o quadro “Projeto Central de manutenção” no TaskDex, consultados em 20–21/09/2026.</p>
+  <p>Vinicius Satores · Manutenção / Tecnologia</p>
+</div>
+
+</div>

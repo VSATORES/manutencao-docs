@@ -1,0 +1,188 @@
+<div class="folha">
+
+<h1>Mockup · Agente "Despesa prova o card"</h1>
+<p class="sub">O sexto agente da aba <b>Agentes de IA</b> da Central de Manutenção. Ele lê a despesa aprovada no Lançamento de Despesas, acha o card aberto do mesmo serviço, puxa a foto e a nota para o card e dá a baixa.</p>
+<p class="data">Casos reais de produção: API do Sapron, 28/09/2026 às 20h37, só leitura. Os vereditos do juiz são <b>simulados à mão</b> para o mockup, porque o agente ainda não existe. Nenhuma ação sai desta página.</p>
+
+<h2>1 · A ideia em uma linha por etapa</h2>
+<div class="principios">
+  <div class="princ"><b>1. Acorda a cada 15 min</b><span>Procura as despesas que acabaram de ser aprovadas ou pagas. O financeiro fica como está.</span></div>
+  <div class="princ"><b>2. Acha o card</b><span>Card aberto do mesmo imóvel, aberto antes da despesa. Conta de água, luz, condomínio e reserva nem entram.</span></div>
+  <div class="princ"><b>3. Julga</b><span>Danos: item e valor iguais casam sem IA. Recorrente: itens da regra. Resto: a IA diz se cobre todos os itens, parte ou nenhum.</span></div>
+  <div class="princ"><b>4. Age</b><span>Cobre todos: evidência no card e baixa. Cobre parte: anexa e diz o que falta. Nenhum ou dúvida: não mexe.</span></div>
+</div>
+
+<h2>2 · A aba do agente</h2>
+<p class="nota">Clicável. Troque a fase no topo do painel para ver como os botões mudam, e decida os casos para ver a fila andar.</p>
+
+<div class="tela">
+  <div class="tela-barra"><span class="bolinhas"><i></i><i></i><i></i></span>Sapron · Central de Manutenção · Agentes de IA</div>
+  <div class="tela-corpo">
+
+    <div class="agenda">
+      <span class="agenda-tit">Precisa de você</span>
+      <button class="pilula"><b id="ag-desp">5</b> despesas para conferir</button>
+      <button class="pilula"><b>9</b> pares de duplicata</button>
+    </div>
+
+    <div class="layout">
+      <nav class="rail" aria-label="Agentes de IA">
+        <div class="rail-titulo">Agentes</div>
+        <button class="rail-item"><span class="ponto p-ok"></span><span class="rail-txt"><span>Classificador</span><span class="rail-est">Rodando</span></span><span class="contador zero">0</span></button>
+        <button class="rail-item"><span class="ponto p-at"></span><span class="rail-txt"><span>Duplicata</span><span class="rail-est">9 cards retidos</span></span><span class="contador">9</span></button>
+        <button class="rail-item"><span class="ponto p-ok"></span><span class="rail-txt"><span>Triagem</span><span class="rail-est">Rodando</span></span><span class="contador zero">0</span></button>
+        <button class="rail-item"><span class="ponto p-ok"></span><span class="rail-txt"><span>Validador</span><span class="rail-est">Rodando</span></span><span class="contador zero">0</span></button>
+        <button class="rail-item"><span class="ponto p-ok"></span><span class="rail-txt"><span>Auditor</span><span class="rail-est">Rodando</span></span><span class="contador zero">0</span></button>
+        <button class="rail-item on"><span class="ponto p-at"></span><span class="rail-txt"><span>Despesa → card <span class="falta">novo</span></span><span class="rail-est" id="rail-est">Modo sombra · dia 1</span></span><span class="contador" id="c-desp">5</span></button>
+      </nav>
+
+      <section class="painel on">
+        <div class="cab"><h4>Despesa prova o card</h4><span class="selo s-at" id="selo">● Modo sombra</span><span class="cad">a cada 15 min · lê o Lançamento de Despesas</span></div>
+        <p class="pergunta">Pergunta que ele responde: <b>esta despesa aprovada prova o serviço de um card aberto?</b></p>
+
+        <div class="fases" id="fases">
+          <button class="fase on" data-fase="sombra"><b>1 · Sombra</b>Só anota o que faria. Você confere e diz se concorda.</button>
+          <button class="fase" data-fase="anexar"><b>2 · Anexar</b>Põe a evidência no card e manda para "Aguardando aprovação".</button>
+          <button class="fase" data-fase="baixa"><b>3 · Baixa</b>Cobrindo todos os itens, fecha o card sozinho.</button>
+        </div>
+
+        <div class="numeros" style="margin-top:14px">
+          <div class="num"><div class="rot">Despesas lidas</div><div class="val">3.612</div><div class="pe">registradas de 01 a 28/09</div></div>
+          <div class="num"><div class="rot">Cards candidatos</div><div class="val">187</div><div class="pe">de 450 abertos: têm despesa no imóvel depois de abertos</div></div>
+          <div class="num"><div class="rot">Casou</div><div class="val" id="n-casou">5</div><div class="pe">todos ou parte dos itens, nos casos abaixo</div></div>
+          <div class="num"><div class="rot">Acerto</div><div class="val" id="acerto">—</div><div class="pe" id="acerto-pe">você ainda não conferiu nenhum</div></div>
+        </div>
+
+        <div class="secao">
+          <div class="secao-tit">Decidir agora <span class="conta" id="n-fila">5</span><span class="dica" id="dica">na sombra, cada caso pede só "concordo" ou "discordo"</span></div>
+          <div class="fila" id="fila">
+
+            <div class="caso" data-tipo="todos">
+              <div class="caso-topo"><span class="veredito v-comp">cobre todos os itens</span><span class="juiz">IA</span><span class="porque">A despesa descreve a troca da fiação em curto e a canaleta do ar-condicionado, que é o pedido do card.</span></div>
+              <div class="lados3">
+                <div class="lado"><div class="rotulo">Card #5909 · Aguardando aprovação</div><div class="tit">SSG0419 · Manutenção</div><div>Ar-condicionado com fiação exposta, com manutenção emergencial sem acabamento.</div><div class="meta">aberto em 18/09</div></div>
+                <div class="seta">⇄</div>
+                <div class="lado"><div class="rotulo">Despesa #75667 · Aprovada em 24/09</div><div class="tit">R$ 300,00 · Elétrico</div><div>Troca de LEDs queimados, troca da fiação em curto e fixação da canaleta para esconder os fios do ar.</div><div class="meta">serviço de 20/09 · 6 fotos + 1 nota</div></div>
+              </div>
+              <div class="caso-acoes"></div>
+            </div>
+
+            <div class="caso" data-tipo="todos">
+              <div class="caso-topo"><span class="veredito v-comp">cobre todos os itens</span><span class="juiz">regra fixa: item + valor</span><span class="porque">Card de danos com um item (cadeira de R$ 850) e despesa de danos com o mesmo valor no dia seguinte.</span></div>
+              <div class="lados3">
+                <div class="lado"><div class="rotulo">Card #5853 · Aguardando aprovação</div><div class="tit">EHI0802 · Cadeira</div><div>1 · Cadeira · R$ 850,00</div><div class="meta">aberto em 15/09 · origem Danos</div></div>
+                <div class="seta">⇄</div>
+                <div class="lado"><div class="rotulo">Despesa #76078 · Aprovada em 24/09</div><div class="tit">R$ 850,00 · Danos</div><div>"Danos", sem outra descrição.</div><div class="meta">16/09 · 0 fotos + 1 nota</div></div>
+              </div>
+              <div class="aviso">Sem foto, só a nota. Em card de danos a nota prova a reposição. Palavra por palavra, este caso passava batido.</div>
+              <div class="caso-acoes"></div>
+            </div>
+
+            <div class="caso" data-tipo="parte">
+              <div class="caso-topo"><span class="veredito v-inc">cobre parte</span><span class="juiz">IA</span><span class="porque">A despesa prova só a higienização do ar. O card de migração tem mais 6 itens.</span></div>
+              <div class="lados3">
+                <div class="lado"><div class="rotulo">Card #705 · Aguardando aprovação</div><div class="tit">AGS0642 · Migração de imóvel</div><div>Cômoda com gaveta solta · higienização do split · controle do ar · cortina com mofo · escova sanitária · secador…</div><div class="meta">aberto em 29/05</div></div>
+                <div class="seta">⇄</div>
+                <div class="lado"><div class="rotulo">Despesa #73737 · Aprovada em 06/09</div><div class="tit">R$ 200,00 · Ar-condicionado</div><div>Higienização de ar condicionado.</div><div class="meta">05/09 · 1 foto + 1 nota</div></div>
+              </div>
+              <ul class="cobre">
+                <li><span class="ic sim">✓</span><span>Higienização do ar-condicionado (split)</span></li>
+                <li><span class="ic sim">✓</span><span>Higienização do controle do ar-condicionado <span class="ev">(a IA acha que sim, a nota fala em "ar condicionado")</span></span></li>
+                <li><span class="ic nao">✗</span><span>Cômoda com gaveta solta · cortina com mofo · escova sanitária · secador</span></li>
+              </ul>
+              <div class="caso-acoes"></div>
+            </div>
+
+            <div class="caso" data-tipo="parte">
+              <div class="caso-topo"><span class="veredito v-inc">cobre parte</span><span class="juiz">IA</span><span class="porque">Higienização de 6 aparelhos, mas a despesa diz que cobre três imóveis: NDE0001, NDE0002 e NDE0003.</span></div>
+              <div class="lados3">
+                <div class="lado"><div class="rotulo">Card #835 · Não urgente</div><div class="tit">NDE0001 · Migração de imóvel</div><div>Sofá afundado · poltrona rasgada · ar-condicionado precisa de higienização · pratos de sobremesa lascados…</div><div class="meta">aberto em 16/07</div></div>
+                <div class="seta">⇄</div>
+                <div class="lado"><div class="rotulo">Despesa #74054 · Aprovada em 12/09</div><div class="tit">R$ 990,00 · Ar-condicionado</div><div>Higienização completa de 6 aparelhos, das unidades NDE0001, NDE0002 e NDE0003.</div><div class="meta">08/09 · 1 foto + 1 nota</div></div>
+              </div>
+              <div class="aviso">Uma despesa para três imóveis. O agente anexa aqui e avisa, mas não procura sozinho os cards do NDE0002 e do NDE0003. Isso fica para uma pessoa.</div>
+              <div class="caso-acoes"></div>
+            </div>
+
+            <div class="caso" data-tipo="parte">
+              <div class="caso-topo"><span class="veredito v-inc">cobre parte</span><span class="juiz">IA</span><span class="porque">O card pede 2 toalhas de banho e 1 de rosto. A despesa repõe 1 toalha de banho.</span></div>
+              <div class="lados3">
+                <div class="lado"><div class="rotulo">Cards #5533 e #5534 · Não urgente</div><div class="tit">TIS0131 · Danos de enxoval</div><div>2 toalhas de banho · 1 toalha de rosto <span class="ev">(os dois cards têm o mesmo texto)</span></div><div class="meta">abertos em 27/08</div></div>
+                <div class="seta">⇄</div>
+                <div class="lado"><div class="rotulo">Despesa #74013 · Aprovada em 11/09</div><div class="tit">R$ 49,84 · Enxoval</div><div>Dano causado a uma toalha de banho.</div><div class="meta">08/09 · 1 foto + 1 nota</div></div>
+              </div>
+              <div class="aviso">Os dois cards parecem duplicados. O agente anexa num só (o #5534, de toalha de banho) e manda o par para o agente de duplicata.</div>
+              <div class="caso-acoes"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="secao">
+          <div class="secao-tit">Descartados hoje <span class="dica">a despesa é do mesmo imóvel, mas não é o serviço do card. Não mexe em nada.</span></div>
+          <div class="fila">
+            <div class="item"><div><div class="t">Card #846 · VCM005 · chuveiro com temperatura desregulada</div><div class="m">Despesa #76721 · R$ 150 · "pia da suíte entupida, trocado sifão e válvula" · a IA diz: outro item</div></div><span class="veredito v-incl">nenhum item</span></div>
+            <div class="item"><div><div class="t">Card #775 · VLD1002 · controle do ar, mofo, travesseiros, ducha…</div><div class="m">Despesa #75593 · R$ 72 · "abridor de vinho, prato raso e duas taças" · a palavra casava, a IA não</div></div><span class="veredito v-incl">nenhum item</span></div>
+            <div class="item"><div><div class="t">Card #842 · NCS0003 · infiltração no quarto</div><div class="m">Despesas de água e energia · nem entram no julgamento</div></div><span class="veredito v-incl">conta, fora</span></div>
+          </div>
+        </div>
+
+        <div class="secao">
+          <div class="secao-tit">Interruptores</div>
+          <div class="interruptores">
+            <div class="interruptor"><span class="chave"></span>Agente ligado</div>
+            <div class="interruptor"><span class="chave" id="ch-anexar" style="background:#94a3b8"></span>Pode anexar no card</div>
+            <div class="interruptor"><span class="chave" id="ch-baixa" style="background:#94a3b8"></span>Pode dar baixa</div>
+          </div>
+        </div>
+        <details class="detalhe"><summary>Detalhes do agente</summary><p>Lê só despesas "Aprovada" e "Paga". A data da evidência no card é a data da despesa, para a demora do financeiro não pesar no score da franquia. Despesa cancelada depois de casar gera aviso interno; o card não é reaberto sozinho. Cada casamento fica gravado com despesa, card, veredito, juiz e hora.</p></details>
+      </section>
+    </div>
+  </div>
+</div>
+
+<h2>3 · Como o card fica depois</h2>
+<p class="nota">O card #5909 depois da fase 3 (baixa). Na fase 2 é igual, só que para em "Aguardando aprovação", sem a linha de conclusão.</p>
+<div class="chat">
+  <div class="chat-cab"><b>#5909 · SSG0419 · Manutenção</b><span class="veredito v-comp">Concluído</span><span class="etq">despesa:75667</span><span class="etq">verificada-por-despesa</span></div>
+  <div class="msgs">
+    <div class="msg"><div class="quem">Seazone · 18/09</div>O ar-condicionado do imóvel apresenta fiação exposta…</div>
+    <div class="msg bot"><div class="quem">🤖 Agente Despesa → card · 24/09, 15:00</div>
+      🧾 A franquia lançou a despesa <b>#75667</b> (R$ 300,00), aprovada no financeiro em 24/09. Ela prova o serviço deste card:<br>
+      "Troca de LEDs queimados, troca da fiação em curto e fixação da canaleta para esconder os fios do AC."<br>
+      Serviço feito em <b>20/09</b>.
+      <div class="anexos"><span class="anexo">20260919_173813.jpg</span><span class="anexo">20260919_173805.jpg</span><span class="anexo">20260919_154220.jpg</span><span class="anexo">+3</span><span class="anexo pdf">NOTA</span></div>
+    </div>
+    <div class="msg sis">✅ Manutenção concluída: Manutenção SSG0419 · evidência de 20/09</div>
+  </div>
+</div>
+<p class="nota" style="margin-top:8px">Os arquivos são os mesmos da despesa, sem cópia. Quem abrir o card vê a foto e a nota sem ir ao financeiro.</p>
+
+<h2>4 · As 3 decisões</h2>
+<p class="nota">Já vem marcado o que eu recomendo. É o que vale até você responder.</p>
+<div class="decisao"><div class="q">1. Cobrindo todos os itens, o agente dá a baixa sozinho?</div>
+  <label><input type="radio" name="d1" checked> Começa anexando e mandando para "Aguardando aprovação". A baixa direta só liga depois da sombra <span class="rec">recomendado</span></label>
+  <label><input type="radio" name="d1"> Dá a baixa direto desde o primeiro dia depois da sombra</label></div>
+<div class="decisao"><div class="q">2. Uma despesa pode provar mais de um card?</div>
+  <label><input type="radio" name="d2" checked> Sim, desde que o juiz diga qual item da despesa cobre cada card <span class="rec">recomendado</span></label>
+  <label><input type="radio" name="d2"> Não. Uma despesa, um card</label></div>
+<div class="decisao"><div class="q">3. Despesa "Pré-aprovada" conta?</div>
+  <label><input type="radio" name="d3" checked> Não. Só "Aprovada" e "Paga", a mesma régua da recorrente <span class="rec">recomendado</span></label>
+  <label><input type="radio" name="d3"> Sim, conta também</label></div>
+
+<h2>5 · O que precisa ser construído</h2>
+<div class="tabela-wrap">
+<table class="ideia">
+  <tr><th>Peça</th><th>O que é</th><th>Onde</th></tr>
+  <tr><td>Ligação card ↔ despesa</td><td>Tabela nova: card, despesa, veredito, juiz (regra ou IA), itens cobertos, fase, hora <span class="falta">novo</span></td><td>backend · migration</td></tr>
+  <tr><td>Tarefa de 15 em 15 min</td><td>Lê as despesas aprovadas, julga e age conforme a fase <span class="falta">novo</span></td><td>backend · fila <code>maintenance</code></td></tr>
+  <tr><td>Juiz</td><td>Regra fixa para danos e recorrente, mais o prompt da IA no mesmo molde do validador de evidência <span class="falta">novo</span></td><td>backend + AI Hub</td></tr>
+  <tr><td>Chave do AI Hub</td><td><code>AI_HUB_API_KEY_MAINTENANCE_EXPENSE</code> em staging e em produção <span class="falta">novo</span></td><td>AWS SSM · você roda</td></tr>
+  <tr><td>Flags das 3 fases</td><td>Ligado, pode anexar, pode dar baixa. Nascem fechadas <span class="falta">novo</span></td><td>PostHog</td></tr>
+  <tr><td><b>Entrada na aba Agentes de IA</b></td><td>O 6º agente no monitor: estado, fila, bloqueio (flag ou chave) e a lista "Decidir agora" <span class="falta">novo</span></td><td>backend <code>agents_monitor</code> + front <code>components/agentes/</code></td></tr>
+  <tr><td>Evidência e baixa</td><td>Os mesmos caminhos da franquia e do botão aprovar <span class="existe">existe</span></td><td>backend <code>lifecycle</code></td></tr>
+</table>
+</div>
+
+<footer style="margin-top:32px;color:var(--fraco);font-size:12px">Casos: API de produção do Sapron, 28/09/2026 às 20h37, só leitura · vereditos simulados · Manutenção · Seazone</footer>
+</div>
+<div class="toast" id="toast"></div>

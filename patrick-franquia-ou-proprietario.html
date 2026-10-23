@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Franquia ou Proprietário</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ground:#F2F5F3; --surface:#FFFFFF; --surface-2:#E9EFEC;
+  --line:#D6E0DB; --line-soft:#E6ECE9;
+  --ink:#151B26; --ink-2:#44524D; --ink-3:#6B7A74;
+  --accent:#2C8F73; --accent-soft:#E2F1EB;
+  --crit:#C0341F; --crit-bg:#FAE7E3;
+  --med:#C2810E; --med-bg:#FBF0DC;
+  --low:#2D8E71; --low-bg:#E2F1EB;
+  --blue:#2E62C4; --blue-bg:#E4EBF9;
+  --plum:#7A3E9D; --plum-bg:#F0E6F7;
+  --display:'Quicksand','Trebuchet MS',sans-serif;
+  --body:'IBM Plex Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --ground:#12161A; --surface:#1A1F23; --surface-2:#232A2E;
+    --line:#303A3E; --line-soft:#262E32;
+    --ink:#EDF2F0; --ink-2:#B3C0BB; --ink-3:#8A9994;
+    --accent:#4FC3A1; --accent-soft:#1E332C;
+    --crit:#F0705C; --crit-bg:#3A201B;
+    --med:#E8B33C; --med-bg:#362C16;
+    --low:#4FC3A1; --low-bg:#1E332C;
+    --blue:#7BA3F0; --blue-bg:#1C2740;
+    --plum:#C08FE0; --plum-bg:#2C1E38;
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#12161A; --surface:#1A1F23; --surface-2:#232A2E;
+  --line:#303A3E; --line-soft:#262E32;
+  --ink:#EDF2F0; --ink-2:#B3C0BB; --ink-3:#8A9994;
+  --accent:#4FC3A1; --accent-soft:#1E332C;
+  --crit:#F0705C; --crit-bg:#3A201B;
+  --med:#E8B33C; --med-bg:#362C16;
+  --low:#4FC3A1; --low-bg:#1E332C;
+  --blue:#7BA3F0; --blue-bg:#1C2740;
+  --plum:#C08FE0; --plum-bg:#2C1E38;
+}
+*{box-sizing:border-box;}
+body{margin:0; background:var(--ground); color:var(--ink); font-family:var(--body); line-height:1.5;}
+.wrap{max-width:1100px; margin:0 auto; padding-inline:16px; padding-block:40px 64px;}
+h1,h2,h3,h4{font-family:var(--display); text-wrap:balance; margin:0;}
+p{margin:0;}
+.eyebrow{font-family:var(--display); font-size:12px; font-weight:700; letter-spacing:.14em;
+  text-transform:uppercase; color:var(--accent);}
+header h1{font-size:clamp(28px,5vw,40px); font-weight:700; letter-spacing:-.01em; margin-top:10px;}
+.sub{color:var(--ink-2); font-size:15px; margin-top:12px; max-width:64ch;}
+.meta{display:flex; flex-wrap:wrap; gap:8px 22px; margin-top:18px; font-size:13px; color:var(--ink-3);}
+.meta b{font-weight:600; color:var(--ink-2);}
+
+.stats{display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-top:32px;}
+@media (max-width:900px){ .stats{grid-template-columns:repeat(2,1fr);} }
+.st{background:var(--surface); border:1px solid var(--line); border-radius:9px; padding:14px 16px;}
+.st .v{font-family:var(--display); font-size:clamp(24px,4.4vw,30px); font-weight:700; line-height:1.1;
+  letter-spacing:-.02em; font-variant-numeric:tabular-nums;}
+.st .v small{font-size:14px; font-weight:600; color:var(--ink-3); margin-left:2px;}
+.st .k{font-size:11.8px; color:var(--ink-3); margin-top:5px; line-height:1.35;}
+.st.fr{border-color:var(--accent);} .st.fr .v{color:var(--accent);}
+.st.pr{border-color:var(--blue);} .st.pr .v{color:var(--blue);}
+.st.mx{border-color:var(--med);} .st.mx .v{color:var(--med);}
+.st.hot{border-color:var(--crit);} .st.hot .v{color:var(--crit);}
+
+section{margin-top:48px;}
+section > h2{font-size:21px; font-weight:700; letter-spacing:-.01em;}
+section > .lede{color:var(--ink-2); font-size:14.5px; margin-top:8px; max-width:74ch;}
+
+.callout{background:var(--surface); border:1px solid var(--line); border-left:3px solid var(--accent);
+  border-radius:0 10px 10px 0; padding:18px 20px; margin-top:18px;}
+.callout.crit{border-left-color:var(--crit);}
+.callout.blue{border-left-color:var(--blue);}
+.callout.med{border-left-color:var(--med);}
+.callout h3{font-size:15px; font-weight:700;}
+.callout p{font-size:14px; color:var(--ink-2); margin-top:9px;}
+.callout ul{margin:10px 0 0; padding-left:18px;}
+.callout li{font-size:13.5px; color:var(--ink-2); margin-top:6px;}
+.callout li b, .callout p b{color:var(--ink); font-weight:600;}
+
+.criterio{display:grid; grid-template-columns:repeat(2,1fr); gap:14px; margin-top:18px;}
+@media (max-width:760px){ .criterio{grid-template-columns:1fr;} }
+.cr{background:var(--surface); border:1px solid var(--line); border-radius:10px; padding:18px 20px;}
+.cr.fr{border-top:3px solid var(--accent);}
+.cr.pr{border-top:3px solid var(--blue);}
+.cr h4{font-size:15px; font-weight:700;}
+.cr .q{font-size:12.5px; color:var(--ink-3); margin-top:4px; font-style:italic;}
+.cr ul{margin:12px 0 0; padding-left:18px;}
+.cr li{font-size:13px; color:var(--ink-2); margin-top:6px;}
+
+.tablebox{overflow-x:auto; border:1px solid var(--line); border-radius:10px; background:var(--surface);
+  margin-top:16px;}
+table{border-collapse:collapse; width:100%; min-width:860px; font-size:13.2px;}
+th{font-family:var(--display); font-size:10.5px; font-weight:700; letter-spacing:.09em;
+  text-transform:uppercase; color:var(--ink-3); text-align:left; padding:12px 14px;
+  border-bottom:1px solid var(--line); background:var(--surface-2); white-space:nowrap;}
+td{padding:11px 14px; border-bottom:1px solid var(--line-soft); vertical-align:top; color:var(--ink-2);}
+tr:last-child td{border-bottom:0;}
+tbody tr:hover td{background:var(--surface-2);}
+td.im{white-space:nowrap; font-weight:700; color:var(--ink); font-family:var(--display); font-size:14px;}
+td.im span{display:block; font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
+  font-size:10.5px; font-weight:400; color:var(--ink-3); margin-top:3px;}
+td.urg{white-space:nowrap;}
+td.desc{color:var(--ink); min-width:400px; line-height:1.45;}
+td.desc em{display:block; font-style:normal; font-size:11.5px; color:var(--ink-3); margin-top:4px;}
+td.desc .lado{display:block; margin-top:7px; font-size:12.5px; line-height:1.45;}
+td.desc .lado b{font-weight:700;}
+td.desc .lado.p b{color:var(--blue);}
+td.desc .lado.f b{color:var(--accent);}
+td.atr{font-variant-numeric:tabular-nums; text-align:right; white-space:nowrap; font-weight:700;}
+td.atr.a{color:var(--crit);} td.atr.b{color:var(--med);} td.atr.n{color:var(--ink-3); font-weight:500;}
+
+.bloco{margin-top:40px;}
+.bh{display:flex; align-items:baseline; gap:12px; flex-wrap:wrap; padding-bottom:10px;
+  border-bottom:2px solid var(--line);}
+.bloco.pr .bh{border-bottom-color:var(--blue);}
+.bloco.mx .bh{border-bottom-color:var(--med);}
+.bloco.fr .bh{border-bottom-color:var(--accent);}
+.bloco.ap .bh{border-bottom-color:var(--crit);}
+.bh h3{font-size:19px; font-weight:700;}
+.bh .qt{font-size:13px; color:var(--ink-3); font-variant-numeric:tabular-nums;}
+.bloco > .porq{font-size:13.5px; color:var(--ink-2); margin-top:10px; max-width:74ch;}
+
+.tag{display:inline-flex; align-items:center; gap:5px; font-size:10.5px; font-weight:700;
+  padding:3px 9px; border-radius:999px; white-space:nowrap; letter-spacing:.03em;}
+.tag.a{background:var(--crit-bg); color:var(--crit);}
+.tag.b{background:var(--med-bg); color:var(--med);}
+.tag.c{background:var(--low-bg); color:var(--low);}
+
+.concl{margin-top:26px; background:var(--surface); border:1px solid var(--line);
+  border-left:3px solid var(--crit); border-radius:0 10px 10px 0; padding:22px 24px;}
+.concl h3{font-size:16px; font-weight:700;}
+.concl p{font-size:14px; color:var(--ink-2); margin-top:11px;}
+.concl p b{color:var(--ink); font-weight:600;}
+.concl .veredito{margin-top:15px; padding-top:13px; border-top:1px solid var(--line-soft);
+  font-size:14.5px; color:var(--ink); font-weight:600;}
+
+.foot{margin-top:52px; padding-top:22px; border-top:1px solid var(--line);
+  font-size:12.5px; color:var(--ink-3);}
+.foot p + p{margin-top:8px;}
+.foot code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:11.8px;
+  background:var(--surface-2); padding:1px 5px; border-radius:4px; color:var(--ink-2);}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <p class="eyebrow">Central de Manutenção · Franquia 293</p>
+  <h1>Patrick — o que é da franquia e o que é do proprietário</h1>
+  <p class="sub">As 42 manutenções travadas da franquia Patrick Josoe Brando, separadas por quem
+  responde por cada uma. A conclusão curta: metade é da franquia, um terço está misturada dentro
+  do mesmo card, e o dinheiro nunca saiu do bolso dela.</p>
+  <div class="meta">
+    <span><b>Franquia</b> 293 · Patrick Josoe Brando</span>
+    <span><b>Carteira</b> 14 imóveis · 13 ativos · 12 com pendência</span>
+    <span><b>Data de corte</b> 23/09/2026 · atraso contado até 21/09</span>
+    <span><b>Fonte</b> Sapron</span>
+  </div>
+</header>
+
+<div class="stats">
+  <div class="st fr"><p class="v">23 <small>/42</small></p><p class="k">são <b>da franquia</b> — execução e conservação (55%)</p></div>
+  <div class="st pr"><p class="v">4 <small>/42</small></p><p class="k">são <b>do proprietário</b> — estrutura e instalação (10%)</p></div>
+  <div class="st mx"><p class="v">14 <small>/42</small></p><p class="k">estão <b>misturadas</b> no mesmo card (33%)</p></div>
+  <div class="st hot"><p class="v">1</p><p class="k">sem dono definido — porta arrombada, ninguém apurou</p></div>
+  <div class="st hot"><p class="v">R$ 0</p><p class="k">de manutenção paga pela franquia em 11 meses</p></div>
+  <div class="st"><p class="v">R$ 6.879</p><p class="k">gastos em manutenção desde out/2025 — 27 de 30 debitados ao proprietário</p></div>
+  <div class="st mx"><p class="v">12 <small>/12</small></p><p class="k">dos cards de migração são mistos — e são os mais antigos</p></div>
+  <div class="st hot"><p class="v">41 <small>/42</small></p><p class="k">com prazo vencido · 1 sem prazo · pior: 108 dias</p></div>
+</div>
+
+<section>
+  <h2>Antes de usar este documento: a regra não existe escrita</h2>
+
+  <div class="callout crit">
+    <h3>A política de rateio está em aberto — é a Decisão 4 do processo</h3>
+    <p>O processo de Manutenção Recorrente v2.1 lista, entre as sete decisões pendentes:
+    <i>"falta dizer quando o custo é da franquia, quando é do proprietário e quando é rateado — e
+    quem aprova esse rateio"</i>. No plano v3, a linha <b>"Política de rateio de custo por item —
+    proprietário, franquia ou Seazone"</b> aparece como <b>ainda não publicada</b>, com o
+    Financeiro como dono.</p>
+    <p>No sistema é igual: o campo <code>scheduled_responsibility</code> existe na tabela de cards
+    e está preenchido em <b>20 dos 5.938 cards</b> da base. Nenhum dos 42 do Patrick tem esse
+    campo.</p>
+    <p><b>Ou seja: a classificação abaixo não sai do sistema nem de uma norma.</b> Ela foi
+    atribuída por mim, item a item, com o critério declarado aqui. Serve para organizar a conversa
+    e para mostrar onde a decisão falta — não para fechar cobrança sem o Financeiro validar.</p>
+  </div>
+
+  <div class="callout blue">
+    <h3>O que o guia oficial já resolve</h3>
+    <p>O <i>Guia de Manutenção Recorrente para a Rede de Franquias</i> é a única fonte escrita que
+    encontrei, e ele cobre só a manutenção <b>preventiva</b>. O que ele define:</p>
+    <ul>
+      <li><b>Não é da franquia:</b> piscina e jardinagem — "o proprietário contrata à parte quando
+      é casa, e são do condomínio quando é prédio".</li>
+      <li><b>Não é da franquia:</b> limpeza de churrasqueira (resolvida no checkout) e caixa d'água
+      de reservatório coletivo ("a obrigação é do síndico").</li>
+      <li><b>Fora deste plano:</b> "manutenção corretiva, urgência, obra e reforma seguem pelos
+      canais de sempre" — e é exatamente aí que caem os 42 cards deste relatório.</li>
+    </ul>
+    <p>Nenhum dos 42 é card recorrente. O guia, portanto, <b>não decide nenhum deles</b> — só
+    confirma que obra e reforma não são do escopo da franquia.</p>
+  </div>
+
+  <div class="criterio">
+    <div class="cr fr">
+      <h4>Critério — Franquia</h4>
+      <p class="q">"Isso some se o imóvel for bem operado?"</p>
+      <ul>
+        <li>Reposição de item: enxoval, utensílio, taça, travesseiro, cabide, lâmpada, pilha</li>
+        <li>Limpeza e higienização: geladeira, fogão, cortina, estofado, desgelo</li>
+        <li>Pequeno reparo e ajuste sem obra: assento de privada, puxador, controle, suporte</li>
+        <li>Testes e conferências que a vistoria exigia e não foram feitos</li>
+        <li>Contratar e acompanhar o prestador, mesmo quando o custo é do proprietário</li>
+      </ul>
+    </div>
+    <div class="cr pr">
+      <h4>Critério — Proprietário</h4>
+      <p class="q">"Isso continua existindo mesmo com o imóvel vazio e bem operado?"</p>
+      <ul>
+        <li>Estrutura: infiltração, rachadura, teto, telhado, rampa, parede</li>
+        <li>Rede embutida: quadro e disjuntores, tomadas, encanamento, ralo, registro</li>
+        <li>Equipamento do imóvel com defeito ou fim de vida: ar-condicionado que não liga, geladeira, fogão que não acende</li>
+        <li>Esquadria e madeira comprometida, incluindo cupim estrutural</li>
+        <li>Falta de instalação: banheiro sem exaustor, ausência de torneira — é obra</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="callout med">
+    <h3>Custo e execução não são a mesma coisa — e é aqui que a conversa trava</h3>
+    <p>Em <b>30 despesas de manutenção lançadas nos imóveis do Patrick desde 20/10/2025</b>,
+    somando R$ 6.879,46, <b>nenhuma</b> foi debitada à franquia: 27 estão como
+    <code>paid_by = Owner</code> e 3 sem pagador registrado. O único lançamento no nome da
+    franquia em toda a base é a <b>multa</b> de R$ 250,00 de 16/09.</p>
+    <p>Isso muda o que se cobra dela. <b>A franquia não está sendo cobrada de dinheiro — está
+    sendo cobrada de execução:</b> contratar, acompanhar, enviar evidência. A alegação de "sem
+    fluxo de caixa" só se aplica ao adiantamento do pagamento, e mesmo esse, no histórico, nunca
+    ficou com ela.</p>
+  </div>
+</section>
+
+<!-- ================= PROPRIETÁRIO ================= -->
+<div class="bloco pr">
+  <div class="bh"><h3>É do proprietário</h3><span class="qt">4 cards · 10% da fila</span></div>
+  <p class="porq">Estrutura, rede embutida e equipamento com defeito. Cobrar a franquia por estes
+  quatro é cobrar quem não decide o gasto — o que ela deve é orçar, apresentar e acompanhar.</p>
+
+  <div class="tablebox">
+    <table>
+      <thead><tr><th>Imóvel</th><th>Urgência</th><th>O que precisa ser corrigido</th><th style="text-align:right;">Atraso</th></tr></thead>
+      <tbody>
+        <tr><td class="im">AGS0642<span>card 837</span></td><td class="urg"><span class="tag a">Crítica</span></td>
+        <td class="desc">Disjuntores caindo o dia inteiro, deixando chuveiro frio e bomba d'água parada. Cheiro forte de mofo num quarto. Rampa da garagem causou duas quedas.<em>Quadro de energia, umidade e área externa são do imóvel. Avaliação de hóspede em 11/07: "não recomendo o local"</em></td>
+        <td class="atr a">56 d</td></tr>
+
+        <tr><td class="im">VLE005<span>card 941</span></td><td class="urg"><span class="tag a">Crítica</span></td>
+        <td class="desc">Ar-condicionado do quarto de solteiro não liga. Ar-condicionado do quarto de casal não ventila.<em>É defeito de aparelho, não falta de higienização — por isso não cai no plano recorrente</em></td>
+        <td class="atr b">28 d</td></tr>
+
+        <tr><td class="im">VLE005<span>card 944</span></td><td class="urg"><span class="tag a">Crítica</span></td>
+        <td class="desc">Cupim na porta do quarto, na porta da sala e na janela da sala.<em>Esquadria comprometida. Dedetizar é operação; trocar a madeira é o bem do proprietário</em></td>
+        <td class="atr b">28 d</td></tr>
+
+        <tr><td class="im">AGS0642<span>card 959</span></td><td class="urg"><span class="tag b">Média</span></td>
+        <td class="desc">Tomada do banheiro da suíte sem funcionar.<em>Rede elétrica embutida</em></td>
+        <td class="atr b">27 d</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ================= MISTO ================= -->
+<div class="bloco mx">
+  <div class="bh"><h3>Está misturado no mesmo card</h3><span class="qt">14 cards · 33% da fila</span></div>
+  <p class="porq">Cada um destes junta, num card só, o que a franquia deve executar e o que o
+  proprietário deve pagar. <b>Os 12 cards de migração estão todos aqui</b> — e são os mais antigos
+  da fila, com 108 dias de atraso. Enquanto o card for um só, ninguém consegue concluir: a franquia
+  não fecha porque depende do proprietário, e o proprietário não é acionado porque o card está no
+  nome da franquia.</p>
+
+  <div class="tablebox">
+    <table>
+      <thead><tr><th>Imóvel</th><th>Urgência</th><th>O que precisa ser corrigido, e de quem é</th><th style="text-align:right;">Atraso</th></tr></thead>
+      <tbody>
+
+        <tr><td class="im">AGS0642<span>card 705</span></td><td class="urg"><span class="tag a">Crítica</span></td>
+        <td class="desc">
+          <span class="lado p"><b>Proprietário:</b> teto com infiltração · porta danificada e sem fechadura · tomadas do banheiro quebradas</span>
+          <span class="lado f"><b>Franquia:</b> higienizar 4 ar-condicionados · cortinas com mofo · repor lâmpadas e luminárias · testar o fogão a gás · repor peneira, 9 taças e liquidificador · higienizar depurador · configurar a SmartTV</span>
+          <em>Evidência entregue em 08/09 — parado aguardando nossa aprovação</em></td>
+        <td class="atr a">108 d</td></tr>
+
+        <tr><td class="im">CCM004<span>card 704</span></td><td class="urg"><span class="tag a">Crítica</span></td>
+        <td class="desc">
+          <span class="lado p"><b>Proprietário:</b> ar-condicionado não funcionou · porta sem chave e sem acabamento da fechadura · registros do chuveiro soltando · televisão não funcionou</span>
+          <span class="lado f"><b>Franquia:</b> 6 travesseiros · 7 cabides · higienizar AC e cortinas · lâmpadas queimadas · talheres desgastados · 3 pratos, 4 taças, 3 panos · 2 lixeiras · tábua de passar · 2 escovas sanitárias · testar o fogão da área gourmet</span></td>
+        <td class="atr a">108 d</td></tr>
+
+        <tr><td class="im">VDT0401<span>card 714</span></td><td class="urg"><span class="tag a">Crítica</span></td>
+        <td class="desc">
+          <span class="lado p"><b>Proprietário:</b> torneira da sacada com vazamento · persiana não abre · papel de parede soltando no corredor e faltando pedaço no quarto · porta sem chave</span>
+          <span class="lado f"><b>Franquia:</b> 4 travesseiros · 2 cabides · escova sanitária · faca de corte · tábua · 2 taças · 3 panos de prato · tábua de passar</span></td>
+        <td class="atr a">108 d</td></tr>
+
+        <tr><td class="im">VLE001<span>card 706</span></td><td class="urg"><span class="tag a">Crítica</span></td>
+        <td class="desc">
+          <span class="lado p"><b>Proprietário:</b> parede com infiltração · 2 portas de correr sem fechadura e sem trinco</span>
+          <span class="lado f"><b>Franquia:</b> higienizar o ar-condicionado · chuveirinho sem suporte · testar fogão e forno · 2 travesseiros · 4 cabides · escova sanitária · ventilador · liquidificador · ferro de passar · 4 taças · 2 panos · forma</span></td>
+        <td class="atr a">108 d</td></tr>
+
+        <tr><td class="im">VLE002<span>card 707</span></td><td class="urg"><span class="tag a">Crítica</span></td>
+        <td class="desc">
+          <span class="lado p"><b>Proprietário:</b> parede com rachadura · porta sem chave · porta sem puxador</span>
+          <span class="lado f"><b>Franquia:</b> testar fogão e forno · 2 travesseiros · 4 cabides · escova sanitária · ventilador · liquidificador · ferro · 2 panelas sem tampa · taça · jarra · 2 panos · tampa de lixeira</span></td>
+        <td class="atr a">108 d</td></tr>
+
+        <tr><td class="im">VLE003<span>card 708</span></td><td class="urg"><span class="tag a">Crítica</span></td>
+        <td class="desc">
+          <span class="lado p"><b>Proprietário:</b> porta do quarto sem chave</span>
+          <span class="lado f"><b>Franquia:</b> testar fogão e forno · consertar sanduicheira · 7 travesseiros · 8 cabides · escova sanitária · ventilador · liquidificador · ferro · 3 taças · peneira · abridor · tampa da lixeira</span></td>
+        <td class="atr a">108 d</td></tr>
+
+        <tr><td class="im">VLE004<span>card 709</span></td><td class="urg"><span class="tag a">Crítica</span></td>
+        <td class="desc">
+          <span class="lado p"><b>Proprietário:</b> instalar fechadura na porta do quarto</span>
+          <span class="lado f"><b>Franquia:</b> testar fogão a gás e forno · 3 travesseiros · cabideiro · 2 facas de corte · peneira · 2 taças · 2 panelas · 2 panos · jarra · liquidificador</span></td>
+        <td class="atr a">108 d</td></tr>
+
+        <tr><td class="im">VLE005<span>card 710</span></td><td class="urg"><span class="tag a">Crítica</span></td>
+        <td class="desc">
+          <span class="lado p"><b>Proprietário:</b> 2 portas sem chave · acabamento em tomada · interruptores e tomadas</span>
+          <span class="lado f"><b>Franquia:</b> testar os 2 ar-condicionados · testar fogão e forno · tampa do freezer · 2 travesseiros · cabideiro · escova · 3 colheres · abridor · pegador · tábua · 4 taças · 2 panos · liquidificador · ferro · forma · balde · lâmpadas · configurar a TV</span></td>
+        <td class="atr a">108 d</td></tr>
+
+        <tr><td class="im">VLE006<span>card 711</span></td><td class="urg"><span class="tag a">Crítica</span></td>
+        <td class="desc">
+          <span class="lado p"><b>Proprietário:</b> instalar chave na porta · instalar torneira na área de serviço</span>
+          <span class="lado f"><b>Franquia:</b> higienizar o ar-condicionado · chuveiro sem suporte · 2 lâmpadas queimadas · testar fogão e forno · 2 travesseiros · arara · 5 cabides · 3 colheres · pegador · faca · 4 taças · 2 panos · jarra · liquidificador · garrafa térmica · ferro · forma</span></td>
+        <td class="atr a">108 d</td></tr>
+
+        <tr><td class="im">VLE007<span>card 712</span></td><td class="urg"><span class="tag a">Crítica</span></td>
+        <td class="desc">
+          <span class="lado p"><b>Proprietário:</b> banheiro sem janela, sem exaustor e sem nenhuma saída de ar — é obra, não manutenção</span>
+          <span class="lado f"><b>Franquia:</b> lâmpada queimada perto da cozinha · travesseiro · arara · 5 cabides · pegador · peneira · tábua · panela · pá de lixo · liquidificador · ferro</span></td>
+        <td class="atr a">108 d</td></tr>
+
+        <tr><td class="im">SDN042<span>card 791</span></td><td class="urg"><span class="tag a">Crítica</span></td>
+        <td class="desc">
+          <span class="lado p"><b>Proprietário:</b> chuveiro e vaso sanitário com vazamento · ralo da pia não escoa · fogão com só 3 bocas acendendo e sem acendimento automático · 3 ar-condicionados que não esquentam · geladeira bastante enferrujada · trilho da porta danificado · display do controle do AC danificado</span>
+          <span class="lado f"><b>Franquia:</b> higienizar os 3 ar-condicionados e o exaustor · trocar a tampa do vaso</span></td>
+        <td class="atr a">69 d</td></tr>
+
+        <tr><td class="im">VLE005<span>card 946</span></td><td class="urg"><span class="tag a">Crítica</span></td>
+        <td class="desc">
+          <span class="lado p"><b>Proprietário:</b> cupim no armário da TV</span>
+          <span class="lado f"><b>Franquia:</b> tampa da privada manchada</span></td>
+        <td class="atr b">28 d</td></tr>
+
+        <tr><td class="im">VLE006<span>card 950</span></td><td class="urg"><span class="tag a">Crítica</span></td>
+        <td class="desc">
+          <span class="lado p"><b>Proprietário:</b> cupim no armário do banheiro</span>
+          <span class="lado f"><b>Franquia:</b> limpeza do assento da privada</span></td>
+        <td class="atr b">28 d</td></tr>
+
+        <tr><td class="im">VLE008<span>card 713</span></td><td class="urg"><span class="tag b">Média</span></td>
+        <td class="desc">
+          <span class="lado p"><b>Proprietário:</b> ajustar as portas do banheiro (portas de chave)</span>
+          <span class="lado f"><b>Franquia:</b> higienizar a cortina da sala · escova sanitária · 2 travesseiros · 2 colheres · faca · 2 taças · panela · jarra · liquidificador · ferro · instalar repetidor de Wi-Fi</span></td>
+        <td class="atr a">108 d</td></tr>
+
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ================= FRANQUIA ================= -->
+<div class="bloco fr">
+  <div class="bh"><h3>É da franquia</h3><span class="qt">23 cards · 55% da fila</span></div>
+  <p class="porq">Reposição de item, limpeza e pequeno reparo. Nenhum destes exige decisão do
+  proprietário nem orçamento alto — são os que não têm justificativa nenhuma para estarem parados,
+  e a maioria some numa visita de meia hora ou numa compra única para o condomínio.</p>
+
+  <div class="tablebox">
+    <table>
+      <thead><tr><th>Imóvel</th><th>Urgência</th><th>O que precisa ser corrigido</th><th style="text-align:right;">Atraso</th></tr></thead>
+      <tbody>
+        <tr><td class="im">VLE003<span>card 940</span></td><td class="urg"><span class="tag a">Crítica</span></td>
+        <td class="desc">Assentos de privada inutilizáveis nos dois banheiros. Puxador da gaveta da cozinha quebrado.<em>Único card do condomínio marcado como "grave" pelo consultor</em></td><td class="atr b">28 d</td></tr>
+
+        <tr><td class="im">VLE008<span>card 5838</span></td><td class="urg"><span class="tag a">Crítica</span></td>
+        <td class="desc">Lençóis e toalhas manchados. Sofá manchado e empoeirado. Utensílios de cozinha sujos. Jogos de taças a substituir.<em>Avaliação de hóspede em 02/09 · card sem prazo e nunca cobrado</em></td><td class="atr n">sem prazo</td></tr>
+
+        <tr><td class="im">AGS0642<span>card 958</span></td><td class="urg"><span class="tag b">Média</span></td>
+        <td class="desc">Quatro lâmpadas queimadas: banheiro da escada, quarto de solteiro, sala e mesa de jantar.</td><td class="atr b">27 d</td></tr>
+
+        <tr><td class="im">VLE001<span>card 934</span></td><td class="urg"><span class="tag b">Média</span></td>
+        <td class="desc">Assento de privada muito acabado. Escova sanitária quebrada.</td><td class="atr b">28 d</td></tr>
+
+        <tr><td class="im">VLE002<span>card 722</span></td><td class="urg"><span class="tag b">Média</span></td>
+        <td class="desc">Controle da TV não liga nem desliga.</td><td class="atr a">98 d</td></tr>
+
+        <tr><td class="im">VLE002<span>card 723</span></td><td class="urg"><span class="tag b">Média</span></td>
+        <td class="desc">Fogão com coloração escura, tipo queimado — higienização pesada.</td><td class="atr a">98 d</td></tr>
+
+        <tr><td class="im">VLE002<span>card 724</span></td><td class="urg"><span class="tag b">Média</span></td>
+        <td class="desc">Muita sujeira acumulada nas borrachas da geladeira.</td><td class="atr a">98 d</td></tr>
+
+        <tr><td class="im">VLE003<span>card 938</span></td><td class="urg"><span class="tag b">Média</span></td>
+        <td class="desc">Controle da TV sem funcionar direito — não foi possível acessar a smart TV.</td><td class="atr b">28 d</td></tr>
+
+        <tr><td class="im">VLE003<span>card 939</span></td><td class="urg"><span class="tag b">Média</span></td>
+        <td class="desc">Colheres de cozinhar derretidas e mofadas. Sanduicheira remendada com fita isolante. Falta liquidificador e ferro, cafeteira sem filtro, caneca quebrada.</td><td class="atr b">28 d</td></tr>
+
+        <tr><td class="im">VLE004<span>card 936</span></td><td class="urg"><span class="tag b">Média</span></td>
+        <td class="desc">Freezer cheio de gelo, precisa de desgelo.<em>Já foi dado como resolvido em 08/06 e voltou na visita de 17/08</em></td><td class="atr b">28 d</td></tr>
+
+        <tr><td class="im">VLE004<span>card 937</span></td><td class="urg"><span class="tag b">Média</span></td>
+        <td class="desc">Assento de privada inutilizável e manchado.<em>Há despesa aprovada de 21/08 com essa mesma troca — conferir antes de cobrar</em></td><td class="atr b">28 d</td></tr>
+
+        <tr><td class="im">VLE005<span>card 942</span></td><td class="urg"><span class="tag b">Média</span></td>
+        <td class="desc">TV não liga — verificar controle.</td><td class="atr b">28 d</td></tr>
+
+        <tr><td class="im">VLE005<span>card 945</span></td><td class="urg"><span class="tag b">Média</span></td>
+        <td class="desc">Plafon da cozinha queimado.</td><td class="atr b">28 d</td></tr>
+
+        <tr><td class="im">VLE006<span>card 949</span></td><td class="urg"><span class="tag b">Média</span></td>
+        <td class="desc">Lâmpada da cozinha queimada.</td><td class="atr b">28 d</td></tr>
+
+        <tr><td class="im">CCM004<span>card 726</span></td><td class="urg"><span class="tag c">Baixa</span></td>
+        <td class="desc">Falta secador de cabelo.</td><td class="atr a">98 d</td></tr>
+
+        <tr><td class="im">VLE003<span>card 725</span></td><td class="urg"><span class="tag c">Baixa</span></td>
+        <td class="desc">Falta liquidificador e ferro de passar.</td><td class="atr a">98 d</td></tr>
+
+        <tr><td class="im">AGS0642<span>card 956</span></td><td class="urg"><span class="tag c">Baixa</span></td>
+        <td class="desc">Faltam 2 garfos, 2 facas e 4 colheres. Trocar tábua de madeira e forma manchada.</td><td class="atr b">27 d</td></tr>
+
+        <tr><td class="im">VLE001<span>card 933</span></td><td class="urg"><span class="tag c">Baixa</span></td>
+        <td class="desc">Falta liquidificador e colher de cozinhar. Sanduicheira quebrada, cafeteira sem filtro, grelha amassada.</td><td class="atr b">28 d</td></tr>
+
+        <tr><td class="im">VLE004<span>card 935</span></td><td class="urg"><span class="tag c">Baixa</span></td>
+        <td class="desc">Falta liquidificador e colheres de cozinhar. Cafeteira sem filtro.</td><td class="atr b">28 d</td></tr>
+
+        <tr><td class="im">VLE005<span>card 943</span></td><td class="urg"><span class="tag c">Baixa</span></td>
+        <td class="desc">Falta liquidificador, ferro de passar e colheres de cozinhar.</td><td class="atr b">28 d</td></tr>
+
+        <tr><td class="im">VLE006<span>card 947</span></td><td class="urg"><span class="tag c">Baixa</span></td>
+        <td class="desc">Falta liquidificador e ferro de passar. Forma de inox acabada.</td><td class="atr b">28 d</td></tr>
+
+        <tr><td class="im">VLE006<span>card 948</span></td><td class="urg"><span class="tag c">Baixa</span></td>
+        <td class="desc">Luz interna da geladeira queimada.</td><td class="atr b">28 d</td></tr>
+
+        <tr><td class="im">VLE007<span>card 951</span></td><td class="urg"><span class="tag c">Baixa</span></td>
+        <td class="desc">Falta liquidificador e ferro de passar. Cafeteira sem filtro.</td><td class="atr b">28 d</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ================= A APURAR ================= -->
+<div class="bloco ap">
+  <div class="bh"><h3>Sem dono — precisa ser apurado</h3><span class="qt">1 card</span></div>
+  <p class="porq">Um caso em que a resposta depende de um fato que ninguém foi buscar.</p>
+
+  <div class="tablebox">
+    <table>
+      <thead><tr><th>Imóvel</th><th>Urgência</th><th>O que precisa ser corrigido</th><th style="text-align:right;">Atraso</th></tr></thead>
+      <tbody>
+        <tr><td class="im">AGS0642<span>card 957</span></td><td class="urg"><span class="tag a">Crítica</span></td>
+        <td class="desc">Porta do quarto de solteiro com sinais de arrombamento.<em>Se foi dano de hóspede, é cobrável do hóspede e não entra nesta conta. Se é desgaste, é do proprietário. A execução do reparo é da franquia em qualquer cenário. Ninguém apurou em 27 dias — e a mesma avaliação de 11/07 já descrevia "porta com maçaneta estourada com sinal de arrombamento"</em></td>
+        <td class="atr b">27 d</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="concl">
+  <h3>Panorama — Patrick Josoe Brando</h3>
+  <p><b>A maior parte da fila é dela, e é a parte barata.</b> 23 dos 42 cards são reposição de
+  item, limpeza ou pequeno reparo — liquidificador, lâmpada, assento de privada, desgelo de
+  freezer, controle de TV. Nenhum depende de autorização do proprietário e nenhum exige
+  orçamento. São os que não têm defesa possível numa reunião.</p>
+  <p><b>Só 4 cards são inteiramente do proprietário</b> — disjuntores, tomada, ar-condicionado
+  com defeito e cupim em esquadria. Nesses, o que se cobra da franquia não é o conserto: é o
+  orçamento, a apresentação ao proprietário e o acompanhamento. Hoje não há registro de que ela
+  tenha feito isso em nenhum dos quatro.</p>
+  <p><b>O nó real são os 14 cards mistos — e não é culpa da franquia, é do nosso formato de
+  card.</b> Os 12 cards de migração são um checklist do imóvel inteiro: dentro do mesmo card estão
+  "substituir 2 travesseiros" e "reparar parede com infiltração". Um é reposição de R$ 40, o outro
+  é obra. Como o card só fecha inteiro, ele nunca fecha — e não é coincidência que <b>os 12 sejam
+  exatamente os mais antigos da fila, todos com 108 dias</b>. Enquanto não forem quebrados em
+  dois, nenhuma cobrança neles vai produzir entrega.</p>
+  <p><b>E o argumento de caixa não se sustenta como foi colocado.</b> Em 30 despesas de manutenção
+  lançadas nos imóveis dela desde outubro de 2025, nenhuma foi debitada à franquia — 27 foram para
+  o proprietário. O que se pede dela é execução, não desembolso. Onde o desembolso existe de
+  verdade é nos 4 cards do proprietário e na parte estrutural dos 14 mistos, e esses dependem de
+  alguém levar o orçamento até o dono do imóvel.</p>
+  <div class="veredito">Três coisas nesta ordem: (1) quebrar os 12 cards de migração em
+  "franquia" e "proprietário" — sem isso o resto não anda; (2) cobrar os 23 cards da franquia com
+  prazo e evidência, porque não têm defesa; (3) levar os 4 do proprietário e a parte estrutural
+  dos mistos para orçamento, com o Financeiro fechando a Decisão 4 antes de qualquer rateio virar
+  cobrança formal.</div>
+</div>
+
+<div class="foot">
+  <p><b>A divisão de responsabilidade deste documento não é campo do sistema nem norma publicada.</b>
+  Foi atribuída na leitura item a item das descrições dos 42 cards, com o critério declarado na
+  seção de abertura. A política oficial de rateio é a Decisão 4 do processo de Manutenção
+  Recorrente v2.1, ainda pendente, com o Financeiro como dono. O campo
+  <code>scheduled_responsibility</code> está preenchido em 20 dos 5.938 cards da base e em nenhum
+  dos 42 analisados. Antes de virar cobrança formal, precisa passar pelo Financeiro e pelo
+  contrato de franquia — que não foi consultado aqui.</p>
+  <p>Levantado em 23/09/2026 a partir do banco do Sapron: <code>maintenance_maintenancecard</code>
+  (42 cards abertos do host 293, status fora de <code>concluido</code> e <code>cancelada</code>),
+  <code>financial_expenses</code> (30 despesas de manutenção desde 20/10/2025 e a multa de 16/09),
+  <code>property_property</code> e <code>account_host</code>. Fontes escritas consultadas: o
+  <i>Guia de Manutenção Recorrente para a Rede de Franquias</i> e os documentos de processo v2.1 e
+  plano v3 em <code>/root/manutencao/</code>.</p>
+  <p>O atraso é contado do vencimento original até 21/09/2026, não da última cobrança — todos os
+  42 foram recobrados em 16/09. A urgência segue o mesmo critério do painel das três franquias.
+  Nomes de hóspedes das avaliações foram omitidos.</p>
+</div>
+
+</div>
+</body>
+</html>

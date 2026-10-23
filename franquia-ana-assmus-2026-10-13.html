@@ -1,0 +1,185 @@
+<title>Franquia Ana Assmus</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: relatório operacional, uma coluna, resumo em cima, lista de cards embaixo */
+:root{
+  --bg:#f7f6f2; --fg:#1d1c19; --muted:#6b675d; --line:#dedbd2; --panel:#ffffff;
+  --accent:#1f5f8b; --late:#b3261e; --late-bg:#fbe9e7; --ok:#2e6b3a; --ok-bg:#e6f1e8; --warn-bg:#fff3d6;
+  --sans:"IBM Plex Sans",system-ui,sans-serif; --mono:"IBM Plex Mono",ui-monospace,monospace;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#17181a; --fg:#ebe8e1; --muted:#a19d93; --line:#33353a; --panel:#1f2124;
+  --accent:#7fb3d9; --late:#f28b82; --late-bg:#3a2321; --ok:#8fcf9b; --ok-bg:#1f3324; --warn-bg:#3d3220; color-scheme:dark }}
+:root[data-theme="dark"]{
+  --bg:#17181a; --fg:#ebe8e1; --muted:#a19d93; --line:#33353a; --panel:#1f2124;
+  --accent:#7fb3d9; --late:#f28b82; --late-bg:#3a2321; --ok:#8fcf9b; --ok-bg:#1f3324; --warn-bg:#3d3220; color-scheme:dark }
+body{background:var(--bg);color:var(--fg);font-family:var(--sans);font-size:15px;line-height:1.5}
+.wrap{max-width:1100px;margin:0 auto;padding-block:32px 56px;padding-inline:16px}
+h1{font-size:1.6rem;font-weight:600;margin:0 0 4px;text-wrap:balance}
+h2{font-size:1.05rem;font-weight:600;margin:0 0 10px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted)}
+.src{color:var(--muted);font-size:.9rem;margin:0 0 28px}
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:28px}
+.tile{background:var(--panel);border:1px solid var(--line);padding:14px 16px}
+.tile .n{font-size:2rem;font-weight:600;font-variant-numeric:tabular-nums;line-height:1.1}
+.tile .l{color:var(--muted);font-size:.85rem}
+.tile.late .n{color:var(--late)}
+section{margin-bottom:32px}
+.cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px}
+.cols>*{min-width:0}
+table{border-collapse:collapse;width:100%;font-size:.92rem}
+th{text-align:left;font-weight:500;color:var(--muted);border-bottom:1px solid var(--line);padding:6px 8px;font-size:.82rem;text-transform:uppercase;letter-spacing:.04em}
+td{border-bottom:1px solid var(--line);padding:6px 8px;vertical-align:top}
+td.num{font-variant-numeric:tabular-nums;text-align:right;white-space:nowrap}
+td.mono{font-family:var(--mono);font-size:.88rem;white-space:nowrap}
+td.late{color:var(--late);font-weight:500;white-space:nowrap}
+td.muted{color:var(--muted)}
+td.t{min-width:200px}
+td.r{color:var(--muted);min-width:180px}
+.chip{display:inline-block;font-size:.75rem;padding:1px 7px;border-radius:3px;background:var(--warn-bg);white-space:nowrap}
+.chip.danos{background:var(--warn-bg)}
+.chip.migracao{background:var(--late-bg);color:var(--late)}
+.chip.recorrente{background:var(--ok-bg);color:var(--ok)}
+.chip.review{background:var(--line)}
+.scroll{overflow-x:auto;border:1px solid var(--line);background:var(--panel)}
+.callout{background:var(--panel);border-left:3px solid var(--accent);padding:14px 18px;max-width:70ch}
+.callout p{margin:0 0 10px}.callout p:last-child{margin:0}
+ul{margin:0;padding-left:20px}li{margin-bottom:4px}
+</style>
+<div class="wrap">
+<h1>Manutenção da franquia Ana Carolina Assmus Barski</h1>
+<p class="src">Host 230 · código FLN-005-CAM · Sapron, consulta em 13/10/2026 (cards de manutenção + mensagens do chamado)</p>
+
+<div class="tiles">
+  <div class="tile"><div class="n">101</div><div class="l">cards no total</div></div>
+  <div class="tile late"><div class="n">53</div><div class="l">abertos (6100 baixado às 14:26; entrou o 7991, urgente, AAR0207)</div></div>
+  <div class="tile late"><div class="n">43</div><div class="l">abertos e vencidos</div></div>
+  <div class="tile"><div class="n">28</div><div class="l">concluídos</div></div>
+  <div class="tile"><div class="n">20</div><div class="l">cancelados</div></div>
+</div>
+
+<section class="cols">
+  <div>
+    <h2>Abertos por origem</h2>
+    <table>
+      <tr><th>Origem</th><th>Cards</th><th>Observação</th></tr>
+      <tr><td><span class="chip danos">danos</span></td><td class="num">42</td><td>todos "não urgente"; quase tudo enxoval (toalha, lençol, fronha)</td></tr>
+      <tr><td><span class="chip migracao">migracao</span></td><td class="num">6</td><td>abertos desde julho, 77 a 90 dias; aguarda proprietário e franquia anterior</td></tr>
+      <tr><td><span class="chip recorrente">recorrente</span></td><td class="num">4</td><td>higienização de ar-condicionado, ciclo 01/10, vencem 22/10</td></tr>
+      <tr><td><span class="chip review">review</span></td><td class="num">1</td><td>comentário de hóspede no MCT0090</td></tr>
+    </table>
+  </div>
+  <div>
+    <h2>O que está acontecendo</h2>
+    <div class="callout">
+      <p>A franquia responde a toda cobrança automática ("Já foi enviado", "Já foi anexado no dano", "Atualizado no link"). Mas a evidência não entra no card: só 1 dos 53 abertos tem evidência registrada, e nenhum tem responsabilidade definida pela Seazone.</p>
+      <p>Resultado: o card não fecha e o robô continua cobrando. Nos cards abertos são 235 mensagens automáticas contra 134 respostas dela, 111 cobranças só em outubro.</p>
+      <p>Não é franquia sem resposta. É evidência indo para o lugar errado e ninguém do nosso lado validando ou fechando. Vale conferir se os anexos estão mesmo nos cards de danos e, se estiverem, fechar em lote.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>Evidência formal da franquia (conferido em 13/10)</h2>
+  <div class="callout">
+    <p><strong>Só 1 dos 53 cards abertos tem evidência da franquia no card:</strong> o 832 (RAP0306), um vídeo enviado em 02/09 mostrando a geladeira nova comprada pela proprietária. É o único com data de evidência registrada.</p>
+    <p><strong>Os outros 5 de migração</strong> (828, 833, 835, 836, 855) só têm os anexos migrados do Pipefy em 28/08: a vistoria e a lista de inconformidades em HTML ou PDF. Isso é o pedido, não a prova. Quando ela diz "atualizando no link", é nesse relatório de vistoria.</p>
+    <p><strong>Os 42 de danos</strong> têm fotos no registro do dano (1 a 19 por card), mas todas foram tiradas <em>antes</em> do card nascer, na hora de registrar o dano. São a foto do item estragado, não do item reposto. O único caso com foto depois do card (5935, 30/09) é um dano novo de chaleira. O "orçamento" anexado nesses danos é o mesmo arquivo padrão da reposição, não comprovante de compra.</p>
+    <p><strong>Recorrentes e review</strong> (7312, 7321, 7682, 7683, 6100): nenhum anexo. Nos 4 de higienização de AC ela respondeu "já foi enviado" no mesmo dia em que o card foi criado, sem anexar nada.</p>
+    <p>Nenhum dos 53 passou pelo validador de evidência (campo de veredito vazio em todos).</p>
+  </div>
+</section>
+
+<section>
+  <h2>Validador e auditor rodados à mão (13/10)</h2>
+  <div class="callout">
+    <p><strong>Nenhum dos 53 libera.</strong> Rodei os prompts reais do validador e do auditor do Sapron (mesmo modelo de produção), só com o texto dos cards e das conversas. Placar: 51 incompleta, 1 inconclusiva (832, vídeo não lido), 1 completa (6100). O auditor concordou em 51 e discordou em 2.</p>
+    <p><strong>6100 (review MCT0090)</strong> saiu completa só por contestação: ar e cafeteira "funcionam", escada caracol "inviável". Mas tomada e gatos no telhado são motivo "outro", que a régua reserva para decisão de gente, e o auditor discordou por falta de foto. Não fecha sozinho.</p>
+    <p><strong>Itens comprovados pela palavra</strong> (itens pequenos): xícara no 835, tábua no 836, pano de prato no 7801. O restante desses cards continua sem prova.</p>
+    <p><strong>Por que nada passa:</strong> "já foi enviado" ou "já foi anexado no dano" não é a franquia dizer que fez, e para enxoval a régua exige foto do item novo ou recibo de compra. Para a higienização de AC basta qualquer foto do aparelho, e ela não mandou nenhuma.</p>
+    <p><strong>Detalhe operacional:</strong> em produção os agentes só olham cards em "aguardando aprovação". Ela nunca clicou em enviar evidência, então os 53 nunca entraram na fila dos robôs.</p>
+  </div>
+</section>
+
+<section>
+  <h2>Finalização (13/10)</h2>
+  <div class="callout">
+    <p><strong>Pela régua, nenhum card fecha.</strong> 52 estão sem prova. O 6100 é o único com parecer completo, mas por contestação com dois motivos que a régua reserva para gente, e o auditor discordou.</p>
+    <p><strong>6100 foi baixado em 13/10 às 14:26</strong> pelo Vinicius, com a chave de produção, como contestação aceita (ar e cafeteira funcionam, secador em outra tomada, gato da rua no telhado, escada caracol sem tela). Data de resolução registrada: 29/09. O card ganhou a tag "baixa-manual" e o chat da franquia recebeu "Manutenção concluída".</p>
+    <p><strong>Novo hoje:</strong> card 7991 (manual, urgente, AAR0207) entrou às 11:55 e não passou pelo ensaio.</p>
+    <p><strong>Os outros 52</strong> só fecham quando ela anexar pelo botão de evidência: foto do item novo ou recibo para enxoval, e qualquer foto do aparelho para o AC. Aí o card entra em "aguardando aprovação" e os robôs avaliam sozinhos.</p>
+  </div>
+</section>
+
+<section>
+  <h2>Imóveis com mais cards abertos</h2>
+  <ul>
+    <li>JDE792, NDE0003 e RAP0306: 5 cada</li>
+    <li>NDE0001 e NDE0002: 4 cada</li>
+    <li>SCJ0003 e MCT0090: 3 cada</li>
+  </ul>
+</section>
+
+<section>
+  <h2>Os 53 cards abertos</h2>
+  <div class="scroll">
+  <table>
+    <thead><tr><th>Card</th><th>Imóvel</th><th>Origem</th><th>O que é</th><th>Criado</th><th>Prazo</th><th>Dias</th><th>Última resposta da franquia</th></tr></thead>
+    <tbody>
+<tr><td class="num">828</td><td class="mono">NDE0003</td><td><span class="chip migracao">migracao</span></td><td class="t">Migração de imóvel (Manutenção Média)</td><td>15/07</td><td class="late">22/07</td><td class="num">90</td><td class="r">Atualizando no link (24/09)</td></tr>
+<tr><td class="num">832</td><td class="mono">RAP0306</td><td><span class="chip migracao">migracao</span></td><td class="t">Migração de imóvel (Manutenção Pequena)</td><td>15/07</td><td class="late">23/07</td><td class="num">90</td><td class="r">Atualizando no link (24/09)</td></tr>
+<tr><td class="num">833</td><td class="mono">SEY0302</td><td><span class="chip migracao">migracao</span></td><td class="t">Migração de imóvel (Manutenção Pequena)</td><td>15/07</td><td class="late">24/07</td><td class="num">90</td><td class="r">Já enviado (02/10)</td></tr>
+<tr><td class="num">835</td><td class="mono">NDE0001</td><td><span class="chip migracao">migracao</span></td><td class="t">Migração de imóvel (Manutenção Pequena)</td><td>17/07</td><td class="late">24/07</td><td class="num">88</td><td class="r">Já enviado (02/10)</td></tr>
+<tr><td class="num">836</td><td class="mono">NDE0002</td><td><span class="chip migracao">migracao</span></td><td class="t">Migração de imóvel (Manutenção Pequena)</td><td>17/07</td><td class="late">24/07</td><td class="num">88</td><td class="r">Já enviado (02/10)</td></tr>
+<tr><td class="num">855</td><td class="mono">POM0111</td><td><span class="chip migracao">migracao</span></td><td class="t">Migração de imóvel (Manutenção Pequena)</td><td>28/07</td><td class="late">05/08</td><td class="num">77</td><td class="r">Está sendo atualizado (23/09)</td></tr>
+<tr><td class="num">5668</td><td class="mono">JDE792</td><td><span class="chip danos">danos</span></td><td class="t">Toalha de rosto, Liquidificador</td><td>02/09</td><td class="late">10/09</td><td class="num">41</td><td class="r">Já foi anexado (24/09)</td></tr>
+<tr><td class="num">5685</td><td class="mono">NDE0003</td><td><span class="chip danos">danos</span></td><td class="t">Cadeira, Pratos de sobremesa</td><td>05/09</td><td class="late">15/09</td><td class="num">38</td><td class="r">Já enviado (06/10)</td></tr>
+<tr><td class="num">5693</td><td class="mono">CPH0202</td><td><span class="chip danos">danos</span></td><td class="t">Toalha de banho, Sujeira/odor de cigarro, Sofá</td><td>08/09</td><td class="late">15/09</td><td class="num">35</td><td class="r">Já enviado (06/10)</td></tr>
+<tr><td class="num">5754</td><td class="mono">MCE0016</td><td><span class="chip danos">danos</span></td><td class="t">Toalha de banho</td><td>08/09</td><td class="late">17/09</td><td class="num">35</td><td class="r">Já foi anexado (24/09)</td></tr>
+<tr><td class="num">5792</td><td class="mono">RAP0306</td><td><span class="chip danos">danos</span></td><td class="t">Toalha de banho</td><td>11/09</td><td class="late">22/09</td><td class="num">32</td><td class="r">Já enviado (06/10)</td></tr>
+<tr><td class="num">5815</td><td class="mono">NDE0002</td><td><span class="chip danos">danos</span></td><td class="t">Toalha de banho, Toalha de rosto</td><td>14/09</td><td class="late">24/09</td><td class="num">29</td><td class="r">Já foi anexado no dano (23/09)</td></tr>
+<tr><td class="num">5852</td><td class="mono">CRA0214</td><td><span class="chip danos">danos</span></td><td class="t">Toalha de banho, Toalha de rosto</td><td>15/09</td><td class="late">24/09</td><td class="num">28</td><td class="r">Já foi anexado no dano (23/09)</td></tr>
+<tr><td class="num">5860</td><td class="mono">HAL10204</td><td><span class="chip danos">danos</span></td><td class="t">Taças de vinho, Xícaras</td><td>16/09</td><td class="late">24/09</td><td class="num">27</td><td class="r">Já foi anexado no dano (23/09)</td></tr>
+<tr><td class="num">5925</td><td class="mono">SEY0302</td><td><span class="chip danos">danos</span></td><td class="t">Toalha de banho, Toalha de rosto</td><td>21/09</td><td class="late">30/09</td><td class="num">22</td><td class="r">Já foi anexado no dano (23/09)</td></tr>
+<tr><td class="num">5933</td><td class="mono">CRA0214</td><td><span class="chip danos">danos</span></td><td class="t">Sujeira/odor de cigarro, Toalhas</td><td>21/09</td><td class="late">30/09</td><td class="num">22</td><td class="r">Já foi anexado no dano (23/09)</td></tr>
+<tr><td class="num">5935</td><td class="mono">NDE0003</td><td><span class="chip danos">danos</span></td><td class="t">Lençol/Virol Casal, Toalha de banho</td><td>21/09</td><td class="late">30/09</td><td class="num">22</td><td class="r">Já foi anexado no dano (23/09)</td></tr>
+<tr><td class="num">5936</td><td class="mono">JDE792</td><td><span class="chip danos">danos</span></td><td class="t">Lençol/Virol King, Toalhas</td><td>21/09</td><td class="late">30/09</td><td class="num">22</td><td class="r">Já foi anexado no dano (23/09)</td></tr>
+<tr><td class="num">6012</td><td class="mono">PEL1199</td><td><span class="chip danos">danos</span></td><td class="t">Toalha de banho</td><td>23/09</td><td class="late">30/09</td><td class="num">20</td><td class="r">Já foi enviado pelos danos (24/09)</td></tr>
+<tr><td class="num">6024</td><td class="mono">PEL1199</td><td><span class="chip danos">danos</span></td><td class="t">Toalha de banho, Toalha de rosto</td><td>24/09</td><td class="late">06/10</td><td class="num">19</td><td class="r">Já foi enviado (29/09)</td></tr>
+<tr><td class="num">6035</td><td class="mono">HAL10204</td><td><span class="chip danos">danos</span></td><td class="t">Toalhas, Lençol/Virol Queen, Fronha</td><td>24/09</td><td class="late">01/10</td><td class="num">19</td><td class="r">Atualizando no link (25/09)</td></tr>
+<tr><td class="num">6040</td><td class="mono">NDE0002</td><td><span class="chip danos">danos</span></td><td class="t">Outros</td><td>25/09</td><td class="late">02/10</td><td class="num">18</td><td class="r">Já foi atualizado (27/09)</td></tr>
+<tr><td class="num">6048</td><td class="mono">SHR5231</td><td><span class="chip danos">danos</span></td><td class="t">Toalha de banho, Toalha de rosto</td><td>25/09</td><td class="late">02/10</td><td class="num">18</td><td class="r">Já foi atualizado (27/09)</td></tr>
+<tr><td class="num">6056</td><td class="mono">CPH0202</td><td><span class="chip danos">danos</span></td><td class="t">Toalha de banho, Toalha de rosto</td><td>28/09</td><td class="late">06/10</td><td class="num">15</td><td class="r">Já foi enviado (29/09)</td></tr>
+<tr><td class="num">6058</td><td class="mono">SCJ0003</td><td><span class="chip danos">danos</span></td><td class="t">Toalha de banho, Lençol/Virol Casal, Toalha de rosto</td><td>28/09</td><td class="late">05/10</td><td class="num">15</td><td class="r">Já apresentado (29/09)</td></tr>
+<tr><td class="num">6059</td><td class="mono">RAP0306</td><td><span class="chip danos">danos</span></td><td class="t">Toalha de banho, Toalha de rosto</td><td>28/09</td><td class="late">05/10</td><td class="num">15</td><td class="r">Já apresentado (29/09)</td></tr>
+<tr><td class="num">6062</td><td class="mono">SCJ0005</td><td><span class="chip danos">danos</span></td><td class="t">Toalha de banho</td><td>28/09</td><td class="late">05/10</td><td class="num">15</td><td class="r">Já apresentado (29/09)</td></tr>
+<tr><td class="num">6074</td><td class="mono">NDE0001</td><td><span class="chip danos">danos</span></td><td class="t">Toalha de banho</td><td>28/09</td><td class="late">05/10</td><td class="num">15</td><td class="r">Já apresentado (29/09)</td></tr>
+<tr><td class="num">6078</td><td class="mono">MCT0090</td><td><span class="chip danos">danos</span></td><td class="t">Toalha de rosto, Toalha de banho</td><td>29/09</td><td class="late">06/10</td><td class="num">14</td><td class="r">Já foi enviado (29/09)</td></tr>
+<tr><td class="num">6100</td><td class="mono">MCT0090</td><td><span class="chip recorrente">concluído 13/10</span></td><td class="t">Ar-cond., cafeteira, tomada, animais no telhado, proteção escada (baixa manual, contestação aceita)</td><td>29/09</td><td class="late">06/10</td><td class="num">14</td><td class="r">AC e cafeteira funcionam; secador em outra tomada (29/09)</td></tr>
+<tr><td class="num">6125</td><td class="mono">RAP0306</td><td><span class="chip danos">danos</span></td><td class="t">Toalha de banho</td><td>30/09</td><td class="late">12/10</td><td class="num">13</td><td class="r">Já enviado (05/10)</td></tr>
+<tr><td class="num">6127</td><td class="mono">LAN0204</td><td><span class="chip danos">danos</span></td><td class="t">Toalha de banho, Toalha de rosto</td><td>30/09</td><td class="late">07/10</td><td class="num">13</td><td class="r">Já foi evidenciado (30/09)</td></tr>
+<tr><td class="num">6134</td><td class="mono">JDE792</td><td><span class="chip danos">danos</span></td><td class="t">Tábua de vidro ou plástico, Toalha de banho</td><td>30/09</td><td class="late">07/10</td><td class="num">13</td><td class="r">Já foi enviado (01/10)</td></tr>
+<tr><td class="num">7312</td><td class="mono">NDE0002</td><td><span class="chip recorrente">recorrente</span></td><td class="t">Ar-condicionado: Higienização</td><td>01/10</td><td class="">22/10</td><td class="num">12</td><td class="r">Já foi enviado (01/10)</td></tr>
+<tr><td class="num">7321</td><td class="mono">NDE0003</td><td><span class="chip recorrente">recorrente</span></td><td class="t">Ar-condicionado: Higienização</td><td>01/10</td><td class="">22/10</td><td class="num">12</td><td class="r">Já foi enviado (01/10)</td></tr>
+<tr><td class="num">7682</td><td class="mono">SHR5231</td><td><span class="chip recorrente">recorrente</span></td><td class="t">Ar-condicionado: Higienização</td><td>01/10</td><td class="">22/10</td><td class="num">12</td><td class="r">Já foi enviado (01/10)</td></tr>
+<tr><td class="num">7683</td><td class="mono">RAP0306</td><td><span class="chip recorrente">recorrente</span></td><td class="t">Ar-condicionado: Higienização</td><td>01/10</td><td class="">22/10</td><td class="num">12</td><td class="r">Já foi enviado (01/10)</td></tr>
+<tr><td class="num">7745</td><td class="mono">NDE0001</td><td><span class="chip danos">danos</span></td><td class="t">Sujeira/odor deixado por cigarro</td><td>01/10</td><td class="late">08/10</td><td class="num">12</td><td class="r">Já enviei (02/10)</td></tr>
+<tr><td class="num">7770</td><td class="mono">JDE792</td><td><span class="chip danos">danos</span></td><td class="t">Odor de cigarro, Lençol Casal, Toalhas, Taças de vinho</td><td>01/10</td><td class="late">08/10</td><td class="num">12</td><td class="r">Já foi enviado (09/10)</td></tr>
+<tr><td class="num">7775</td><td class="mono">SCJ0007</td><td><span class="chip danos">danos</span></td><td class="t">Toalha de banho, Toalha de rosto</td><td>02/10</td><td class="late">09/10</td><td class="num">11</td><td class="r">Já foi enviado (02/10)</td></tr>
+<tr><td class="num">7776</td><td class="mono">POM0113</td><td><span class="chip danos">danos</span></td><td class="t">Toalha de banho</td><td>02/10</td><td class="late">09/10</td><td class="num">11</td><td class="r">Já foi enviado (02/10)</td></tr>
+<tr><td class="num">7778</td><td class="mono">LMC0206</td><td><span class="chip danos">danos</span></td><td class="t">Fronha, Toalha de banho</td><td>02/10</td><td class="late">09/10</td><td class="num">11</td><td class="r">Já foi enviado (02/10)</td></tr>
+<tr><td class="num">7789</td><td class="mono">LMC0206</td><td><span class="chip danos">danos</span></td><td class="t">Toalha de rosto</td><td>03/10</td><td class="late">09/10</td><td class="num">10</td><td class="r">Já foi enviado (03/10)</td></tr>
+<tr><td class="num">7792</td><td class="mono">LAN0204</td><td><span class="chip danos">danos</span></td><td class="t">Toalha de rosto</td><td>03/10</td><td class="late">12/10</td><td class="num">10</td><td class="r">Já foi enviado (09/10)</td></tr>
+<tr><td class="num">7800</td><td class="mono">SPUB0104</td><td><span class="chip danos">danos</span></td><td class="t">Outros</td><td>03/10</td><td class="late">09/10</td><td class="num">10</td><td class="r">Já foi enviado (09/10)</td></tr>
+<tr><td class="num">7801</td><td class="mono">MCT0090</td><td><span class="chip danos">danos</span></td><td class="t">Toalha de rosto, Toalha de banho, Pano de prato</td><td>03/10</td><td class="late">12/10</td><td class="num">10</td><td class="r">Já foi enviado (09/10)</td></tr>
+<tr><td class="num">7854</td><td class="mono">POM0113</td><td><span class="chip danos">danos</span></td><td class="t">Toalhas, Pano de prato, Lençóis Casal e Solteiro, Fronha</td><td>05/10</td><td class="late">12/10</td><td class="num">8</td><td class="r">Já foi enviado (09/10)</td></tr>
+<tr><td class="num">7866</td><td class="mono">SCJ0003</td><td><span class="chip danos">danos</span></td><td class="t">Lençol Casal, Pano de prato, Toalhas</td><td>06/10</td><td class="muted">sem prazo</td><td class="num">7</td><td class="r">Já foi enviado (09/10)</td></tr>
+<tr><td class="num">7873</td><td class="mono">MCE0016</td><td><span class="chip danos">danos</span></td><td class="t">Fronha, Toalha de rosto, Toalha de banho</td><td>06/10</td><td class="">13/10</td><td class="num">7</td><td class="r">Já foi enviado (09/10)</td></tr>
+<tr><td class="num">7898</td><td class="mono">NDE0003</td><td><span class="chip danos">danos</span></td><td class="t">Toalha de rosto, Toalha de banho</td><td>07/10</td><td class="muted">sem prazo</td><td class="num">6</td><td class="r">Já foi enviado (09/10)</td></tr>
+<tr><td class="num">7908</td><td class="mono">SCJ0007</td><td><span class="chip danos">danos</span></td><td class="t">Toalha de banho</td><td>07/10</td><td class="muted">sem prazo</td><td class="num">6</td><td class="r">Já foi enviado (09/10)</td></tr>
+<tr><td class="num">7910</td><td class="mono">JDE792</td><td><span class="chip danos">danos</span></td><td class="t">Toalha de banho, Toalha de rosto</td><td>07/10</td><td class="muted">sem prazo</td><td class="num">6</td><td class="r">Já foi enviado (09/10)</td></tr>
+<tr><td class="num">7925</td><td class="mono">POM0111</td><td><span class="chip danos">danos</span></td><td class="t">Copos de vidro, Forma de alumínio, Toalhas</td><td>08/10</td><td class="muted">sem prazo</td><td class="num">5</td><td class="r">Já foi enviado (09/10)</td></tr>
+    </tbody>
+  </table>
+  </div>
+</section>
+</div>

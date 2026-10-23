@@ -1,0 +1,89 @@
+<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Agente de triagem e priorização</title><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&amp;family=Newsreader:opsz,wght@6..72,500;6..72,600&amp;family=Source+Sans+3:wght@400;600&amp;display=swap"><style>
+:root{
+  --ground:#F6F6F3; --surface:#FFFFFF; --line:#DEDFD8; --line-soft:#EAEBE4;
+  --ink:#17201C; --ink-2:#4A574F; --ink-3:#7D8981;
+  --accent:#0B6B62; --accent-soft:rgba(11,107,98,.09);
+  --ok-fg:#15803D; --ok-bg:rgba(22,163,74,.12);
+  --wait-fg:#B45309; --wait-bg:rgba(217,119,6,.13);
+  --stop-fg:#B91C1C; --stop-bg:rgba(220,38,38,.11);
+  --code-bg:#EDEEE8;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --ground:#0E1311; --surface:#161D1A; --line:#2A3531; --line-soft:#1F2825;
+    --ink:#E9EEEA; --ink-2:#A9B6AF; --ink-3:#74837B;
+    --accent:#4FB3A6; --accent-soft:rgba(79,179,166,.13);
+    --ok-fg:#5FD68A; --ok-bg:rgba(22,163,74,.17);
+    --wait-fg:#F0B429; --wait-bg:rgba(217,119,6,.17);
+    --stop-fg:#FCA5A5; --stop-bg:rgba(220,38,38,.17);
+    --code-bg:#1E2622;
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#0E1311; --surface:#161D1A; --line:#2A3531; --line-soft:#1F2825;
+  --ink:#E9EEEA; --ink-2:#A9B6AF; --ink-3:#74837B;
+  --accent:#4FB3A6; --accent-soft:rgba(79,179,166,.13);
+  --ok-fg:#5FD68A; --ok-bg:rgba(22,163,74,.17);
+  --wait-fg:#F0B429; --wait-bg:rgba(217,119,6,.17);
+  --stop-fg:#FCA5A5; --stop-bg:rgba(220,38,38,.17);
+  --code-bg:#1E2622;
+}
+body{background:var(--ground);color:var(--ink);font-family:'Source Sans 3',system-ui,-apple-system,sans-serif;font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased;}
+.wrap{max-width:760px;margin:0 auto;padding:0 16px;padding-block:40px 72px;}
+.eyebrow{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);font-weight:600;margin:0 0 10px;}
+h1{font-family:'Newsreader',Georgia,serif;font-weight:600;font-size:clamp(30px,6vw,42px);line-height:1.12;margin:0 0 14px;text-wrap:balance;letter-spacing:-.01em;}
+.lede{font-size:18px;color:var(--ink-2);margin:0 0 28px;max-width:62ch;}
+h2{font-family:'Newsreader',Georgia,serif;font-weight:600;font-size:24px;line-height:1.25;margin:0 0 14px;text-wrap:balance;}
+h3{font-size:15px;font-weight:600;margin:22px 0 8px;letter-spacing:-.005em;}
+p{margin:0 0 14px;max-width:66ch;}
+section{margin-top:38px;}
+.rule{height:1px;background:var(--line);border:0;margin:0 0 26px;}
+.sec-head{display:flex;align-items:baseline;gap:12px;margin-bottom:14px;}
+.sec-head h2{margin:0;}
+.sec-n{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--ink-3);padding-top:4px;}
+code,.mono{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:.88em;background:var(--code-bg);padding:.12em .38em;border-radius:3px;}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:18px 20px;}
+.meta{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:6px;overflow:hidden;margin-bottom:34px;}
+.meta div{background:var(--surface);padding:12px 14px;}
+.meta dt{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3);margin:0 0 4px;}
+.meta dd{margin:0;font-size:14px;font-weight:600;}
+.tag{display:inline-block;font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;padding:3px 8px;border-radius:3px;vertical-align:1px;}
+.t-ok{color:var(--ok-fg);background:var(--ok-bg);}
+.t-wait{color:var(--wait-fg);background:var(--wait-bg);}
+.t-stop{color:var(--stop-fg);background:var(--stop-bg);}
+.tbl-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:6px;background:var(--surface);}
+table{width:100%;border-collapse:collapse;font-size:14.5px;}
+th{text-align:left;font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-3);font-weight:600;padding:11px 14px;border-bottom:1px solid var(--line);white-space:nowrap;}
+td{padding:11px 14px;border-bottom:1px solid var(--line-soft);vertical-align:top;}
+tr:last-child td{border-bottom:0;}
+td.num{font-variant-numeric:tabular-nums;white-space:nowrap;}
+.flow{list-style:none;counter-reset:s;margin:0;padding:0;}
+.flow li{counter-increment:s;position:relative;padding:0 0 20px 44px;border-left:1px solid var(--line);margin-left:13px;}
+.flow li:last-child{border-left-color:transparent;padding-bottom:0;}
+.flow li::before{content:counter(s);position:absolute;left:-13px;top:-2px;width:26px;height:26px;border-radius:50%;background:var(--accent-soft);color:var(--accent);border:1px solid var(--accent);display:grid;place-items:center;font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:500;}
+.flow b{display:block;font-size:15px;margin-bottom:3px;}
+.flow p{margin:0;color:var(--ink-2);font-size:14.5px;}
+.callout{border-left:3px solid var(--accent);background:var(--accent-soft);padding:14px 16px;border-radius:0 5px 5px 0;margin:20px 0;}
+.callout.warn{border-left-color:var(--wait-fg);background:var(--wait-bg);}
+.callout.stop{border-left-color:var(--stop-fg);background:var(--stop-bg);}
+.callout p:last-child{margin-bottom:0;}
+.callout b{font-weight:600;}
+ul.plain{margin:0 0 14px;padding-left:20px;}
+ul.plain li{margin-bottom:7px;max-width:64ch;}
+pre{background:var(--code-bg);border:1px solid var(--line);border-radius:5px;padding:13px 15px;overflow-x:auto;font-family:'IBM Plex Mono',monospace;font-size:13px;line-height:1.55;margin:0 0 16px;}
+pre code{background:none;padding:0;font-size:inherit;}
+.foot{margin-top:48px;padding-top:18px;border-top:1px solid var(--line);font-size:13px;color:var(--ink-3);}
+.foot p{max-width:none;margin-bottom:6px;}
+@media (max-width:520px){.flow li{padding-left:36px;}}
+</style><style>.t-mute{color:var(--ink-3);background:var(--code-bg);}h1 .tag{font-family:'Source Sans 3',system-ui,sans-serif;}.meta{grid-template-columns:repeat(auto-fit,minmax(140px,1fr));}</style></head><body><div class="wrap">
+<p class="eyebrow">Central de Manutenção · Fase 3 · Automações e IA · 16/10/2026</p>
+<h1>Agente de triagem e priorização <span class="tag t-ok">Concluída</span></h1>
+<p class="lede">A fila da Central é ordenada sozinha para o urgente aparecer primeiro. Está rodando em produção.</p>
+<dl class="meta"><div><dt>Status</dt><dd>Concluída</dd></div><div><dt>Cards triados (08 a 15/10)</dt><dd>128</dd></div><div><dt>Corte de urgente</dt><dd>nota 70</dd></div><div><dt>Frequência</dt><dd>a cada card novo</dd></div></dl>
+<section><div class="sec-head"><span class="sec-n">01</span><h2>Como funciona</h2></div><ol class="flow"><li><b>Lê a nota de urgência</b><p>Usa a nota de 0 a 100 do classificador.</p></li><li><b>Move para Urgente</b><p>Card com nota 70 ou mais vai para a coluna Urgente e abre a conversa com a franquia com o aviso de urgência.</p></li><li><b>Ordena o resto</b><p>Os demais seguem pela prioridade.</p></li></ol></section>
+<section><div class="sec-head"><span class="sec-n">02</span><h2>Resultado</h2></div><ul class="plain"><li>128 cards triados de 08/10 a 15/10.</li></ul></section>
+<section><div class="sec-head"><span class="sec-n">03</span><h2>O que falta</h2></div><ul class="plain"><li>A régua nova de urgência muda o que a franquia recebe como urgente: mofo, ar-condicionado, hidráulica, vidro e praga sobem.</li></ul></section>
+<div class="callout"><p><b>Próximo passo:</b> Régua nova em simulação a partir de 19/10, sem mover card, e liga depois da conferência com a Ray.</p></div>
+<div class="foot"><p>Fonte: Banco de produção do Sapron (maintenance_maintenancecard e tabelas dos agentes), PostHog e GitHub (sapron-backend e sapron-frontend), lidos em 16/10/2026.</p><p>Lista "Projeto Central de manutenção" no TaskDex · Vinicius Satores · Manutenção / Tecnologia</p></div>
+</div></body></html>

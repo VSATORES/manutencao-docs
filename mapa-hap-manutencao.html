@@ -1,0 +1,272 @@
+<title>Mapa HAP da Manutenção</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  --ground:#f3f4f1; --paper:#ffffff; --ink:#15262d; --ink-2:#4a5a60; --line:#d8ddd9;
+  --accent:#e2a92b; --accent-ink:#5a3f00; --accent-soft:#fbf0d4;
+  --band:#15262d; --band-ink:#f3f4f1;
+  --ok:#2f7d4f; --ok-soft:#e2f1e7; --warn:#a86a00; --warn-soft:#fbeed3; --bad:#b23b2e; --bad-soft:#f8e1dd;
+  --display:"Archivo","Arial Narrow",Arial,sans-serif; --body:"IBM Plex Sans",system-ui,sans-serif; --mono:"IBM Plex Mono",ui-monospace,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  color-scheme:dark; --ground:#0f1a1e; --paper:#16252b; --ink:#e7ece9; --ink-2:#a3b1b3; --line:#2b3d43;
+  --accent:#f0bb45; --accent-ink:#f7d98e; --accent-soft:#33290f; --band:#e7ece9; --band-ink:#0f1a1e;
+  --ok:#6cc58e; --ok-soft:#173226; --warn:#f0bb45; --warn-soft:#33290f; --bad:#f08a7c; --bad-soft:#3a1d19;}}
+:root[data-theme="dark"]{
+  color-scheme:dark; --ground:#0f1a1e; --paper:#16252b; --ink:#e7ece9; --ink-2:#a3b1b3; --line:#2b3d43;
+  --accent:#f0bb45; --accent-ink:#f7d98e; --accent-soft:#33290f; --band:#e7ece9; --band-ink:#0f1a1e;
+  --ok:#6cc58e; --ok-soft:#173226; --warn:#f0bb45; --warn-soft:#33290f; --bad:#f08a7c; --bad-soft:#3a1d19;}
+*{box-sizing:border-box}
+body{background:var(--ground);color:var(--ink);font:15px/1.6 var(--body);padding-inline:16px;padding-block:32px 64px}
+.wrap{max-width:1080px;margin:0 auto;display:grid;gap:40px}
+h1,h2,h3{font-family:var(--display);text-wrap:balance;margin:0;line-height:1.15}
+h1{font-size:clamp(28px,5vw,44px);font-weight:800;letter-spacing:-.01em}
+h2{font-size:24px;font-weight:800}
+h3{font-size:16px;font-weight:700}
+p{margin:0;max-width:68ch}
+.eyebrow{font:500 12px/1 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--ink-2)}
+.muted{color:var(--ink-2)}
+.src{font:400 12px/1.5 var(--mono);color:var(--ink-2)}
+header{display:grid;gap:14px}
+header .lede{font-size:17px}
+
+/* Cascata */
+.cascade{display:grid;grid-template-columns:repeat(6,1fr);gap:6px}
+.step{background:var(--paper);border:1px solid var(--line);padding:12px;display:grid;gap:6px;align-content:start;text-decoration:none;color:inherit}
+.step:hover,.step:focus-visible{border-color:var(--accent);outline:none}
+.step b{font:800 13px/1.2 var(--display)}
+.step .lvl{font:500 11px/1 var(--mono);color:var(--ink-2);text-transform:uppercase;letter-spacing:.06em}
+@media (max-width:760px){.cascade{grid-template-columns:repeat(2,1fr)}}
+
+.pill{display:inline-block;font:500 11px/1 var(--mono);padding:4px 7px;border-radius:3px;white-space:nowrap;letter-spacing:.02em}
+.ok{background:var(--ok-soft);color:var(--ok)} .warn{background:var(--warn-soft);color:var(--warn)} .bad{background:var(--bad-soft);color:var(--bad)}
+
+/* Etapas */
+section.etapa{display:grid;gap:18px}
+.etapa-head{display:grid;grid-template-columns:auto 1fr;gap:4px 16px;align-items:end;border-bottom:3px solid var(--band);padding-bottom:10px}
+.num{grid-row:span 2;font:800 52px/0.85 var(--display);color:var(--accent)}
+.etapa-head .eyebrow{align-self:end}
+
+/* Cadeia de valor */
+.chain{display:flex;gap:0;overflow-x:auto;padding-bottom:4px}
+.link{flex:1 0 150px;background:var(--paper);border:1px solid var(--line);padding:12px 22px 12px 14px;clip-path:polygon(0 0,calc(100% - 12px) 0,100% 50%,calc(100% - 12px) 100%,0 100%,12px 50%);margin-left:-6px;display:grid;gap:4px}
+.link:first-child{clip-path:polygon(0 0,calc(100% - 12px) 0,100% 50%,calc(100% - 12px) 100%,0 100%);margin-left:0}
+.link.here{background:var(--band);color:var(--band-ink);border-color:var(--band)}
+.link.here .muted{color:var(--band-ink);opacity:.8}
+.link b{font:700 14px/1.2 var(--display)}
+.link small{font-size:12px;line-height:1.35}
+
+.two{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media (max-width:760px){.two{grid-template-columns:1fr}}
+.box{background:var(--paper);border:1px solid var(--line);padding:16px;display:grid;gap:10px;align-content:start}
+.box ul{margin:0;padding-left:18px;display:grid;gap:4px}
+
+/* Tabelas */
+.tbl{overflow-x:auto;background:var(--paper);border:1px solid var(--line)}
+table{border-collapse:collapse;width:100%;min-width:720px;font-size:14px}
+th,td{text-align:left;vertical-align:top;padding:10px 12px;border-bottom:1px solid var(--line)}
+th{font:500 11px/1.3 var(--mono);text-transform:uppercase;letter-spacing:.06em;color:var(--ink-2);background:var(--ground)}
+tr:last-child td{border-bottom:0}
+td.k{font-weight:600;white-space:nowrap}
+code{font:400 12.5px var(--mono);background:var(--ground);padding:1px 4px;border-radius:2px}
+.num-cell{font-variant-numeric:tabular-nums;font-family:var(--mono);font-size:13px}
+
+/* Números */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line);border:1px solid var(--line)}
+.stat{background:var(--paper);padding:14px;display:grid;gap:4px}
+.stat .v{font:800 30px/1 var(--display);font-variant-numeric:tabular-nums}
+.stat .l{font-size:13px;color:var(--ink-2);line-height:1.35}
+@media (max-width:760px){.stats{grid-template-columns:repeat(2,1fr)}}
+
+.callout{background:var(--accent-soft);border-left:4px solid var(--accent);padding:14px 16px;display:grid;gap:6px}
+.callout b{color:var(--accent-ink)}
+
+ol.next{margin:0;padding-left:22px;display:grid;gap:8px;max-width:75ch}
+footer{border-top:1px solid var(--line);padding-top:16px}
+</style>
+
+<div class="wrap">
+
+<header>
+  <span class="eyebrow">Gestão de Manutenção · Seazone · versão 1 · 28/09/2026</span>
+  <h1>Mapa HAP da Manutenção</h1>
+  <p class="lede">A metodologia HAP (P-Excellence) aplicada à área, do estratégico ao operacional. Cada etapa diz o que a área já tem, o que falta e de onde vem cada número.</p>
+  <p class="src">Números: exportação da Central de Manutenção, 6.050 cards, gerada em 28/09/2026 09:22 (<code>cards-todos-2026-09-28.json</code>), e folha de contexto (medições de 01–02/09/2026, janela set/25–ago/26).</p>
+</header>
+
+<nav class="cascade" aria-label="Etapas">
+  <a class="step" href="#e1"><span class="lvl">Estratégico</span><b>1 · Cadeia de valor</b><span class="pill ok">definida aqui</span></a>
+  <a class="step" href="#e2"><span class="lvl">Tático</span><b>2 · Macroprocessos</b><span class="pill ok">7 mapeados</span></a>
+  <a class="step" href="#e3"><span class="lvl">Operacional</span><b>3 · Processos e subprocessos</b><span class="pill warn">sem FTE medido</span></a>
+  <a class="step" href="#e4"><span class="lvl">Execução</span><b>4 · Atividades e POPs</b><span class="pill warn">6 de 11 escritos</span></a>
+  <a class="step" href="#e5"><span class="lvl">Automação</span><b>5 · Ferramentas</b><span class="pill warn">integração parcial</span></a>
+  <a class="step" href="#e6"><span class="lvl">Contínuo</span><b>6 · Melhorias</b><span class="pill bad">backlog crescendo</span></a>
+</nav>
+
+<!-- ETAPA 1 -->
+<section class="etapa" id="e1">
+  <div class="etapa-head"><span class="num">1</span><span class="eyebrow">Estratégico · visão ponta a ponta</span><h2>Cadeia de valor</h2></div>
+  <p>A manutenção protege o ativo que gera receita: o imóvel. Sem ela, a nota do hóspede cai, o imóvel fica bloqueado e o proprietário perde confiança. Ela entra na cadeia depois da operação e alimenta de volta a própria operação.</p>
+  <div class="chain" role="list">
+    <div class="link" role="listitem"><b>Captação</b><small class="muted">proprietário e imóvel entram</small></div>
+    <div class="link" role="listitem"><b>Implantação</b><small class="muted">enxoval, vistoria, ativação</small></div>
+    <div class="link" role="listitem"><b>Operação</b><small class="muted">reservas, hóspede, limpeza, franquia local</small></div>
+    <div class="link here" role="listitem"><b>Manutenção</b><small class="muted">conserto, preventiva, dano de hóspede</small></div>
+    <div class="link" role="listitem"><b>Financeiro</b><small class="muted">despesa, cobrança, recuperação de dano</small></div>
+    <div class="link" role="listitem"><b>Proprietário</b><small class="muted">imóvel preservado, repasse, retenção</small></div>
+  </div>
+  <div class="two">
+    <div class="box">
+      <h3>Como a manutenção gera valor</h3>
+      <ul>
+        <li>Imóvel disponível para reserva (nada bloqueado por conserto parado).</li>
+        <li>Nota do hóspede protegida: <code>review</code> é uma das origens de card.</li>
+        <li>Dinheiro de volta: dano de hóspede recupera cerca de 60% (folha de contexto, 02/09).</li>
+        <li>Custo previsível: preventiva recorrente troca urgência por agenda.</li>
+      </ul>
+    </div>
+    <div class="box">
+      <h3>Quem está na cadeia</h3>
+      <ul>
+        <li><b>Seazone (Gestão de Manutenção):</b> decide responsabilidade, aprova, cobra, audita.</li>
+        <li><b>Franquia:</b> executa no imóvel e manda evidência. 71 franquias têm card aberto hoje.</li>
+        <li><b>Prestador:</b> homologado no Hub de Serviços.</li>
+        <li><b>Proprietário:</b> paga ou aprova quando a responsabilidade é dele.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ETAPA 2 -->
+<section class="etapa" id="e2">
+  <div class="etapa-head"><span class="num">2</span><span class="eyebrow">Tático · entregas, prioridades e métricas</span><h2>Macroprocessos</h2></div>
+  <p>Sete macroprocessos cobrem o que a área entrega. A ordem é a do caminho de um card, da entrada ao controle.</p>
+  <div class="tbl"><table>
+    <thead><tr><th>Macroprocesso</th><th>Entrega</th><th>Métrica que vale</th><th>Situação</th></tr></thead>
+    <tbody>
+      <tr><td class="k">M1 · Entrada da demanda</td><td>Todo pedido vira card, com imóvel e origem certos</td><td>Cards criados por <code>origin</code></td><td><span class="pill ok">roda</span> ponte do Suporte e UTI em staging</td></tr>
+      <tr><td class="k">M2 · Triagem e priorização</td><td>Urgência, responsabilidade e duplicata decididas</td><td>Cards sem <code>scheduled_responsibility</code></td><td><span class="pill bad">gargalo</span> 421 de 437 abertos sem responsabilidade</td></tr>
+      <tr><td class="k">M3 · Execução pela franquia</td><td>Serviço feito no imóvel no prazo</td><td>Lead time da franquia (envio → evidência)</td><td><span class="pill warn">parcial</span> 48 abertos nem foram enviados</td></tr>
+      <tr><td class="k">M4 · Evidência e fechamento</td><td>Card fechado com prova válida</td><td>Cards em <code>aguardando_aprovacao</code></td><td><span class="pill warn">fila</span> 82 esperando a Seazone</td></tr>
+      <tr><td class="k">M5 · Cobrança e financeiro</td><td>Despesa lançada, cobrança semanal, dano recuperado</td><td>Recuperação de dano; cobrança vencida</td><td><span class="pill warn">sem ligação</span> despesa não se liga ao card</td></tr>
+      <tr><td class="k">M6 · Preventiva recorrente</td><td>Ciclo mensal por regra (ar-condicionado primeiro)</td><td>Cards gerados × auto-verificados</td><td><span class="pill warn">começa</span> 1º ciclo só AC em 01/10</td></tr>
+      <tr><td class="k">M7 · Gestão das franquias</td><td>Franquia travada identificada e recuperada</td><td>Faixa da franquia (Atenção → UTI)</td><td><span class="pill warn">desenhado</span> triagem v1.3, ainda não rodou no Sapron</td></tr>
+    </tbody>
+  </table></div>
+  <p class="src">Contagens: exportação da Central, 28/09/2026 09:22. Aberto = <code>status</code> fora de <code>concluido</code> e <code>cancelada</code>.</p>
+</section>
+
+<!-- ETAPA 3 -->
+<section class="etapa" id="e3">
+  <div class="etapa-head"><span class="num">3</span><span class="eyebrow">Operacional · indicadores, esforço e gargalos</span><h2>Processos e subprocessos</h2></div>
+
+  <div class="stats">
+    <div class="stat"><span class="v">437</span><span class="l">cards abertos hoje (eram 267 em 02/09)</span></div>
+    <div class="stat"><span class="v">317</span><span class="l">parados em <code>nao_urgente</code>, onde o backlog se esconde</span></div>
+    <div class="stat"><span class="v">489 × 271</span><span class="l">criados × concluídos nos últimos 30 dias</span></div>
+    <div class="stat"><span class="v">9 dias</span><span class="l">mediana do ciclo dos concluídos nos últimos 30 dias</span></div>
+  </div>
+  <p class="src">Fonte: exportação da Central, 28/09/2026 09:22. Últimos 30 dias = desde 29/08/2026. 187 abertos têm mais de 30 dias e 66 têm mais de 90; o mais antigo é de 23/02/2026. O número de 02/09 vem da folha de contexto.</p>
+
+  <div class="tbl"><table>
+    <thead><tr><th>Macro</th><th>Subprocessos</th><th>Indicador</th><th>Gargalo ou retrabalho</th></tr></thead>
+    <tbody>
+      <tr><td class="k">M1</td><td>Chamado do Suporte → card · dano de hóspede → card · review → card · UTI → card · consultor/regional → card</td><td>Volume por origem</td><td>Mesmo problema chega por dois caminhos e vira card duplicado</td></tr>
+      <tr><td class="k">M2</td><td>Classificar urgência · verificar duplicata · decidir responsabilidade (Seazone, franquia ou proprietário) · agendar</td><td>Abertos sem responsabilidade; tempo até a decisão</td><td>A decisão não sai: 421 de 437 abertos sem <code>scheduled_responsibility</code></td></tr>
+      <tr><td class="k">M3</td><td>Enviar à franquia · cadência de cobrança · execução · atraso</td><td><code>lead_time.franchise_days</code></td><td>Conversa quase não existe: 67% das atividades têm zero mensagem (01/09)</td></tr>
+      <tr><td class="k">M4</td><td>Receber evidência · validar pela matriz · pedir nova evidência · aprovar e finalizar</td><td>Fila em <code>aguardando_aprovacao</code></td><td>82 cards esperando aprovação da Seazone</td></tr>
+      <tr><td class="k">M5</td><td>Lançar despesa · cobrança semanal (quarta, 11h) · negociar dano</td><td>Recuperação de dano; vencidos</td><td>Só 16,6% das despesas acham algum card candidato (01/09)</td></tr>
+      <tr><td class="k">M6</td><td>Regra de elegibilidade · geração do ciclo · dedup por despesa ou IA · auditoria</td><td>Gerados, auto-verificados, vencidos</td><td>16 regras antigas a excluir antes do ciclo</td></tr>
+      <tr><td class="k">M7</td><td>Triagem semanal pelos 5 sinais · call Plano, Ação, Resultado · UTI</td><td>Franquias por faixa</td><td>5 franquias concentram 182 dos 437 abertos</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="callout">
+    <b>O que falta para fechar esta etapa: esforço (FTE)</b>
+    <p>O HAP pede o esforço de cada processo. Hoje ele não sai do dado: o card não guarda histórico de mudança de status, então não dá para medir tempo por etapa. Duas saídas: cronometrar uma amostra de cards por subprocesso durante duas semanas, ou pedir ao produto o registro das transições de status.</p>
+  </div>
+</section>
+
+<!-- ETAPA 4 -->
+<section class="etapa" id="e4">
+  <div class="etapa-head"><span class="num">4</span><span class="eyebrow">Execução · POPs, ITs e base de automação</span><h2>Atividades e tarefas</h2></div>
+  <p>Cada subprocesso precisa de um POP (o passo a passo) antes de ser automatizado. A lista mostra o que já está escrito nesta pasta e o que ainda está na cabeça de alguém.</p>
+  <div class="tbl"><table>
+    <thead><tr><th>Atividade</th><th>POP ou IT</th><th>Automação</th><th>Status</th></tr></thead>
+    <tbody>
+      <tr><td class="k">Manutenção recorrente</td><td>Processo v2.1 com auditoria de 17/09</td><td>Geração e dedup no Sapron</td><td><span class="pill ok">escrito</span></td></tr>
+      <tr><td class="k">Classificar urgência</td><td>Classificador de chamados</td><td>Agente de urgência (inerte)</td><td><span class="pill ok">escrito</span></td></tr>
+      <tr><td class="k">Triagem automática</td><td>Processo de triagem automática</td><td>Em desenho</td><td><span class="pill ok">escrito</span></td></tr>
+      <tr><td class="k">Verificar duplicata</td><td>Verificador de duplicata</td><td>Tela em staging</td><td><span class="pill ok">escrito</span></td></tr>
+      <tr><td class="k">Validar evidência e finalizar</td><td>Finalização inteligente e auditoria</td><td>Validador e auditor em produção</td><td><span class="pill ok">escrito</span></td></tr>
+      <tr><td class="k">Recuperar franquia crítica</td><td>Processo v1.3 + skill de triagem</td><td>Skill semanal</td><td><span class="pill ok">escrito</span></td></tr>
+      <tr><td class="k">Decidir responsabilidade</td><td>Não existe</td><td>Nenhuma</td><td><span class="pill bad">falta</span></td></tr>
+      <tr><td class="k">Enviar e cobrar a franquia</td><td>Só a cadência da recorrente</td><td>Aviso de atraso diário (10h)</td><td><span class="pill warn">parcial</span></td></tr>
+      <tr><td class="k">Dano de hóspede ponta a ponta</td><td>Não existe</td><td>Card criado a partir do dano</td><td><span class="pill bad">falta</span></td></tr>
+      <tr><td class="k">Lançar despesa ligada ao card</td><td>Não existe</td><td>Só para recorrente</td><td><span class="pill bad">falta</span></td></tr>
+      <tr><td class="k">Homologar prestador</td><td>Não existe nesta pasta</td><td>Hub de Serviços</td><td><span class="pill warn">fora da pasta</span></td></tr>
+    </tbody>
+  </table></div>
+  <p class="src">Arquivos em <code>/root/manutencao</code>, conferidos em 28/09/2026.</p>
+</section>
+
+<!-- ETAPA 5 -->
+<section class="etapa" id="e5">
+  <div class="etapa-head"><span class="num">5</span><span class="eyebrow">Automação · sistemas, integração e KPIs</span><h2>Ferramentas</h2></div>
+  <div class="tbl"><table>
+    <thead><tr><th>Ferramenta</th><th>Papel</th><th>Conversa com</th><th>Falta</th></tr></thead>
+    <tbody>
+      <tr><td class="k">Central de Manutenção (Sapron)</td><td>O card, a tela e os 11 KPIs diários</td><td>Financeiro, danos, UTI</td><td>Histórico de status; ligação despesa → card</td></tr>
+      <tr><td class="k">Suporte Unificado</td><td>Chamado que a franquia abre</td><td>Central, pela ponte</td><td>Ligar a leitura da ponte</td></tr>
+      <tr><td class="k">UTI</td><td>Casos graves</td><td>Central, por tags <code>uti:&lt;caso&gt;</code></td><td>Main e chave do uti-bot</td></tr>
+      <tr><td class="k">Hub de Serviços</td><td>Prestadores homologados</td><td>Nada ainda</td><td>Ligar prestador ao card</td></tr>
+      <tr><td class="k">Agentes (AI Hub)</td><td>Urgência, evidência, auditoria, duplicata</td><td>Central, por dentro do backend</td><td>Aba própria por agente (PRs #4956 e #3587)</td></tr>
+      <tr><td class="k">TaskDex</td><td>Backlog de melhorias da área</td><td>Nada</td><td>Ligar melhoria ao indicador que ela move</td></tr>
+    </tbody>
+  </table></div>
+  <div class="box">
+    <h3>KPIs claros e visíveis: proposta de painel da área</h3>
+    <ul>
+      <li><b>Estoque:</b> abertos, abertos há +30 e +90 dias, abertos sem responsabilidade.</li>
+      <li><b>Fluxo:</b> criados × concluídos por semana. Hoje está negativo: 489 × 271 em 30 dias.</li>
+      <li><b>Tempo:</b> ciclo total (<code>kpis.lead_time_dias</code>) e lead time da franquia, sempre com o nome de qual é.</li>
+      <li><b>Dinheiro:</b> gasto por família de serviço e recuperação de dano.</li>
+      <li><b>Franquia:</b> quantas em cada faixa da triagem.</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ETAPA 6 -->
+<section class="etapa" id="e6">
+  <div class="etapa-head"><span class="num">6</span><span class="eyebrow">Contínuo · o que o mapa mostrou</span><h2>Melhorias</h2></div>
+  <div class="callout">
+    <b>O fato que puxa tudo</b>
+    <p>A área cria mais card do que fecha. Em 26 dias, o backlog aberto foi de 267 (02/09) para 437 (28/09). Qualquer melhoria que não mexa na triagem (M2) ou na aprovação (M4) não muda esse número.</p>
+  </div>
+  <div class="tbl"><table>
+    <thead><tr><th>Melhoria</th><th>Macro</th><th>Indicador que move</th><th>Quem faz</th></tr></thead>
+    <tbody>
+      <tr><td class="k">Escrever o POP de responsabilidade e zerar os 421 sem decisão</td><td>M2</td><td>Abertos sem responsabilidade</td><td>Área</td></tr>
+      <tr><td class="k">Mutirão nos 82 em <code>aguardando_aprovacao</code> com o validador de evidência</td><td>M4</td><td>Fila de aprovação</td><td>Área + agente</td></tr>
+      <tr><td class="k">Enviar os 48 abertos que nunca foram para a franquia</td><td>M3</td><td>Abertos sem envio</td><td>Área</td></tr>
+      <tr><td class="k">Ligar o agente de urgência</td><td>M2</td><td>Tempo até a decisão</td><td>Tecnologia</td></tr>
+      <tr><td class="k">Campo de ligação despesa → card</td><td>M5</td><td>Custo por card</td><td>Produto</td></tr>
+      <tr><td class="k">Registrar mudança de status do card</td><td>M3, M4</td><td>Tempo por etapa e FTE</td><td>Produto</td></tr>
+      <tr><td class="k">Rodar a triagem de franquias contra o Sapron</td><td>M7</td><td>Franquias por faixa</td><td>Área</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section class="etapa">
+  <div class="etapa-head"><span class="num">→</span><span class="eyebrow">Próximos passos</span><h2>Para fechar a versão 1</h2></div>
+  <ol class="next">
+    <li>Validar a cadeia de valor e os 7 macroprocessos com quem opera a área. Pode faltar algum ou sobrar algum.</li>
+    <li>Escolher como medir o esforço (FTE): amostra cronometrada ou pedido ao produto.</li>
+    <li>Escrever os 3 POPs que faltam, começando pela decisão de responsabilidade.</li>
+    <li>Montar o painel de KPIs da etapa 5 e rever o mapa todo mês.</li>
+  </ol>
+</section>
+
+<footer><p class="src">Mapa HAP da Manutenção · v1 · 28/09/2026 · arquivo local <code>/root/manutencao/mapa-hap-manutencao.html</code></p></footer>
+</div>

@@ -1,0 +1,266 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ocorrência do urgente</title>
+<style>
+  :root {
+    --navy: #080E32; --blue: #0055FF; --blue50: #F0F2FA; --border: #E1E7ED;
+    --g50: #F4F4F4; --g300: #CECFD6; --g600: #6A7282; --g700: #525670;
+    --am-bg: #FEF9C2; --am-fg: #733E0A; --am-bar: #F0B100;
+    --or-bg: #FFEDD4; --or-fg: #9F2D00; --or-bar: #FF832B;
+    --rd-bg: #FFE2E2; --rd-fg: #9F0712; --rd-bar: #E7000B;
+    --gr-bg: #ECFCCA; --gr-fg: #35530E; --bg: #F7F8FA; --card: #fff;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --navy: #E8EAF6; --blue50: #1C2440; --border: #2C3242; --g50: #23283A; --g300: #3A4054;
+      --g600: #9AA0B4; --g700: #B8BDCC; --am-bg: #332B0A; --am-fg: #F5DC8A;
+      --or-bg: #3A2614; --or-fg: #FFC58F; --rd-bg: #3A1418; --rd-fg: #FFB4B4;
+      --gr-bg: #1E2A12; --gr-fg: #C7E89A; --bg: #12151F; --card: #1A1E2B;
+    }
+  }
+  :root[data-theme="dark"] {
+    --navy: #E8EAF6; --blue50: #1C2440; --border: #2C3242; --g50: #23283A; --g300: #3A4054;
+    --g600: #9AA0B4; --g700: #B8BDCC; --am-bg: #332B0A; --am-fg: #F5DC8A;
+    --or-bg: #3A2614; --or-fg: #FFC58F; --rd-bg: #3A1418; --rd-fg: #FFB4B4;
+    --gr-bg: #1E2A12; --gr-fg: #C7E89A; --bg: #12151F; --card: #1A1E2B;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--navy);
+    font: 14px/1.5 Inter, "Helvetica Neue", Helvetica, Arial, system-ui, sans-serif; letter-spacing: .02em; }
+  .wrap { max-width: 1100px; margin: 0 auto; padding: 20px 16px 48px; }
+  .faixa { font-size: 13px; color: var(--g600); margin-bottom: 14px; }
+  .abas { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 16px; }
+  .abas span { padding: 6px 14px; border-radius: 999px; border: 1px solid var(--border); background: var(--card); color: var(--g700); }
+  .abas span.on { background: var(--blue); border-color: var(--blue); color: #fff; font-weight: 600; }
+  .cartao { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 18px; min-width: 0; }
+  h2 { margin: 0 0 4px; font-size: 18px; }
+  .sub { color: var(--g600); margin: 0 0 12px; }
+  .cfg { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+  .pill { padding: 3px 12px; border-radius: 999px; border: 1px solid var(--border); background: var(--g50); color: var(--g700); font-size: 13px; }
+  .pill b { color: var(--navy); }
+  .pill.trava { background: var(--blue50); border-color: var(--blue); }
+  .nums { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; }
+  .num { border: 1px solid var(--border); border-radius: 10px; padding: 10px 12px; }
+  .num b { display: block; font-size: 26px; line-height: 1.2; }
+  .num small { color: var(--g600); }
+  .num.rd { background: var(--rd-bg); border-color: var(--rd-bar); } .num.rd b, .num.rd .lbl { color: var(--rd-fg); }
+  .lbl { color: var(--g600); font-size: 13px; }
+  h4 { margin: 24px 0 10px; font-size: 14px; text-transform: uppercase; color: var(--g600); }
+  .caso { border: 1px solid var(--border); border-radius: 12px; padding: 14px 16px; margin-bottom: 12px; }
+  .topo { display: flex; gap: 14px; align-items: center; justify-content: space-between; flex-wrap: wrap; }
+  .id { min-width: 0; flex: 1 1 320px; }
+  .id a { color: var(--navy); font-weight: 700; text-decoration: none; }
+  .id a:hover { text-decoration: underline; }
+  .meta { color: var(--g600); }
+  .atraso { text-align: right; padding: 6px 14px; border-radius: 10px; flex: none; }
+  .atraso b { display: block; font-size: 24px; line-height: 1.15; }
+  .atraso small { font-size: 12px; }
+  .a1 { background: var(--am-bg); color: var(--am-fg); }
+  .a2 { background: var(--or-bg); color: var(--or-fg); }
+  .a3 { background: var(--rd-bg); color: var(--rd-fg); }
+  .rel { position: relative; height: 10px; border-radius: 999px; background: var(--g50); border: 1px solid var(--border); margin: 26px 6px 30px; }
+  .rel .fill { position: absolute; top: -1px; bottom: -1px; border-radius: 999px; }
+  .rel .m { position: absolute; top: -6px; width: 2px; height: 20px; background: var(--g600); }
+  .rel .m span { position: absolute; white-space: nowrap; font-size: 12px; color: var(--g700); transform: translateX(-50%); }
+  .rel .m .s { top: -19px; } .rel .m .i { top: 22px; color: var(--g600); }
+  .rel .m.hoje { background: var(--navy); width: 3px; } .rel .m.hoje span { color: var(--navy); font-weight: 700; }
+  .fill.a1 { background: var(--am-bar); } .fill.a2 { background: var(--or-bar); } .fill.a3 { background: var(--rd-bar); }
+  .fill.ok { background: var(--g300); }
+  .prova { color: var(--g700); margin: 0 0 8px; }
+  details { margin: 6px 0; }
+  summary { cursor: pointer; color: var(--g700); font-weight: 600; }
+  ul { margin: 6px 0 8px; padding-left: 18px; color: var(--g700); }
+  textarea { width: 100%; min-height: 190px; font: inherit; padding: 10px 12px; border: 1px solid var(--g300); border-radius: 8px; color: var(--navy); background: var(--card); resize: vertical; margin-top: 6px; }
+  .acoes { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-top: 10px; }
+  button, select { font: inherit; font-weight: 600; padding: 7px 16px; border-radius: 999px; border: 1px solid var(--g300); background: var(--card); color: var(--navy); cursor: pointer; }
+  button.pri { background: var(--blue); border-color: var(--blue); color: #fff; }
+  select { font-weight: 400; padding: 6px 10px; }
+  .acoes a { color: var(--navy); font-weight: 600; }
+  .tab-wrap { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; min-width: 640px; }
+  th, td { text-align: left; padding: 7px 8px; border-bottom: 1px solid var(--border); }
+  th { color: var(--g600); font-weight: 600; }
+  td a { color: var(--navy); font-weight: 600; }
+  .selo { padding: 2px 10px; border-radius: 999px; font-weight: 600; font-size: 13px; background: var(--g50); color: var(--g700); white-space: nowrap; }
+  .selo.gr { background: var(--gr-bg); color: var(--gr-fg); }
+  .legenda { display: flex; gap: 10px; flex-wrap: wrap; margin: 10px 0 0; font-size: 13px; color: var(--g700); }
+  .legenda i { display: inline-block; width: 12px; height: 12px; border-radius: 3px; margin-right: 5px; vertical-align: -1px; }
+  .nota { margin-top: 26px; padding: 12px 14px; border-radius: 10px; background: var(--blue50); color: var(--g700); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="faixa">Mockup v2 · Sapron › Central de Manutenção › Agentes de IA › Ocorrência do urgente · casos reais do banco de produção em 22/10/2026, 11h25 (o que o agente proporia agora)</div>
+  <div class="abas"><span>Cards</span><span>Por imóvel</span><span>Dashboard</span><span>Score de manutenção</span><span class="on">Agentes de IA</span></div>
+
+  <section class="cartao">
+    <h2>Ocorrência do urgente</h2>
+    <p class="sub">Acha o card urgente que a franquia não respondeu em 48 horas úteis, mostra o atraso e monta a ocorrência. <b>Nada vai para a Central de Ocorrências e Multas sem você aprovar.</b></p>
+
+    <div class="cfg">
+      <span class="pill trava">Aprovação obrigatória: <b>ligada</b></span>
+      <span class="pill">Destino: <b>Central de Ocorrências e Multas</b> · origem Manutenções</span>
+      <span class="pill">Vale para cards enviados desde <b>22/10/2026</b> <span class="meta">(só cards novos)</span></span>
+      <span class="pill">Subcategoria enviada: <b>6.2</b> <span class="meta">(trocar pela nova quando a Victória criar)</span></span>
+    </div>
+
+    <div class="nums">
+      <div class="num"><span class="lbl">Para aprovar</span><b>0</b><small>a fila começa vazia em 22/10</small></div>
+      <div class="num"><span class="lbl">Maior atraso</span><b>—</b><small>nenhum card novo atrasado</small></div>
+      <div class="num"><span class="lbl">Quase vencendo</span><b>0</b><small>passou o prazo, ainda dentro das 48h</small></div>
+      <div class="num"><span class="lbl">No prazo</span><b>1</b><small>CMH0202, vence em 26/10</small></div>
+      <div class="num"><span class="lbl">Antes do corte</span><b>11</b><small>fora da regra, só consulta</small></div>
+    </div>
+
+    <h4>Para aprovar (0) · maior atraso primeiro</h4>
+    <div class="nota" style="margin:0 0 12px">
+      <b>Simulação da tela.</b> Hoje não há proposta, porque nenhum card enviado a partir de 22/10 venceu. Os 3 cards abaixo são
+      <b>anteriores ao corte</b> e <b>não entrariam</b>; estão aqui só para mostrar como o atraso aparece quando a fila tiver casos.
+    </div>
+
+    <!-- 1 -->
+    <div class="caso">
+      <div class="topo">
+        <div class="id">
+          <a href="#">#7997 · Extensão da pia da cozinha em curto, cai o disjuntor do apto</a><br>
+          <span class="meta">LSS1301 · Jessica Cristine Silva dos Santos · 6.2 · Grave · 4 pts</span>
+        </div>
+        <div class="atraso a3"><b>5 d 11 h</b><small>de atraso · venceu 16/10 às 23:59</small></div>
+      </div>
+      <div class="rel">
+        <div class="fill ok" style="left:0;width:31%"></div>
+        <div class="fill a3" style="left:31%;width:69%"></div>
+        <div class="m" style="left:0"><span class="s">Enviado</span><span class="i">14/10 14:00</span></div>
+        <div class="m" style="left:18%"><span class="s">Prazo (1 dia útil)</span><span class="i">15/10</span></div>
+        <div class="m" style="left:31%"><span class="s">Venceu (48h úteis)</span><span class="i">16/10</span></div>
+        <div class="m hoje" style="left:100%"><span class="s">Hoje</span><span class="i">22/10 11:25</span></div>
+      </div>
+      <p class="prova">Última mensagem da franquia no chamado: <b>nenhuma</b> · cobranças da Seazone: 2</p>
+      <details><summary>Ver texto que vai para a Central de Ocorrências e Multas</summary>
+<textarea>Manutenção urgente sem resposta da franquia em 48 horas úteis
+
+Imóvel: LSS1301
+Card: #7997 — Extensão da pia da cozinha em curto, qdo utilizada cai o djuntor do apto
+Link: https://sapron.com.br/central-manutencao?aba=cards&card=7997
+
+Enviado à franquia em 14/10/2026 às 11:00.
+Prazo do urgente: 15/10/2026.
+Venceu em 16/10/2026 às 23:59 (48 horas úteis).
+Atraso no envio: calculado na hora de enviar.
+Última resposta da franquia: nenhuma.
+Cobranças da Seazone no chamado: 2.
+
+Regra: MGO p. 28 — card urgente sem resposta em 48 horas úteis.</textarea></details>
+      <div class="acoes">
+        <button class="pri">Aprovar e enviar</button>
+        <select><option>Motivo do descarte…</option><option>Respondeu fora do chamado</option><option>Não era urgente</option><option>Depende do proprietário</option><option>O atraso foi da Seazone</option><option>Card duplicado</option><option>Outro</option></select>
+        <button>Descartar</button>
+        <a href="#">Abrir o card</a>
+      </div>
+    </div>
+
+    <!-- 2 -->
+    <div class="caso">
+      <div class="topo">
+        <div class="id">
+          <a href="#">#8026 · Manutenção - limpeza - EEP0802 (baratas, hóspede saiu antes)</a><br>
+          <span class="meta">EEP0802 · Ricardo Portella Junior · 6.2 · Grave · 4 pts</span>
+        </div>
+        <div class="atraso a3"><b>5 d 11 h</b><small>de atraso · venceu 16/10 às 23:59</small></div>
+      </div>
+      <div class="rel">
+        <div class="fill ok" style="left:0;width:31%"></div>
+        <div class="fill a3" style="left:31%;width:69%"></div>
+        <div class="m" style="left:0"><span class="s">Enviado</span><span class="i">14/10 13:53</span></div>
+        <div class="m" style="left:18%"><span class="s">Prazo (1 dia útil)</span><span class="i">15/10</span></div>
+        <div class="m" style="left:31%"><span class="s">Venceu (48h úteis)</span><span class="i">16/10</span></div>
+        <div class="m hoje" style="left:100%"><span class="s">Hoje</span><span class="i">22/10 11:25</span></div>
+      </div>
+      <p class="prova">Última mensagem da franquia no chamado: <b>nenhuma</b> · cobranças da Seazone: 2</p>
+      <div class="acoes">
+        <button class="pri">Aprovar e enviar</button>
+        <select><option>Motivo do descarte…</option></select>
+        <button>Descartar</button>
+        <a href="#">Abrir o card</a>
+      </div>
+    </div>
+
+    <!-- 3 -->
+    <div class="caso">
+      <div class="topo">
+        <div class="id">
+          <a href="#">#8135 · Manutenção - internet - PSMC003</a><br>
+          <span class="meta">PSMC003 · Ana Márcia Pereira Buzzacchino · 6.2 · Grave · 4 pts</span>
+        </div>
+        <div class="atraso a1"><b>11 h</b><small>de atraso · venceu 21/10 às 23:59</small></div>
+      </div>
+      <div class="rel">
+        <div class="fill ok" style="left:0;width:62%"></div>
+        <div class="fill a1" style="left:62%;width:38%"></div>
+        <div class="m" style="left:0"><span class="s">Enviado</span><span class="i">19/10 13:53</span></div>
+        <div class="m" style="left:36%"><span class="s">Prazo (1 dia útil)</span><span class="i">20/10</span></div>
+        <div class="m" style="left:62%"><span class="s">Venceu (48h úteis)</span><span class="i">21/10</span></div>
+        <div class="m hoje" style="left:100%"><span class="s">Hoje</span><span class="i">22/10 11:25</span></div>
+      </div>
+      <p class="prova">Última mensagem da franquia no chamado: <b>nenhuma</b> · veio da ponte do Suporte (#8135)</p>
+      <div class="acoes">
+        <button class="pri">Aprovar e enviar</button>
+        <select><option>Motivo do descarte…</option></select>
+        <button>Descartar</button>
+        <a href="#">Abrir o card</a>
+      </div>
+    </div>
+
+    <div class="legenda">
+      <span><i style="background:var(--am-bar)"></i>até 1 dia de atraso</span>
+      <span><i style="background:var(--or-bar)"></i>2 a 4 dias</span>
+      <span><i style="background:var(--rd-bar)"></i>5 dias ou mais</span>
+      <span class="meta">· o vencimento conta dias úteis; o atraso é mostrado em dias corridos</span>
+    </div>
+
+    <h4>Enviadas à Central de Ocorrências e Multas</h4>
+    <div class="tab-wrap">
+      <table>
+        <thead><tr><th>Card</th><th>Imóvel</th><th>Atraso no envio</th><th>Etapa na Victória</th><th>Aprovada por</th><th>Em</th></tr></thead>
+        <tbody>
+          <tr><td><a href="#">#0000</a></td><td>EXEMPLO</td><td>5 d 11 h</td><td><span class="selo gr">Com pontuação</span></td><td>Vinicius Satores</td><td>—</td></tr>
+          <tr><td><a href="#">#0000</a></td><td>EXEMPLO</td><td>1 d 2 h</td><td><span class="selo">Primeiro contato</span></td><td>Vinicius Satores</td><td>—</td></tr>
+          <tr><td><a href="#">#0000</a></td><td>EXEMPLO</td><td>0 d 11 h</td><td><span class="selo">Pendente de reenvio</span></td><td>Vinicius Satores</td><td>—</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h4>Outros urgentes no relógio (9) · não geram proposta</h4>
+    <p class="meta" style="margin:-4px 0 8px">Enviados antes de 22/10 ou ainda no prazo. Os 3 da simulação acima (#7997, #8026, #8135) também são anteriores ao corte e não entram nesta lista.</p>
+    <details open>
+      <summary>Ver a lista</summary>
+      <div class="tab-wrap">
+        <table>
+          <thead><tr><th>Card</th><th>Imóvel</th><th>Franquia</th><th>Situação</th><th>Atraso</th></tr></thead>
+          <tbody>
+            <tr><td><a href="#">#5951</a></td><td>SMA0206</td><td>Maria Carolina de Rodrigues de Souza</td><td><span class="selo">Antes do corte · venceu 01/10</span></td><td>20 d 11 h</td></tr>
+            <tr><td><a href="#">#7849</a></td><td>VLP0111</td><td>Ana Márcia Pereira Buzzacchino</td><td><span class="selo">Antes do corte · venceu 13/10</span></td><td>8 d 11 h</td></tr>
+            <tr><td><a href="#">#7991</a></td><td>AAR0207</td><td>Ana Carolina Assmus Barski</td><td><span class="selo">Antes do corte · venceu 15/10</span></td><td>6 d 11 h</td></tr>
+            <tr><td><a href="#">#7994</a></td><td>NTO0005</td><td>Ana Márcia Pereira Buzzacchino</td><td><span class="selo">Antes do corte · venceu 15/10</span></td><td>6 d 11 h</td></tr>
+            <tr><td><a href="#">#8023</a></td><td>SOV0002</td><td>Ana Márcia Pereira Buzzacchino</td><td><span class="selo">Antes do corte · venceu 15/10</span></td><td>6 d 11 h</td></tr>
+            <tr><td><a href="#">#5899</a></td><td>SRR0007</td><td>Flávio de Souza Porto</td><td><span class="selo gr">Franquia respondeu (6 mensagens)</span></td><td>—</td></tr>
+            <tr><td><a href="#">#8022</a></td><td>RGL0304</td><td>Luciana Dellamora Pata Fernandes Lima</td><td><span class="selo gr">Franquia respondeu (1 mensagem)</span></td><td>—</td></tr>
+            <tr><td><a href="#">#8216</a></td><td>FUA0004</td><td>Kathellyne Soares de Moraes</td><td><span class="selo gr">Franquia respondeu (5 mensagens)</span></td><td>—</td></tr>
+            <tr><td><a href="#">#8294</a></td><td>CMH0202</td><td>Luís Eduardo Oliveira Machado</td><td><span class="selo">No prazo · vence 26/10</span></td><td>—</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </details>
+
+    <div class="nota">
+      <b>Retrato de 22/10/2026, 11h25 (banco de produção do Sapron):</b> 12 urgentes enviados a franquias, sem contar a operação própria (host 17) ·
+      <b>1 card novo</b> (enviado em 22/10, no prazo, vence 26/10) · 11 enviados antes do corte, sendo 8 sem resposta e 3 com mensagem da franquia
+      (a data da resposta ainda não foi conferida contra o vencimento).
+    </div>
+  </section>
+</div>
+</body>
+</html>

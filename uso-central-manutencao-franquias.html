@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Uso da Central pelas Franquias</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ground:#F2F5F3; --surface:#FFFFFF; --surface-2:#E9EFEC;
+  --line:#D6E0DB; --line-soft:#E6ECE9;
+  --ink:#151B26; --ink-2:#44524D; --ink-3:#6B7A74;
+  --accent:#2C8F73; --crit:#C0341F; --med:#C2810E; --blue:#2E62C4;
+  --display:'Quicksand','Trebuchet MS',sans-serif;
+  --body:'IBM Plex Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --ground:#12161A; --surface:#1A1F23; --surface-2:#232A2E;
+    --line:#303A3E; --line-soft:#262E32;
+    --ink:#EDF2F0; --ink-2:#B3C0BB; --ink-3:#8A9994;
+    --accent:#4FC3A1; --crit:#F0705C; --med:#E8B33C; --blue:#7BA3F0;
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#12161A; --surface:#1A1F23; --surface-2:#232A2E;
+  --line:#303A3E; --line-soft:#262E32;
+  --ink:#EDF2F0; --ink-2:#B3C0BB; --ink-3:#8A9994;
+  --accent:#4FC3A1; --crit:#F0705C; --med:#E8B33C; --blue:#7BA3F0;
+}
+*{box-sizing:border-box;}
+body{margin:0; background:var(--ground); color:var(--ink); font-family:var(--body); line-height:1.55;}
+.wrap{max-width:900px; margin:0 auto; padding-inline:16px; padding-block:44px 64px;}
+h1,h2,h3,h4{font-family:var(--display); text-wrap:balance; margin:0;}
+p{margin:0;}
+.eyebrow{font-family:var(--display); font-size:12px; font-weight:700; letter-spacing:.14em;
+  text-transform:uppercase; color:var(--accent);}
+header h1{font-size:clamp(28px,5vw,38px); font-weight:700; letter-spacing:-.01em; margin-top:10px;}
+.sub{color:var(--ink-2); font-size:15.5px; margin-top:12px; max-width:62ch;}
+.tagline{margin-top:16px; font-size:13px; color:var(--ink-3);}
+.tagline b{color:var(--ink-2); font-weight:600;}
+
+section{margin-top:50px;}
+section > h2{font-size:21px; font-weight:700; letter-spacing:-.01em;}
+section > .lede{color:var(--ink-2); font-size:14.5px; margin-top:8px; max-width:70ch;}
+section > .lede b{color:var(--ink); font-weight:600;}
+
+.kpis{display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-top:24px;}
+@media (max-width:760px){ .kpis{grid-template-columns:repeat(2,1fr);} }
+@media (max-width:460px){ .kpis{grid-template-columns:1fr;} }
+.kpi{background:var(--surface); border:1px solid var(--line); border-radius:11px; padding:16px 17px;
+  border-top:3px solid var(--accent);}
+.kpi.warn{border-top-color:var(--med);}
+.kpi.bad{border-top-color:var(--crit);}
+.kpi .n{font-family:var(--display); font-size:30px; font-weight:700; letter-spacing:-.02em;
+  font-variant-numeric:tabular-nums; line-height:1.1;}
+.kpi.bad .n{color:var(--crit);}
+.kpi.warn .n{color:var(--med);}
+.kpi .t{font-size:13px; font-weight:600; color:var(--ink-2); margin-top:6px;}
+.kpi .d{font-size:12px; color:var(--ink-3); margin-top:5px; line-height:1.4;}
+
+.tablebox{overflow-x:auto; border:1px solid var(--line); border-radius:10px; background:var(--surface);
+  margin-top:18px;}
+table{border-collapse:collapse; width:100%; min-width:560px; font-size:13.4px;}
+th{font-family:var(--display); font-size:10.5px; font-weight:700; letter-spacing:.09em;
+  text-transform:uppercase; color:var(--ink-3); text-align:left; padding:12px 15px;
+  border-bottom:1px solid var(--line); background:var(--surface-2); white-space:nowrap;}
+td{padding:11px 15px; border-bottom:1px solid var(--line-soft); vertical-align:top; color:var(--ink-2);}
+tr:last-child td{border-bottom:0;}
+td.b{font-weight:700; color:var(--ink); white-space:nowrap;}
+td.c{text-align:center; white-space:nowrap; font-variant-numeric:tabular-nums;}
+td.crit{color:var(--crit); font-weight:700;}
+td.ok{color:var(--accent); font-weight:700;}
+tr.destaque td{background:color-mix(in srgb, var(--crit) 7%, transparent);}
+
+.bars{margin-top:18px; background:var(--surface); border:1px solid var(--line);
+  border-radius:11px; padding:18px 20px;}
+.bar{display:grid; grid-template-columns:96px 1fr 128px; gap:12px; align-items:center;
+  padding:8px 0; border-top:1px solid var(--line-soft);}
+.bar:first-child{border-top:0;}
+@media (max-width:560px){ .bar{grid-template-columns:82px 1fr; }
+  .bar .leg{grid-column:1 / -1; text-align:left;} }
+.bar .lab{font-size:12.5px; font-weight:700; color:var(--ink);}
+.bar .track{background:var(--surface-2); border-radius:5px; height:16px; overflow:hidden;}
+.bar .fill{height:100%; background:var(--accent); border-radius:5px;}
+.bar.r0 .fill{background:var(--crit);}
+.bar.r1 .fill{background:#D9683F;}
+.bar.r2 .fill{background:var(--med);}
+.bar .leg{font-size:12px; color:var(--ink-3); text-align:right; font-variant-numeric:tabular-nums;}
+
+.regras{margin-top:18px; background:var(--surface); border:1px solid var(--line);
+  border-left:3px solid var(--blue); border-radius:0 10px 10px 0; padding:16px 20px;}
+.regras h3{font-size:14.5px; font-weight:700;}
+.regras ul{margin:10px 0 0; padding-left:19px;}
+.regras li{font-size:13.5px; color:var(--ink-2); margin-top:8px;}
+.regras li b{color:var(--ink); font-weight:600;}
+.regras.alerta{border-left-color:var(--crit);}
+
+.acoes{margin-top:18px;}
+.acao{background:var(--surface); border:1px solid var(--line); border-radius:11px;
+  padding:15px 18px; margin-top:11px; border-left:4px solid var(--accent);}
+.acao h4{font-size:15px; font-weight:700;}
+.acao p{font-size:13.5px; color:var(--ink-2); margin-top:6px;}
+.acao .quem{font-size:11.5px; font-weight:700; color:var(--ink-3); margin-top:9px;
+  text-transform:uppercase; letter-spacing:.06em;}
+
+.foot{margin-top:52px; padding-top:20px; border-top:1px solid var(--line);
+  font-size:12.5px; color:var(--ink-3);}
+.foot b{color:var(--ink-2); font-weight:600;}
+.foot ul{margin:10px 0 0; padding-left:18px;}
+.foot li{margin-top:6px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <p class="eyebrow">Central de Manutenção · Relatório</p>
+  <h1>Uso da Central de Manutenção pelas franquias</h1>
+  <p class="sub">Quanto da operação de manutenção realmente passa pela ferramenta, quem responde,
+  em quanto tempo, e onde a fila trava. Um retrato dos últimos 90 dias.</p>
+  <p class="tagline"><b>Fonte:</b> banco de produção do Sapron, consultado em <b>24/09/2026</b>.
+  <b>Janela:</b> 26/06/2026 a 24/09/2026.</p>
+</header>
+
+<section>
+  <h2>Os números de cima</h2>
+  <p class="lede">Card "enviado à franquia" é o card com <b>sent_to_franchise_at</b> preenchido — o
+  primeiro momento em que a bola passa para a franquia. "Respondido" é o card com evidência
+  recebida.</p>
+
+  <div class="kpis">
+    <div class="kpi">
+      <p class="n">877</p>
+      <p class="t">cards enviados em 90 dias</p>
+      <p class="d">Contra ~45/mês até maio. Julho foi o primeiro mês em escala.</p>
+    </div>
+    <div class="kpi">
+      <p class="n">100 / 139</p>
+      <p class="t">franquias receberam card</p>
+      <p class="d">39 franquias ativas não receberam nada no período.</p>
+    </div>
+    <div class="kpi warn">
+      <p class="n">49%</p>
+      <p class="t">taxa de resposta</p>
+      <p class="d">431 dos 877 enviados voltaram com evidência.</p>
+    </div>
+    <div class="kpi">
+      <p class="n">5,0 dias</p>
+      <p class="t">mediana de resposta</p>
+      <p class="d">Quem responde, responde rápido. A metade que não responde é o problema.</p>
+    </div>
+    <div class="kpi warn">
+      <p class="n">240</p>
+      <p class="t">abertos sem nenhuma resposta</p>
+      <p class="d">Só no período; na base inteira são 299.</p>
+    </div>
+    <div class="kpi bad">
+      <p class="n">80</p>
+      <p class="t">passaram de 35 dias</p>
+      <p class="d">Acima de 35 dias desde o envio, a nota do mês da franquia é zerada.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>A adoção é recente — e cresceu de um salto</h2>
+  <p class="lede">A Central existe desde maio de 2025, mas o envio para a franquia em volume começa
+  em <b>maio/2026</b> e vira operação real em <b>julho/2026</b>.</p>
+  <div class="tablebox">
+  <table>
+    <thead><tr><th>Mês do envio</th><th>Cards enviados</th><th>Franquias alcançadas</th>
+      <th>Responderam</th><th>Concluídos</th></tr></thead>
+    <tbody>
+      <tr><td class="b">fev/2026</td><td class="c">3</td><td class="c">2</td><td class="c">1</td><td class="c">1</td></tr>
+      <tr><td class="b">mar/2026</td><td class="c">2</td><td class="c">2</td><td class="c">1</td><td class="c">0</td></tr>
+      <tr><td class="b">mai/2026</td><td class="c">46</td><td class="c">10</td><td class="c">15</td><td class="c">10</td></tr>
+      <tr><td class="b">jun/2026</td><td class="c">48</td><td class="c">15</td><td class="c">22</td><td class="c">16</td></tr>
+      <tr><td class="b">jul/2026</td><td class="c">302</td><td class="c">67</td><td class="c">79</td><td class="c">62</td></tr>
+      <tr><td class="b">ago/2026</td><td class="c">276</td><td class="c">72</td><td class="c">202</td><td class="c">184</td></tr>
+      <tr><td class="b">set/2026 <span style="font-weight:400;color:var(--ink-3)">(parcial)</span></td>
+        <td class="c">296</td><td class="c">76</td><td class="c">148</td><td class="c">87</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p class="lede" style="margin-top:14px">Agosto é o melhor mês da série: 276 enviados e 202
+  respondidos. Setembro ainda está correndo — parte dos 296 enviados tem prazo em aberto.</p>
+</section>
+
+<section>
+  <h2>Como a franquia usa a ferramenta</h2>
+  <p class="lede">O padrão de uso é claro: a franquia <b>responde</b> o que a Seazone manda, mas
+  quase não <b>abre</b> card por conta própria.</p>
+
+  <div class="kpis" style="grid-template-columns:repeat(2,1fr)">
+    <div class="kpi bad">
+      <p class="n">2,9%</p>
+      <p class="t">dos cards nasceram na franquia</p>
+      <p class="d">50 de 1.722 cards criados em 90 dias (46 de origem "limpeza" + 4 de origem
+      "franquia"). O resto vem de Danos (994), consultor (223), manual (143) e migração (96).</p>
+    </div>
+    <div class="kpi">
+      <p class="n">1.256</p>
+      <p class="t">mensagens escritas por franquias</p>
+      <p class="d">93 pessoas de franquia, nos canais dos cards enviados. <b>544 delas com
+      anexo (43%)</b> — a evidência está chegando por foto no chat.</p>
+    </div>
+    <div class="kpi warn">
+      <p class="n">13</p>
+      <p class="t">cards programados</p>
+      <p class="d">O botão "Programar" (dizer quando vai resolver, em vez de ficar em silêncio)
+      é praticamente ignorado: 13 usos em 90 dias.</p>
+    </div>
+    <div class="kpi warn">
+      <p class="n">4</p>
+      <p class="t">pessoas da Seazone no canal</p>
+      <p class="d">Contra 93 do lado da franquia. A conversa de manutenção inteira está apoiada
+      em 4 usuários internos.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>A resposta não é uniforme: ela é bimodal</h2>
+  <p class="lede">Distribuição das 100 franquias que receberam card, pela taxa de resposta no
+  período. O bloco vermelho (0% e 1–33%) são <b>31 franquias segurando 268 cards</b>.</p>
+
+  <div class="bars">
+    <div class="bar r0">
+      <span class="lab">0%</span>
+      <span class="track"><span class="fill" style="width:44%"></span></span>
+      <span class="leg">15 franquias · 57 cards</span>
+    </div>
+    <div class="bar r1">
+      <span class="lab">1 a 33%</span>
+      <span class="track"><span class="fill" style="width:47%"></span></span>
+      <span class="leg">16 franquias · 211 cards</span>
+    </div>
+    <div class="bar r2">
+      <span class="lab">34 a 66%</span>
+      <span class="track"><span class="fill" style="width:100%"></span></span>
+      <span class="leg">34 franquias · 387 cards</span>
+    </div>
+    <div class="bar">
+      <span class="lab">67 a 99%</span>
+      <span class="track"><span class="fill" style="width:56%"></span></span>
+      <span class="leg">19 franquias · 182 cards</span>
+    </div>
+    <div class="bar">
+      <span class="lab">100%</span>
+      <span class="track"><span class="fill" style="width:44%"></span></span>
+      <span class="leg">15 franquias · 40 cards</span>
+    </div>
+  </div>
+  <p class="lede" style="margin-top:14px">Largura da barra = número de franquias na faixa.
+  Nenhuma ação genérica ("cobrar todo mundo") resolve isso: metade da rede já responde.</p>
+</section>
+
+<section>
+  <h2>A fila parada envelheceu</h2>
+  <p class="lede">Os 299 cards enviados e nunca respondidos (base inteira, não só 90 dias),
+  por tempo desde o envio. <b>139 já passaram de 35 dias</b> — 103 deles com mais de 60.</p>
+  <div class="tablebox">
+  <table>
+    <thead><tr><th>Tempo desde o envio</th><th>Cards sem resposta</th><th>Situação</th></tr></thead>
+    <tbody>
+      <tr><td class="b">até 7 dias</td><td class="c">78</td><td>Normal — dentro do prazo de trabalho.</td></tr>
+      <tr><td class="b">8 a 15 dias</td><td class="c">55</td><td>Atenção — passou do ciclo de cobrança.</td></tr>
+      <tr><td class="b">16 a 35 dias</td><td class="c">27</td><td>Risco — perto de zerar a nota.</td></tr>
+      <tr class="destaque"><td class="b">36 a 60 dias</td><td class="c crit">36</td><td>Nota do mês já zerada.</td></tr>
+      <tr class="destaque"><td class="b">mais de 60 dias</td><td class="c crit">103</td><td>Card abandonado — ninguém vai responder sozinho.</td></tr>
+    </tbody>
+  </table>
+  </div>
+</section>
+
+<section>
+  <h2>Onde o problema está concentrado</h2>
+  <p class="lede">Três franquias respondem por <b>98 dos 139 cards parados há mais de 35 dias</b>.
+  O resto da rede tem, no máximo, meia dúzia cada.</p>
+  <div class="tablebox">
+  <table>
+    <thead><tr><th>Franquia</th><th>Enviados 90d</th><th>Resposta</th><th>Mediana</th>
+      <th>Parados +35d</th><th>Último envio</th></tr></thead>
+    <tbody>
+      <tr class="destaque"><td class="b">ANT-001-VDA</td><td class="c">29</td><td class="c crit">0%</td>
+        <td class="c">—</td><td class="c crit">43</td><td class="c">14/07/2026</td></tr>
+      <tr class="destaque"><td class="b">BOM-005-BBS</td><td class="c">29</td><td class="c crit">10%</td>
+        <td class="c">14,6 d</td><td class="c crit">40</td><td class="c">17/09/2026</td></tr>
+      <tr class="destaque"><td class="b">SSA-006-BRR</td><td class="c">15</td><td class="c">47%</td>
+        <td class="c crit">49,6 d</td><td class="c crit">15</td><td class="c">23/09/2026</td></tr>
+      <tr><td class="b">BCB-006-CEN</td><td class="c">8</td><td class="c">50%</td>
+        <td class="c crit">64,8 d</td><td class="c">6</td><td class="c">22/07/2026</td></tr>
+      <tr><td class="b">ITP-004-CEN</td><td class="c">—</td><td class="c">—</td>
+        <td class="c">—</td><td class="c">6</td><td class="c">o mais antigo é de 23/02/2026</td></tr>
+      <tr><td class="b">SSA-005-BRR</td><td class="c">63</td><td class="c">33%</td>
+        <td class="c">6,0 d</td><td class="c">0</td><td class="c">23/09/2026</td></tr>
+      <tr><td class="b">FLN-004-CAM</td><td class="c">39</td><td class="c">36%</td>
+        <td class="c">26,4 d</td><td class="c">0</td><td class="c">23/09/2026</td></tr>
+      <tr><td class="b">FLN-002-INGN</td><td class="c">20</td><td class="c">25%</td>
+        <td class="c crit">50,5 d</td><td class="c">1</td><td class="c">23/09/2026</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <div class="regras alerta">
+    <h3>O caso ANT-001-VDA precisa de decisão, não de cobrança</h3>
+    <ul>
+      <li><b>29 cards enviados, zero resposta</b> — nenhuma evidência, em nenhum card.</li>
+      <li><b>43 cards parados há mais de 35 dias</b>, o mais antigo de 25/06/2026.</li>
+      <li><b>Parou de receber card em 14/07/2026.</b> Ou a franquia saiu / foi desligada e ninguém
+      fechou a fila dela, ou ela sumiu do fluxo de envio sem que isso fosse notado.</li>
+    </ul>
+  </div>
+
+  <p class="lede" style="margin-top:26px">Do outro lado, quem usa bem — e prova que a ferramenta
+  funciona quando a franquia entra nela:</p>
+  <div class="tablebox">
+  <table>
+    <thead><tr><th>Franquia</th><th>Enviados 90d</th><th>Resposta</th><th>Mediana</th><th>Abertos</th></tr></thead>
+    <tbody>
+      <tr><td class="b">GIG-001-COP</td><td class="c">22</td><td class="c ok">95%</td><td class="c">3,0 d</td><td class="c">0</td></tr>
+      <tr><td class="b">FLN-003-CAM</td><td class="c">14</td><td class="c ok">93%</td><td class="c">0,5 d</td><td class="c">2</td></tr>
+      <tr><td class="b">MCZ-002-CDA</td><td class="c">13</td><td class="c ok">92%</td><td class="c">8,5 d</td><td class="c">6</td></tr>
+      <tr><td class="b">FLN-003-CAN</td><td class="c">12</td><td class="c ok">92%</td><td class="c">21,0 d</td><td class="c">1</td></tr>
+      <tr><td class="b">JPA-002-MIR</td><td class="c">9</td><td class="c ok">89%</td><td class="c">1,9 d</td><td class="c">4</td></tr>
+      <tr><td class="b">BSB-003-ASN</td><td class="c">12</td><td class="c ok">75%</td><td class="c">2,4 d</td><td class="c">1</td></tr>
+      <tr><td class="b">FLN-003-CEN</td><td class="c">20</td><td class="c">65%</td><td class="c ok">0,7 d</td><td class="c">0</td></tr>
+    </tbody>
+  </table>
+  </div>
+</section>
+
+<section>
+  <h2>O gargalo não é só da franquia</h2>
+  <p class="lede">Dos 431 cards que voltaram com evidência nos últimos 90 dias:</p>
+  <div class="kpis" style="grid-template-columns:repeat(3,1fr)">
+    <div class="kpi">
+      <p class="n">329</p>
+      <p class="t">aprovados e concluídos</p>
+      <p class="d">76% do que a franquia devolveu foi aceito.</p>
+    </div>
+    <div class="kpi warn">
+      <p class="n">77</p>
+      <p class="t">parados aguardando a Seazone</p>
+      <p class="d">A franquia já entregou. A fila é interna.</p>
+    </div>
+    <div class="kpi">
+      <p class="n">13</p>
+      <p class="t">cancelados depois da evidência</p>
+      <p class="d">Trabalho da franquia que não virou nada.</p>
+    </div>
+  </div>
+  <p class="lede" style="margin-top:16px">Ou seja: <b>18% dos cards respondidos estão travados do
+  nosso lado</b>, com 4 pessoas da Seazone dando conta de 100 franquias. É exatamente o ponto que
+  o validador e o auditor de evidência atacam.</p>
+</section>
+
+<section>
+  <h2>O que eu faria com isso</h2>
+  <div class="acoes">
+    <div class="acao">
+      <h4>1. Fechar o caso ANT-001-VDA antes de qualquer cobrança</h4>
+      <p>Descobrir por que ela parou de receber card em 14/07 e o que fazer com os 43 abertos.
+      Cobrar uma franquia que talvez nem exista mais só suja o indicador.</p>
+      <p class="quem">Quem: Vinicius + responsável pela rede</p>
+    </div>
+    <div class="acao">
+      <h4>2. Tratar os 103 cards com mais de 60 dias como lote, não como fila</h4>
+      <p>Card abandonado há dois meses não volta com cobrança semanal. Ou entra em recuperação de
+      franquia crítica, ou é cancelado com registro do motivo — mas parado no board ele só
+      envenena a média de todo mundo.</p>
+      <p class="quem">Quem: Central de Manutenção</p>
+    </div>
+    <div class="acao">
+      <h4>3. Desafogar os 77 aguardando aprovação</h4>
+      <p>É a fila mais injusta: a franquia entregou e está esperando. Os agentes validador e
+      auditor de evidência existem para isso — vale priorizar a ligação deles em produção.</p>
+      <p class="quem">Quem: Vinicius / Tecnologia</p>
+    </div>
+    <div class="acao">
+      <h4>4. Investigar por que "Programar" não é usado</h4>
+      <p>13 usos em 90 dias contra 240 cards em silêncio. A franquia que não vai resolver esta
+      semana não tem como dizer isso — então não diz nada, e o card vira atraso. Pode ser
+      desconhecimento do botão ou fricção na tela; as duas hipóteses se testam perguntando a
+      3 franquias.</p>
+      <p class="quem">Quem: Vinicius</p>
+    </div>
+  </div>
+</section>
+
+<div class="foot">
+  <p><b>Fonte de todos os números:</b> banco de produção do Sapron (tabelas
+  <code>maintenance_maintenancecard</code>, <code>account_host</code>,
+  <code>franchise_communication_activitymessage</code>), consultado em <b>24/09/2026</b>.
+  Janela padrão: 26/06/2026 a 24/09/2026 (90 dias), exceto onde indicado.</p>
+  <p style="margin-top:14px"><b>Ressalvas de leitura:</b></p>
+  <ul>
+    <li>As mensagens são contadas no <b>canal permanente do imóvel</b>, que é compartilhado por
+    vários cards. O número mede conversa no canal de um imóvel com card enviado — não
+    estritamente dentro do card.</li>
+    <li>A fila parada por idade (299 cards) usa a base inteira, sem recorte de 90 dias; por isso
+    é maior que os 240 do período.</li>
+    <li>Setembro/2026 está parcial (fechado em 24/09) e parte dos cards enviados ainda está dentro
+    do prazo — a taxa de resposta do mês tende a subir.</li>
+    <li>"Responder" aqui é <code>evidence_received_at</code> preenchido. Franquia que resolveu e
+    não registrou no sistema aparece como silenciosa — e, para efeito de score, é mesmo.</li>
+  </ul>
+</div>
+
+</div>
+</body>
+</html>

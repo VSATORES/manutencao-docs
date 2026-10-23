@@ -1,0 +1,251 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Manutenção Recorrente · canvas</title>
+<style>
+body{font-family:-apple-system,"Segoe UI",Lato,sans-serif;max-width:860px;margin:32px auto;padding:0 16px;color:#1d1c1d;line-height:1.5;font-size:15px}
+.dica{background:#fff8e1;border:1px solid #f2c94c;border-radius:6px;padding:10px 14px;font-size:13px;margin-bottom:28px}
+table{border-collapse:collapse;width:100%;margin:6px 0 14px}
+th,td{border:1px solid #ddd;padding:6px 9px;text-align:left;vertical-align:top;font-size:14px}
+th{background:#f4f4f4}
+blockquote{border-left:4px solid #ddd;margin:0 0 12px;padding:2px 12px;color:#555}
+h2{margin-top:26px}
+</style>
+</head>
+<body>
+<div class="dica"><b>Como usar:</b> selecione tudo abaixo desta caixa (clique antes de "Documento oficial", Shift+clique no fim), copie com Ctrl+C e cole no canvas do Slack com Ctrl+V. Títulos, tabelas, negrito e listas entram formatados. Esta caixa amarela não vai junto.</div>
+
+<blockquote><p>Documento oficial · <b>v2.1 · 17/09/2026</b> · auditoria de 17/09 aplicada (24 pontos).</p></blockquote>
+<hr>
+<h2>📌 1. Identificação do Processo</h2>
+<ul>
+<li><b>Nome do processo:</b> Manutenção Recorrente — Franquias</li>
+<li><b>Setor responsável:</b> Manutenção · BackOffice Franquias</li>
+<li><b>Dono das regras:</b> Coordenação de Manutenção Recorrente</li>
+<li><b>Autoria:</b> Ray (BackOffice Franquias) · <b>Revisão técnica:</b> Vinicius Satores (Manutenção)</li>
+<li><b>Sistema:</b> Sapron · Central de Manutenção, aba Recorrentes</li>
+</ul>
+<hr>
+<h2>🎯 2. Objetivo</h2>
+<p>Decidir, todo mês, quais imóveis são cobrados por manutenção preventiva, <b>sem duplicar o que já foi feito</b>. O calendário decide o mês; a varredura decide o imóvel. Item cobrado abre card com prazo; lembrete não abre.</p>
+<p><b>Resultados esperados:</b></p>
+<ul>
+<li>Toda a carteira com o mesmo calendário por item</li>
+<li>Nenhuma cobrança de serviço que a franquia ou o proprietário já fez</li>
+<li>Card fechado só com evidência conferida</li>
+<li>Custo registrado e próxima entrada agendada no mesmo mês do ano seguinte</li>
+</ul>
+<hr>
+<h2>📝 3. Escopo</h2>
+<p><b>Dentro do escopo:</b></p>
+<ul>
+<li>Os itens com status <b>Cobrado</b> da tabela 7.1</li>
+<li>A varredura das quatro perguntas antes de abrir card</li>
+<li>Cadência de comunicação com a franquia e abertura dos cards</li>
+<li>Evidência, validação, aprovação e registro do custo</li>
+<li>Monitoramento diário e retro a cada 15 dias</li>
+</ul>
+<p><b>Fora do escopo:</b></p>
+<ul>
+<li>Jardim e enxoval (retirados na v1.0)</li>
+<li>Manutenção corretiva: segue o processo próprio</li>
+<li>Itens <b>Pendente</b>: não geram card até a retro decidir</li>
+</ul>
+<p><b>Interfaces com outros processos:</b></p>
+<ul>
+<li><b>Central de Manutenção (Sapron):</b> onde o card nasce, recebe a evidência e fecha</li>
+<li><b>Despesas do Sapron:</b> despesa aprovada ou paga com o item da regra satisfaz o ciclo</li>
+<li><b>Anúncio do Airbnb (data lake):</b> fonte da elegibilidade do imóvel</li>
+<li><b>Régua de atraso do Sapron:</b> lembretes de D+7 em diante</li>
+</ul>
+<hr>
+<h2>📖 4. Definições</h2>
+<table>
+<tr><th>Termo</th><th>Significado</th></tr>
+<tr><td><b>Cobrado</b></td><td>Item que abre card com prazo</td></tr>
+<tr><td><b>Lembrete</b></td><td>Item sem card e sem prazo</td></tr>
+<tr><td><b>Pendente</b></td><td>Item ainda não revisto; não gera card</td></tr>
+<tr><td><b>Ciclo</b></td><td>A janela de um item no ano (ex.: ar-condicionado em setembro)</td></tr>
+<tr><td><b>Varredura</b></td><td>As quatro perguntas que decidem se o imóvel recebe card no ciclo</td></tr>
+<tr><td><b>Indefinido</b></td><td>Imóvel sem anúncio para conferir o cadastro; não gera card</td></tr>
+<tr><td><b>Janela de bloqueio</b></td><td>01/12 a 31/03: nenhum card recorrente entra ou vence</td></tr>
+<tr><td><b>Retro</b></td><td>Reunião quinzenal onde as regras mudam; nunca no meio de um ciclo</td></tr>
+</table>
+<hr>
+<h2>👥 5. Responsáveis e Papéis</h2>
+<table>
+<tr><th>Papel</th><th>O que faz</th><th>Responde pelo prazo</th></tr>
+<tr><td>Fornecedor ou zelador</td><td>Executa o serviço</td><td>Franquia</td></tr>
+<tr><td>Franquia</td><td>Contrata, paga e anexa a evidência no card</td><td>Franquia</td></tr>
+<tr><td>BackOffice</td><td>Envia comunicado, reforço e alerta; aciona o gestor da franquia no D+14</td><td>Time interno</td></tr>
+<tr><td>Manutenção</td><td>Valida a evidência. A validação é a aprovação: não existe segunda aprovação depois dela</td><td>Time interno</td></tr>
+<tr><td>Coordenação de Manutenção Recorrente</td><td>Dona das regras, do calendário e das exceções; assume os casos escalados e conduz a retro</td><td>Time interno</td></tr>
+<tr><td>Sistema (Sapron)</td><td>Registra o custo, fecha o card e agenda a próxima entrada. Não decide nada</td><td>—</td></tr>
+</table>
+<hr>
+<h2>🔄 6. Fluxo do Processo</h2>
+<ol>
+<li><b>Chega o mês</b> (Sistema): o calendário diz qual item cobrar</li>
+<li><b>Já foi lançado?</b> (Sistema): quatro perguntas antes de cobrar</li>
+<li><b>Cadência de comunicação</b> (BackOffice): comunicado, reforço, alerta e abertura dos cards</li>
+<li><b>Franquia executa</b> (Franquia): 15 dias úteis a partir da abertura</li>
+<li><b>Evidência no card</b> (Franquia): sem prova, o card não fecha</li>
+<li><b>Validar ou corrigir</b> (Manutenção): evidência errada ou incompleta volta para a franquia</li>
+<li><b>Aprovar e finalizar</b> (Sistema): custo registrado, próxima entrada agendada</li>
+<li><b>Monitorar</b> (Manutenção): todo dia, com retro a cada 15 dias</li>
+</ol>
+<blockquote><p><b>Atenção:</b> qualquer arquivo anexado move o card sozinho para "Aguardando aprovação". Serviço pela metade chega como se fosse conclusão. Por isso a devolução é sempre um ato humano, na coluna de aprovação.</p></blockquote>
+<hr>
+<h2>📋 7. Regras de Negócio</h2>
+<h3>7.1 Itens do processo</h3>
+<table>
+<tr><th>Item</th><th>Status</th><th>Periodicidade</th><th>Mês</th><th>Prazo à franquia</th></tr>
+<tr><td>Ar-condicionado + Split</td><td>✅ Cobrado</td><td>Anual</td><td>Setembro</td><td>15 dias úteis</td></tr>
+<tr><td>Filtro do exaustor</td><td>✅ Cobrado</td><td>Anual</td><td>Setembro</td><td>15 dias úteis</td></tr>
+<tr><td>Filtro de água</td><td>🟡 Pendente</td><td>a definir *</td><td>Abril e setembro</td><td>15 dias úteis</td></tr>
+<tr><td>Limpeza da caixa d'água</td><td>🟡 Pendente</td><td>a definir *</td><td>Abril e outubro</td><td>15 dias úteis</td></tr>
+<tr><td>Higienização de sofá / estofado</td><td>✅ Cobrado</td><td>Anual</td><td>Maio</td><td>15 dias úteis</td></tr>
+<tr><td>Higienização de colchão</td><td>✅ Cobrado</td><td>Anual</td><td>Maio</td><td>15 dias úteis</td></tr>
+<tr><td>Troca de travesseiro</td><td>✅ Cobrado</td><td>Anual</td><td>Novembro</td><td>15 dias úteis</td></tr>
+<tr><td>Higienização da máquina de lavar</td><td>✅ Cobrado</td><td>Anual</td><td>Agosto</td><td>15 dias úteis</td></tr>
+<tr><td>Dedetização</td><td>✅ Cobrado</td><td>Anual</td><td>Outubro</td><td>15 dias úteis</td></tr>
+<tr><td>Lavagem de cortinas</td><td>✅ Cobrado</td><td>Anual</td><td>Novembro</td><td>15 dias úteis</td></tr>
+<tr><td>Senha de fechadura eletrônica</td><td>🟡 Pendente</td><td>A cada check-out</td><td>—</td><td>sem prazo</td></tr>
+<tr><td>Troca de pilhas</td><td>🟡 Pendente</td><td>Por alerta de bateria</td><td>—</td><td>sem prazo</td></tr>
+</table>
+<p>Um item por linha, um card por serviço. Ar-condicionado e Split são o mesmo item. O filtro do exaustor é feito na mesma visita de setembro, mas tem card e evidência próprios.</p>
+<p>* Filtro de água e caixa d'água aparecem duas vezes no ano, o que não fecha com "anual". Ficam Pendente até a retro decidir: semestral, ou uma entrada é revisão e a outra é troca.</p>
+<h3>7.2 Calendário do ciclo</h3>
+<table>
+<tr><th>Mês</th><th>Itens</th><th>Entradas de card</th></tr>
+<tr><td>Abril</td><td>Filtro de água · Caixa d'água (reabre o ciclo)</td><td>2</td></tr>
+<tr><td>Maio</td><td>Sofá · Colchão</td><td>2</td></tr>
+<tr><td>Junho e julho</td><td>—</td><td>0</td></tr>
+<tr><td>Agosto</td><td>Máquina de lavar</td><td>1</td></tr>
+<tr><td>Setembro</td><td>Ar-condicionado · Filtro do exaustor · Filtro de água</td><td>3</td></tr>
+<tr><td>Outubro</td><td>Caixa d'água · Dedetização</td><td>2</td></tr>
+<tr><td>Novembro</td><td>Lavagem de cortinas · Travesseiro (vence antes do bloqueio)</td><td>2</td></tr>
+<tr><td>Dezembro a março</td><td>🔒 Bloqueio: nenhum card recorrente entra ou vence</td><td>—</td></tr>
+</table>
+<h3>7.3 Primeira execução e bloqueio</h3>
+<ul>
+<li><b>Primeira execução:</b> o imóvel entra no primeiro mês do calendário que ocorrer depois de 12 meses de ativação. Ativado em jul/2026 não entra em jul/2027 (julho não tem item); entra no ar-condicionado de set/2027.</li>
+<li><b>Ativado durante o bloqueio:</b> não abre card dentro da janela. Entra no primeiro ciclo válido de abril em diante, respeitando os mesmos 12 meses de ativação.</li>
+<li><b>Governança:</b> a Coordenação ajusta cadência e datas apenas na retro de 15 dias, nunca no meio de um ciclo.</li>
+</ul>
+<h3>7.4 Já foi lançado? (varredura)</h3>
+<p>Quatro perguntas, nessa ordem, a mais barata primeiro. Números reais do ar-condicionado, medidos em 16/09/2026 sobre 3.496 imóveis ativos:</p>
+<table>
+<tr><th>#</th><th>Pergunta</th><th>Barrados</th><th>Seguem</th></tr>
+<tr><td>1</td><td>O imóvel está ativo há mais tempo que o ciclo do item? (ar-condicionado: mais de 1 ano)</td><td>1.782</td><td>1.714</td></tr>
+<tr><td>2</td><td>O imóvel tem esse item no cadastro?</td><td>20</td><td>1.694</td></tr>
+<tr><td>3</td><td>Já existe despesa lançada desse item neste ciclo? (aprovada ou paga)</td><td>526</td><td>1.168</td></tr>
+<tr><td>4</td><td>Já existe manutenção registrada, mesmo sem despesa?</td><td>4</td><td>1.164</td></tr>
+</table>
+<p><b>Resultado do ciclo de ar-condicionado: 1.091 cards abrem.</b> 73 ficam indefinidos por falta de anúncio para conferir o cadastro.</p>
+<p>A elegibilidade vem do <b>anúncio do Airbnb</b> (data lake, 91,7% dos ativos casam), não da ficha de amenities do Sapron: 78% das fichas estão com todos os campos falsos. Só o ar-condicionado está medido; os outros itens são medidos um por retro.</p>
+<h3>7.5 Cadência de comunicação</h3>
+<p>Aviso na semana anterior à abertura. A abertura é sempre na <b>primeira segunda-feira útil do mês</b>.</p>
+<table>
+<tr><th>Dia</th><th>Ação</th><th>O que faz</th></tr>
+<tr><td>Terça</td><td>Comunicado</td><td>Avisa que vai ocorrer a manutenção</td></tr>
+<tr><td>Quinta</td><td>Reforço</td><td>Reforça o comunicado de terça</td></tr>
+<tr><td>Sábado</td><td>Alerta</td><td>Último aviso antes da segunda</td></tr>
+<tr><td>1ª segunda útil</td><td>Abertura</td><td>Os cards abrem. O lead time começa a contar aqui</td></tr>
+</table>
+<p><b>Próximo ciclo (outubro · caixa d'água e dedetização):</b> comunicado ter 29/09 · reforço qui 01/10 · alerta sáb 03/10 · abertura seg 05/10.</p>
+<p>Comunicado, reforço e alerta vão <b>um por franqueado</b>, com a lista dos imóveis no corpo. Na abertura é <b>um card por imóvel</b>, porque é o card que carrega prazo e evidência.</p>
+<h3>7.6 Evidência no card</h3>
+<p>Uma foto do serviço basta, no próprio card. Fora do card não conta. O que a foto precisa mostrar:</p>
+<table>
+<tr><th>Item</th><th>A foto precisa mostrar</th><th>Documento</th></tr>
+<tr><td>Ar-condicionado + Split</td><td>O aparelho aberto com o filtro removido e o filtro já limpo, no ambiente do imóvel</td><td>—</td></tr>
+<tr><td>Filtro do exaustor</td><td>O filtro novo instalado no exaustor</td><td>—</td></tr>
+<tr><td>Filtro de água</td><td>O filtro trocado no ponto de instalação, com a data da etiqueta visível quando houver</td><td>—</td></tr>
+<tr><td>Caixa d'água</td><td>A caixa aberta e limpa, e depois tampada</td><td>Certificado com CNPJ e responsável técnico</td></tr>
+<tr><td>Sofá / estofado e colchão</td><td>A peça durante a extração, molhada, no ambiente do imóvel</td><td>—</td></tr>
+<tr><td>Travesseiro</td><td>Os travesseiros novos sobre a cama, com etiqueta</td><td>—</td></tr>
+<tr><td>Máquina de lavar</td><td>Tambor e gaveta de sabão limpos, com a máquina aberta</td><td>—</td></tr>
+<tr><td>Dedetização</td><td>A aplicação em andamento no imóvel</td><td>Certificado com CNPJ, responsável técnico e praga alvo</td></tr>
+<tr><td>Lavagem de cortinas</td><td>A cortina de volta no trilho depois da lavagem</td><td>Nota do serviço, quando terceirizado</td></tr>
+</table>
+<p><b>Documento regulado</b> (RDC 52/2009 · Portaria nº 5/2017): sobe como anexo no próprio card. Quem valida confere, nessa ordem: CNPJ ativo do prestador · responsável técnico com registro no conselho · data dentro do ciclo corrente · imóvel identificado no documento. Faltou um, volta para a franquia.</p>
+<h3>7.7 Evidência parcial e devolução</h3>
+<ul>
+<li>Serviço parcial: o <b>mesmo card</b> volta para "Programada", com o prazo original correndo. Não se cria card novo nem subcard.</li>
+<li>Evidência devolvida mantém o prazo original, com piso de <b>3 dias úteis</b> para reapresentar.</li>
+</ul>
+<h3>7.8 Fluxo financeiro</h3>
+<p>A franquia contrata e paga o fornecedor. O custo entra como despesa do imóvel no Sapron, e é a despesa (aprovada ou paga, com o item da regra) que satisfaz o ciclo e fecha o card. Item lançado errado, o card não fecha sozinho. Quando o serviço é do proprietário, o custo segue o caminho de qualquer manutenção do imóvel.</p>
+<hr>
+<h2>🔑 8. Sistemas e Ferramentas</h2>
+<ul>
+<li><b>Sapron · Central de Manutenção, aba Recorrentes:</b> regras, varredura e cards</li>
+<li><b>Sapron · Despesas:</b> lançamento do custo que fecha o ciclo</li>
+<li><b>Data lake (anúncio do Airbnb):</b> elegibilidade do imóvel</li>
+</ul>
+<hr>
+<h2>⏳ 9. Prazos e SLA</h2>
+<table>
+<tr><th>Etapa</th><th>Prazo</th><th>Quem</th></tr>
+<tr><td>Executar e anexar a evidência</td><td>15 dias úteis a partir da abertura</td><td>Franquia</td></tr>
+<tr><td>Validar a evidência</td><td>2 dias úteis. Estourou, o relógio da franquia congela até a devolução sair</td><td>Manutenção</td></tr>
+<tr><td>Reapresentar evidência devolvida</td><td>Prazo original, com piso de 3 dias úteis</td><td>Franquia</td></tr>
+</table>
+<p><b>Passou do prazo</b> (dias corridos):</p>
+<table>
+<tr><th>Marco</th><th>Ação</th></tr>
+<tr><td>D+0</td><td>O card entra em atraso e passa a contar na régua</td></tr>
+<tr><td>D+7</td><td>Lembrete automático do Sapron para a franquia</td></tr>
+<tr><td>D+14</td><td>BackOffice aciona o gestor da franquia, por nome</td></tr>
+<tr><td>D+21</td><td>Coordenação assume o caso e define a tratativa</td></tr>
+<tr><td>Depois</td><td>O lembrete se repete a cada 7 dias enquanto o card estiver aberto</td></tr>
+</table>
+<hr>
+<h2>📊 10. Acompanhamento</h2>
+<ul>
+<li><b>Report · sexta, 09h:</b> ciclos em andamento, cards presos e gargalo de comunicação com a franquia, direto para Ray e Carol</li>
+<li><b>Retro a cada 15 dias:</b> a Coordenação convoca, com Manutenção e BackOffice na sala. Toda decisão sai em ata e vira versão nova deste processo</li>
+<li><b>Ciclo de qualidade:</b> identificar · analisar · priorizar · tratar · acompanhar · registrar</li>
+</ul>
+<blockquote><p><b>Regra de ouro:</b> nunca mudar o processo no meio de um ciclo. Fecha primeiro, aprende depois.</p></blockquote>
+<hr>
+<h2>⚠️ 11. Onde o sistema ainda não acompanha</h2>
+<table>
+<tr><th>Tema</th><th>O processo diz</th><th>O sistema faz</th><th>Contorno</th></tr>
+<tr><td>Fechamento por despesa</td><td>Despesa lançada fecha o card, sem esperar</td><td>Só verifica em varredura diária</td><td>Agente de fechamento (a construir), rodando de hora em hora</td></tr>
+<tr><td>Fechamento por evidência</td><td>Confere se a foto é do item certo e o documento tem os campos</td><td>Guarda o anexo e move o card</td><td>Conferência humana na coluna de aprovação, até o agente de validação de evidência assumir</td></tr>
+<tr><td>Calendário por item</td><td>Ar-condicionado é sempre setembro</td><td>A data nasce da ativação de cada imóvel</td><td>Coordenação conduz até a regra virar mês fixo</td></tr>
+<tr><td>Cadastro de ativos</td><td>Imóvel elegível reflete o que ele tem</td><td>78% das fichas nascem com tudo falso</td><td>Elegibilidade pelo anúncio do Airbnb</td></tr>
+<tr><td>Itens de lembrete</td><td>Senha a cada check-out; pilhas por alerta</td><td>Nada: sem card, prazo nem registro</td><td>Ficam Pendente até a retro decidir</td></tr>
+<tr><td>Regulação</td><td>RDC 52/2009 e Portaria nº 5/2017</td><td>Ninguém checou a exigência municipal</td><td>Levantar a exigência praça a praça</td></tr>
+<tr><td>Bloqueio dez–mar</td><td>Nada entra nem vence na alta temporada</td><td>A varredura roda o ano inteiro</td><td>Pausar as regras em 01/12 e reativar em 01/04</td></tr>
+</table>
+<hr>
+<h2>✅ 12. Checklist do ciclo</h2>
+<ul>
+<li>☐ Conferir no calendário quais itens entram no mês</li>
+<li>☐ Rodar a varredura e revisar barrados e indefinidos</li>
+<li>☐ Terça: comunicado · quinta: reforço · sábado: alerta</li>
+<li>☐ 1ª segunda útil: abrir os cards</li>
+<li>☐ Validar cada evidência em até 2 dias úteis</li>
+<li>☐ Acompanhar a régua de atraso (D+7, D+14, D+21)</li>
+<li>☐ Sexta 09h: report para Ray e Carol</li>
+</ul>
+<hr>
+<h2>📎 13. Documentos Relacionados</h2>
+<ul>
+<li>Processo de Manutenção Recorrente v2.1, documento completo (17/09/2026)</li>
+<li>Resposta à auditoria de 17/09/2026 (Rayanne Oliveira, BackOffice Franquias), ponto a ponto</li>
+</ul>
+<hr>
+<h2>🕓 14. Histórico de Alterações</h2>
+<table>
+<tr><th>Versão</th><th>Data</th><th>O que mudou</th></tr>
+<tr><td>v1.0</td><td>15/09/2026</td><td>Reescrito a partir da reunião com a Ray: oito etapas, prazo único de 15 dias úteis, calendário fixo por item, jardim e enxoval fora do escopo</td></tr>
+<tr><td>v2.0</td><td>16/09/2026</td><td>Registrado que o Sapron não confere evidência: quem valida hoje é uma pessoa</td></tr>
+<tr><td>v2.1</td><td>17/09/2026</td><td>Auditoria aplicada: matriz de evidência, régua de atraso, fluxo financeiro, SLAs internos e funil real do ar-condicionado</td></tr>
+</table>
+</body>
+</html>

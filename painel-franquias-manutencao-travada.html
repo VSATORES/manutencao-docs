@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Franquias com Manutenção Travada</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ground:#F2F5F3; --surface:#FFFFFF; --surface-2:#E9EFEC;
+  --line:#D6E0DB; --line-soft:#E6ECE9;
+  --ink:#151B26; --ink-2:#44524D; --ink-3:#6B7A74;
+  --accent:#2C8F73; --accent-soft:#E2F1EB;
+  --crit:#C0341F; --crit-bg:#FAE7E3;
+  --med:#C2810E; --med-bg:#FBF0DC;
+  --low:#2D8E71; --low-bg:#E2F1EB;
+  --blue:#2E62C4; --blue-bg:#E4EBF9;
+  --display:'Quicksand','Trebuchet MS',sans-serif;
+  --body:'IBM Plex Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --ground:#12161A; --surface:#1A1F23; --surface-2:#232A2E;
+    --line:#303A3E; --line-soft:#262E32;
+    --ink:#EDF2F0; --ink-2:#B3C0BB; --ink-3:#8A9994;
+    --accent:#4FC3A1; --accent-soft:#1E332C;
+    --crit:#F0705C; --crit-bg:#3A201B;
+    --med:#E8B33C; --med-bg:#362C16;
+    --low:#4FC3A1; --low-bg:#1E332C;
+    --blue:#7BA3F0; --blue-bg:#1C2740;
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#12161A; --surface:#1A1F23; --surface-2:#232A2E;
+  --line:#303A3E; --line-soft:#262E32;
+  --ink:#EDF2F0; --ink-2:#B3C0BB; --ink-3:#8A9994;
+  --accent:#4FC3A1; --accent-soft:#1E332C;
+  --crit:#F0705C; --crit-bg:#3A201B;
+  --med:#E8B33C; --med-bg:#362C16;
+  --low:#4FC3A1; --low-bg:#1E332C;
+  --blue:#7BA3F0; --blue-bg:#1C2740;
+}
+*{box-sizing:border-box;}
+body{margin:0; background:var(--ground); color:var(--ink); font-family:var(--body); line-height:1.5;}
+.wrap{max-width:1100px; margin:0 auto; padding-inline:16px; padding-block:40px 64px;}
+h1,h2,h3,h4{font-family:var(--display); text-wrap:balance; margin:0;}
+p{margin:0;}
+.eyebrow{font-family:var(--display); font-size:12px; font-weight:700; letter-spacing:.14em;
+  text-transform:uppercase; color:var(--accent);}
+header h1{font-size:clamp(28px,5vw,40px); font-weight:700; letter-spacing:-.01em; margin-top:10px;}
+.sub{color:var(--ink-2); font-size:15px; margin-top:12px; max-width:64ch;}
+.meta{display:flex; flex-wrap:wrap; gap:8px 22px; margin-top:18px; font-size:13px; color:var(--ink-3);}
+.meta b{font-weight:600; color:var(--ink-2);}
+
+.tablebox{overflow-x:auto; border:1px solid var(--line); border-radius:10px; background:var(--surface);}
+table{border-collapse:collapse; width:100%; font-size:13.2px;}
+th{font-family:var(--display); font-size:10.5px; font-weight:700; letter-spacing:.09em;
+  text-transform:uppercase; color:var(--ink-3); text-align:left; padding:12px 14px;
+  border-bottom:1px solid var(--line); background:var(--surface-2); white-space:nowrap;}
+td{padding:11px 14px; border-bottom:1px solid var(--line-soft); vertical-align:top; color:var(--ink-2);}
+tr:last-child td{border-bottom:0;}
+
+/* comparativo do topo */
+.comp{margin-top:32px;}
+.comp table{min-width:640px;}
+.comp td.f{font-weight:700; color:var(--ink); white-space:nowrap;}
+.comp td.n{font-variant-numeric:tabular-nums; text-align:center; white-space:nowrap;}
+.comp td.n.bad{color:var(--crit); font-weight:700;}
+
+/* blocos de franquia */
+.franq{margin-top:56px;}
+.fhead{display:flex; align-items:baseline; justify-content:space-between; gap:12px; flex-wrap:wrap;
+  padding-bottom:12px; border-bottom:2px solid var(--ink);}
+.franq.f1 .fhead{border-bottom-color:var(--crit);}
+.franq.f2 .fhead{border-bottom-color:var(--med);}
+.franq.f3 .fhead{border-bottom-color:var(--accent);}
+.fhead h2{font-size:24px; font-weight:700; letter-spacing:-.01em;}
+.fhead .code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:12px;
+  color:var(--ink-3); background:var(--surface-2); padding:4px 9px; border-radius:5px; white-space:nowrap;}
+
+.stats{display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-top:18px;}
+@media (max-width:900px){ .stats{grid-template-columns:repeat(2,1fr);} }
+.st{background:var(--surface); border:1px solid var(--line); border-radius:9px; padding:14px 16px;}
+.st .v{font-family:var(--display); font-size:clamp(24px,4.4vw,30px); font-weight:700; line-height:1.1;
+  letter-spacing:-.02em; font-variant-numeric:tabular-nums;}
+.st .v small{font-size:14px; font-weight:600; color:var(--ink-3); margin-left:2px;}
+.st .k{font-size:11.8px; color:var(--ink-3); margin-top:5px; line-height:1.35;}
+.st.hot{border-color:var(--crit);} .st.hot .v{color:var(--crit);}
+.st.warn{border-color:var(--med);} .st.warn .v{color:var(--med);}
+.st.info{border-color:var(--blue);} .st.info .v{color:var(--blue);}
+
+/* tabela de cards */
+.cards{margin-top:20px;}
+.cards table{min-width:820px;}
+.cards td.im{white-space:nowrap; font-weight:700; color:var(--ink);
+  font-family:var(--display); font-size:14px;}
+.cards td.im span{display:block; font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
+  font-size:10.5px; font-weight:400; color:var(--ink-3); margin-top:3px; letter-spacing:0;}
+.cards td.urg{white-space:nowrap;}
+.cards td.desc{color:var(--ink); min-width:380px; line-height:1.45;}
+.cards td.desc em{display:block; font-style:normal; font-size:11.5px; color:var(--ink-3); margin-top:4px;}
+.cards td.atr{font-variant-numeric:tabular-nums; text-align:right; white-space:nowrap; font-weight:700;}
+.cards td.atr.a{color:var(--crit);}
+.cards td.atr.b{color:var(--med);}
+.cards td.atr.n{color:var(--ink-3); font-weight:500;}
+.cards tbody tr:hover td{background:var(--surface-2);}
+
+.tag{display:inline-flex; align-items:center; gap:5px; font-size:10.5px; font-weight:700;
+  padding:3px 9px; border-radius:999px; white-space:nowrap; letter-spacing:.03em;}
+.tag.a{background:var(--crit-bg); color:var(--crit);}
+.tag.b{background:var(--med-bg); color:var(--med);}
+.tag.c{background:var(--low-bg); color:var(--low);}
+.tag.n{background:var(--blue-bg); color:var(--blue);}
+
+.concl{margin-top:20px; background:var(--surface); border:1px solid var(--line);
+  border-left:3px solid var(--ink-3); border-radius:0 10px 10px 0; padding:20px 22px;}
+.franq.f1 .concl{border-left-color:var(--crit);}
+.franq.f2 .concl{border-left-color:var(--med);}
+.franq.f3 .concl{border-left-color:var(--accent);}
+.concl h3{font-size:15px; font-weight:700;}
+.concl p{font-size:14px; color:var(--ink-2); margin-top:10px;}
+.concl p b{color:var(--ink); font-weight:600;}
+.concl .veredito{margin-top:14px; padding-top:12px; border-top:1px solid var(--line-soft);
+  font-size:14px; color:var(--ink); font-weight:600;}
+
+.nota{margin-top:26px; background:var(--surface); border:1px solid var(--line);
+  border-left:3px solid var(--blue); border-radius:0 10px 10px 0; padding:16px 20px;}
+.nota p{font-size:13.5px; color:var(--ink-2);}
+.nota p b{color:var(--ink); font-weight:600;}
+
+.foot{margin-top:56px; padding-top:22px; border-top:1px solid var(--line);
+  font-size:12.5px; color:var(--ink-3);}
+.foot p + p{margin-top:8px;}
+.foot code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:11.8px;
+  background:var(--surface-2); padding:1px 5px; border-radius:4px; color:var(--ink-2);}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <p class="eyebrow">Central de Manutenção · Painel de cobrança</p>
+  <h1>Três franquias, 57 manutenções travadas</h1>
+  <p class="sub">Todos os cards de manutenção abertos das franquias Patrick, Dreicom e Evelyn,
+  com urgência, o que precisa ser corrigido e há quanto tempo o prazo venceu. Um quadro por
+  franquia, com o panorama no fim de cada um.</p>
+  <div class="meta">
+    <span><b>Data de corte</b> 21/09/2026</span>
+    <span><b>Fonte</b> Sapron · maintenance_maintenancecard</span>
+    <span><b>Recorte</b> status fora de concluído e cancelada</span>
+  </div>
+</header>
+
+<div class="comp tablebox">
+  <table>
+    <thead>
+      <tr>
+        <th>Franquia</th>
+        <th style="text-align:center;">Travadas</th>
+        <th style="text-align:center;">Vencidas</th>
+        <th style="text-align:center;">Críticas</th>
+        <th style="text-align:center;">Imóveis<br>afetados</th>
+        <th style="text-align:center;">% da<br>carteira</th>
+        <th style="text-align:center;">Atraso<br>médio</th>
+        <th style="text-align:center;">Pior<br>atraso</th>
+        <th style="text-align:center;">Dias p/<br>concluir</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="f">Patrick Josoe Brando</td>
+        <td class="n bad">42</td><td class="n">41</td><td class="n bad">19</td>
+        <td class="n">12</td><td class="n bad">92%</td><td class="n">60 d</td>
+        <td class="n">108 d</td><td class="n">43 d</td>
+      </tr>
+      <tr>
+        <td class="f">Dreicom Adolfo Neckel Wolter</td>
+        <td class="n">11</td><td class="n">10</td><td class="n">5</td>
+        <td class="n">10</td><td class="n">22%</td><td class="n">79 d</td>
+        <td class="n bad">122 d</td><td class="n bad">150 d</td>
+      </tr>
+      <tr>
+        <td class="f">Evelyn Gabriela dos Santos</td>
+        <td class="n">4</td><td class="n">2</td><td class="n">1</td>
+        <td class="n">2</td><td class="n">13%</td><td class="n">32 d</td>
+        <td class="n">32 d</td><td class="n">40 d</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="nota">
+  <p><b>A urgência aqui foi atribuída à mão.</b> Os 57 cards estão no Sapron com
+  <code>urgent = false</code> e sem nenhum campo de IA preenchido — em toda a base de 5.927 cards,
+  zero têm classificação. O agente de urgência está pronto e inerte: falta a flag no PostHog e a
+  chave do AI Hub em produção. <b>Crítica</b> = risco, segurança ou dano que piora sozinho.
+  <b>Média</b> = função essencial parada. <b>Baixa</b> = reposição de item.</p>
+</div>
+
+<!-- ======================= PATRICK ======================= -->
+<div class="franq f1">
+  <div class="fhead">
+    <h2>Patrick Josoe Brando</h2>
+    <span class="code">host 293 · 14 imóveis · 13 ativos</span>
+  </div>
+
+  <div class="stats">
+    <div class="st hot"><p class="v">42</p><p class="k">manutenções travadas</p></div>
+    <div class="st hot"><p class="v">41</p><p class="k">com prazo vencido · 1 sem prazo</p></div>
+    <div class="st hot"><p class="v">19</p><p class="k">críticas — risco ou habitabilidade</p></div>
+    <div class="st hot"><p class="v">12 <small>/13</small></p><p class="k">imóveis ativos com pendência (92%)</p></div>
+    <div class="st"><p class="v">60 <small>d</small></p><p class="k">atraso médio · pior: 108 dias</p></div>
+    <div class="st"><p class="v">1 <small>/42</small></p><p class="k">com evidência entregue</p></div>
+    <div class="st warn"><p class="v">R$ 140</p><p class="k">gasto nos 8 VLE, que somam 32 dos 42 cards</p></div>
+    <div class="st"><p class="v">R$ 250</p><p class="k">multa aplicada em 16/09 (a 2ª, segundo a área)</p></div>
+  </div>
+
+  <div class="cards tablebox">
+    <table>
+      <thead>
+        <tr><th>Imóvel</th><th>Urgência</th><th>O que precisa ser corrigido</th><th style="text-align:right;">Atraso</th></tr>
+      </thead>
+      <tbody>
+
+        <tr><td class="im">AGS0642<span>card 837</span></td><td class="urg"><span class="tag a">Crítica</span></td>
+        <td class="desc">Disjuntores caindo o dia inteiro, deixando chuveiro frio e bomba d'água parada. Cheiro forte de mofo num quarto. Porta com maçaneta arrombada. Rampa da garagem causou duas quedas.<em>Avaliação de hóspede em 11/07: "não recomendo o local"</em></td>
+        <td class="atr a">56 d</td></tr>
+
+        <tr><td class="im">AGS0642<span>card 705</span></td><td class="urg"><span class="tag a">Crítica</span></td>
+        <td class="desc">Teto com infiltração. Porta danificada e sem fechadura. Quatro ar-condicionados a higienizar, cortinas com mofo, tomadas do banheiro quebradas, lâmpadas queimadas, fogão a gás nunca testado.<em>Evidência entregue em 08/09 — aguardando nossa aprovação</em></td>
+        <td class="atr a">108 d</td></tr>
+
+        <tr><td class="im">AGS0642<span>card 957</span></td><td class="urg"><span class="tag a">Crítica</span></td>
+        <td class="desc">Porta do quarto de solteiro com sinais de arrombamento.</td>
+        <td class="atr b">27 d</td></tr>
+
+        <tr><td class="im">AGS0642<span>card 959</span></td><td class="urg"><span class="tag b">Média</span></td>
+        <td class="desc">Tomada do banheiro da suíte sem funcionar.</td>
+        <td class="atr b">27 d</td></tr>
+
+        <tr><td class="im">AGS0642<span>card 958</span></td><td class="urg"><span class="tag b">Média</span></td>
+        <td class="desc">Quatro lâmpadas queimadas: banheiro da escada, quarto de solteiro, sala e mesa de jantar.</td>
+        <td class="atr b">27 d</td></tr>
+
+        <tr><td class="im">AGS0642<span>card 956</span></td><td class="urg"><span class="tag c">Baixa</span></td>
+        <td class="desc">Faltam 2 garfos, 2 facas e 4 colheres. Trocar tábua de madeira e forma manchada.</td>
+        <td class="atr b">27 d</td></tr>
+
+        <tr><td class="im">SDN042<span>card 791</span></td><td class="urg"><span class="tag a">Crítica</span></td>
+        <td class="desc">Chuveiro e vaso sanitário com vazamento, ralo da pia não escoa. Fogão com só 3 bocas acendendo e sem acendimento automático. Três ar-condicionados não esquentam. Geladeira bastante enferrujada.</td>
+        <td class="atr a">69 d</td></tr>
+
+        <tr><td class="im">CCM004<span>card 704</span></td><td class="urg"><span class="tag a">Crítica</span></td>
+        <td class="desc">Ar-condicionado e lâmpadas não funcionaram na vistoria. Porta sem chave e sem acabamento da fechadura. Registros do chuveiro soltando. TV e controle não funcionaram. Fogão da área gourmet nunca testado — franquia não soube dizer se está ligado ao gás.</td>
+        <td class="atr a">108 d</td></tr>
+
+        <tr><td class="im">CCM004<span>card 726</span></td><td class="urg"><span class="tag c">Baixa</span></td>
+        <td class="desc">Falta secador de cabelo.</td>
+        <td class="atr a">98 d</td></tr>
+
+        <tr><td class="im">VDT0401<span>card 714</span></td><td class="urg"><span class="tag a">Crítica</span></td>
+        <td class="desc">Porta sem chave. Torneira da sacada com vazamento. Persiana não abre. Papel de parede soltando no corredor e faltando pedaço no quarto.</td>
+        <td class="atr a">108 d</td></tr>
+
+        <tr><td class="im">VLE001<span>card 706</span></td><td class="urg"><span class="tag a">Crítica</span></td>
+        <td class="desc">Parede com infiltração. Duas portas de correr sem fechadura e sem trinco. Fogão e forno nunca testados. Chuveirinho sem suporte, ar-condicionado a higienizar.</td>
+        <td class="atr a">108 d</td></tr>
+
+        <tr><td class="im">VLE001<span>card 934</span></td><td class="urg"><span class="tag b">Média</span></td>
+        <td class="desc">Assento de privada muito acabado. Escova sanitária quebrada.</td>
+        <td class="atr b">28 d</td></tr>
+
+        <tr><td class="im">VLE001<span>card 933</span></td><td class="urg"><span class="tag c">Baixa</span></td>
+        <td class="desc">Falta liquidificador e colher de cozinhar. Sanduicheira quebrada, cafeteira sem filtro, grelha amassada.</td>
+        <td class="atr b">28 d</td></tr>
+
+        <tr><td class="im">VLE002<span>card 707</span></td><td class="urg"><span class="tag a">Crítica</span></td>
+        <td class="desc">Parede com rachadura. Porta sem chave e porta sem puxador. Fogão e forno nunca testados. Escova sanitária quebrada.</td>
+        <td class="atr a">108 d</td></tr>
+
+        <tr><td class="im">VLE002<span>card 722</span></td><td class="urg"><span class="tag b">Média</span></td>
+        <td class="desc">Controle da TV não liga nem desliga.</td>
+        <td class="atr a">98 d</td></tr>
+
+        <tr><td class="im">VLE002<span>card 723</span></td><td class="urg"><span class="tag b">Média</span></td>
+        <td class="desc">Fogão com coloração escura, tipo queimado — precisa de higienização pesada.</td>
+        <td class="atr a">98 d</td></tr>
+
+        <tr><td class="im">VLE002<span>card 724</span></td><td class="urg"><span class="tag b">Média</span></td>
+        <td class="desc">Muita sujeira acumulada nas borrachas da geladeira.</td>
+        <td class="atr a">98 d</td></tr>
+
+        <tr><td class="im">VLE003<span>card 708</span></td><td class="urg"><span class="tag a">Crítica</span></td>
+        <td class="desc">Porta do quarto sem chave. Fogão e forno nunca testados. Sanduicheira com luz que não acende.</td>
+        <td class="atr a">108 d</td></tr>
+
+        <tr><td class="im">VLE003<span>card 940</span></td><td class="urg"><span class="tag a">Crítica</span></td>
+        <td class="desc">Assentos de privada inutilizáveis nos dois banheiros. Puxador da gaveta da cozinha quebrado.<em>Único card do condomínio marcado como "grave" pelo consultor</em></td>
+        <td class="atr b">28 d</td></tr>
+
+        <tr><td class="im">VLE003<span>card 938</span></td><td class="urg"><span class="tag b">Média</span></td>
+        <td class="desc">Controle da TV sem funcionar direito — não foi possível acessar a smart TV.</td>
+        <td class="atr b">28 d</td></tr>
+
+        <tr><td class="im">VLE003<span>card 939</span></td><td class="urg"><span class="tag b">Média</span></td>
+        <td class="desc">Colheres de cozinhar derretidas e mofadas. Sanduicheira remendada com fita isolante. Falta liquidificador e ferro, cafeteira sem filtro, caneca quebrada.</td>
+        <td class="atr b">28 d</td></tr>
+
+        <tr><td class="im">VLE003<span>card 725</span></td><td class="urg"><span class="tag c">Baixa</span></td>
+        <td class="desc">Falta liquidificador e ferro de passar.</td>
+        <td class="atr a">98 d</td></tr>
+
+        <tr><td class="im">VLE004<span>card 709</span></td><td class="urg"><span class="tag a">Crítica</span></td>
+        <td class="desc">Porta do quarto sem fechadura. Fogão a gás e forno nunca testados. Faltam 2 facas de corte e 2 panelas.</td>
+        <td class="atr a">108 d</td></tr>
+
+        <tr><td class="im">VLE004<span>card 936</span></td><td class="urg"><span class="tag b">Média</span></td>
+        <td class="desc">Freezer cheio de gelo, precisa de desgelo.<em>Já foi dado como resolvido em 08/06 e voltou na visita de 17/08</em></td>
+        <td class="atr b">28 d</td></tr>
+
+        <tr><td class="im">VLE004<span>card 937</span></td><td class="urg"><span class="tag b">Média</span></td>
+        <td class="desc">Assento de privada inutilizável e manchado.<em>Há despesa aprovada de 21/08 com essa mesma troca — conferir antes de cobrar</em></td>
+        <td class="atr b">28 d</td></tr>
+
+        <tr><td class="im">VLE004<span>card 935</span></td><td class="urg"><span class="tag c">Baixa</span></td>
+        <td class="desc">Falta liquidificador e colheres de cozinhar. Cafeteira sem filtro.</td>
+        <td class="atr b">28 d</td></tr>
+
+        <tr><td class="im">VLE005<span>card 710</span></td><td class="urg"><span class="tag a">Crítica</span></td>
+        <td class="desc">Duas portas sem chave. Tomada sem acabamento perto do armário. Fogão e forno nunca testados. Tampa do freezer a substituir.</td>
+        <td class="atr a">108 d</td></tr>
+
+        <tr><td class="im">VLE005<span>card 941</span></td><td class="urg"><span class="tag a">Crítica</span></td>
+        <td class="desc">Ar-condicionado do quarto de solteiro não liga. Ar-condicionado do quarto de casal não ventila.</td>
+        <td class="atr b">28 d</td></tr>
+
+        <tr><td class="im">VLE005<span>card 944</span></td><td class="urg"><span class="tag a">Crítica</span></td>
+        <td class="desc">Cupim na porta do quarto, na porta da sala e na janela da sala.</td>
+        <td class="atr b">28 d</td></tr>
+
+        <tr><td class="im">VLE005<span>card 946</span></td><td class="urg"><span class="tag a">Crítica</span></td>
+        <td class="desc">Cupim no armário da TV. Tampa da privada manchada e ruim.</td>
+        <td class="atr b">28 d</td></tr>
+
+        <tr><td class="im">VLE005<span>card 942</span></td><td class="urg"><span class="tag b">Média</span></td>
+        <td class="desc">TV não liga — verificar controle.</td>
+        <td class="atr b">28 d</td></tr>
+
+        <tr><td class="im">VLE005<span>card 945</span></td><td class="urg"><span class="tag b">Média</span></td>
+        <td class="desc">Plafon da cozinha queimado.</td>
+        <td class="atr b">28 d</td></tr>
+
+        <tr><td class="im">VLE005<span>card 943</span></td><td class="urg"><span class="tag c">Baixa</span></td>
+        <td class="desc">Falta liquidificador, ferro de passar e colheres de cozinhar.</td>
+        <td class="atr b">28 d</td></tr>
+
+        <tr><td class="im">VLE006<span>card 711</span></td><td class="urg"><span class="tag a">Crítica</span></td>
+        <td class="desc">Porta sem chave. Duas lâmpadas queimadas (corredor e ventilador da sala). Chuveiro sem suporte de fixação. Falta torneira na área de serviço. Fogão e forno nunca testados.</td>
+        <td class="atr a">108 d</td></tr>
+
+        <tr><td class="im">VLE006<span>card 950</span></td><td class="urg"><span class="tag a">Crítica</span></td>
+        <td class="desc">Cupim no armário do banheiro. Assento da privada sujo.</td>
+        <td class="atr b">28 d</td></tr>
+
+        <tr><td class="im">VLE006<span>card 949</span></td><td class="urg"><span class="tag b">Média</span></td>
+        <td class="desc">Lâmpada da cozinha queimada.</td>
+        <td class="atr b">28 d</td></tr>
+
+        <tr><td class="im">VLE006<span>card 948</span></td><td class="urg"><span class="tag c">Baixa</span></td>
+        <td class="desc">Luz interna da geladeira queimada.</td>
+        <td class="atr b">28 d</td></tr>
+
+        <tr><td class="im">VLE006<span>card 947</span></td><td class="urg"><span class="tag c">Baixa</span></td>
+        <td class="desc">Falta liquidificador e ferro de passar. Forma de inox acabada.</td>
+        <td class="atr b">28 d</td></tr>
+
+        <tr><td class="im">VLE007<span>card 712</span></td><td class="urg"><span class="tag a">Crítica</span></td>
+        <td class="desc">Banheiro sem janela, sem exaustor e sem nenhuma saída de ar. Lâmpada perto da cozinha queimada. Falta 1 panela e 1 travesseiro.</td>
+        <td class="atr a">108 d</td></tr>
+
+        <tr><td class="im">VLE007<span>card 951</span></td><td class="urg"><span class="tag c">Baixa</span></td>
+        <td class="desc">Falta liquidificador e ferro de passar. Cafeteira sem filtro.</td>
+        <td class="atr b">28 d</td></tr>
+
+        <tr><td class="im">VLE008<span>card 5838</span></td><td class="urg"><span class="tag a">Crítica</span></td>
+        <td class="desc">Lençóis e toalhas manchados. Sofá manchado e empoeirado. Utensílios de cozinha sujos. Jogos de taças a substituir.<em>Avaliação de hóspede em 02/09 · card sem prazo e nunca cobrado</em></td>
+        <td class="atr n">sem prazo</td></tr>
+
+        <tr><td class="im">VLE008<span>card 713</span></td><td class="urg"><span class="tag b">Média</span></td>
+        <td class="desc">Portas do banheiro sem chave. Cortina da sala a higienizar. Falta escova sanitária, 2 travesseiros e repetidor de Wi-Fi.</td>
+        <td class="atr a">108 d</td></tr>
+
+      </tbody>
+    </table>
+  </div>
+
+  <div class="concl">
+    <h3>Panorama — Patrick Josoe Brando</h3>
+    <p><b>Não é uma franquia com pendências: é uma franquia que parou de fazer manutenção.</b>
+    Doze dos treze imóveis ativos têm card aberto — 92% da carteira. São 42 travadas, 41 já
+    vencidas, e apenas <b>uma</b> tem evidência entregue. Nas outras 41 não existe foto, nota nem
+    resposta.</p>
+    <p><b>O dinheiro mostra onde está a escolha.</b> A franquia gastou R$ 4.334,46 em manutenção
+    desde maio, mas 92% disso em três imóveis (CCM004, AGS0642 e ROX0325). Nos oito imóveis do
+    condomínio VLE, que concentram 32 dos 42 cards, o gasto foi de <b>R$ 140</b> — duas tampas de
+    vaso, em 21/08, ambas pagas pelo proprietário. Não é falta de caixa uniforme; é priorização.</p>
+    <p><b>O que já chegou no hóspede.</b> O card 837 nasceu de uma avaliação que termina com "não
+    recomendo o local" — disjuntores caindo seis vezes por dia, mofo, porta arrombada, rampa que
+    derrubou duas pessoas. Está aberto há 56 dias. O card do VLE008 veio de outra avaliação e
+    nasceu sem prazo, ou seja, nunca entrou na régua de cobrança.</p>
+    <p><b>Os oito imóveis VLE estão vazios hoje e recebem hóspede no dia 29/09</b> — uma entrada
+    por unidade, todas no mesmo dia. É a única janela limpa que existe e ela fecha em 8 dias.</p>
+    <div class="veredito">Veredito: caso crítico confirmado. A segunda multa já está aplicada; o
+    próximo degrau é prazo formal com data, ou distrato. Mas duas coisas são nossas antes de
+    cobrar: aprovar o card 705 (parado desde 08/09) e carimbar prazo no 5838.</div>
+  </div>
+</div>
+
+<!-- ======================= DREICOM ======================= -->
+<div class="franq f2">
+  <div class="fhead">
+    <h2>Dreicom Adolfo Neckel Wolter</h2>
+    <span class="code">host 148 · BLU-001-CEN · 68 imóveis · 46 ativos</span>
+  </div>
+
+  <div class="stats">
+    <div class="st"><p class="v">11</p><p class="k">manutenções travadas</p></div>
+    <div class="st warn"><p class="v">10</p><p class="k">com prazo vencido · 1 sem prazo</p></div>
+    <div class="st warn"><p class="v">5</p><p class="k">críticas — risco ou habitabilidade</p></div>
+    <div class="st"><p class="v">10 <small>/46</small></p><p class="k">imóveis ativos com pendência (22%)</p></div>
+    <div class="st hot"><p class="v">150 <small>d</small></p><p class="k">média histórica para concluir um card</p></div>
+    <div class="st hot"><p class="v">122 <small>d</small></p><p class="k">o card mais antigo ainda aberto</p></div>
+    <div class="st info"><p class="v">3 <small>/11</small></p><p class="k">já entregues, esperando nossa aprovação</p></div>
+    <div class="st warn"><p class="v">R$ 0</p><p class="k">em manutenção própria desde 24/05</p></div>
+  </div>
+
+  <div class="cards tablebox">
+    <table>
+      <thead>
+        <tr><th>Imóvel</th><th>Urgência</th><th>O que precisa ser corrigido</th><th style="text-align:right;">Atraso</th></tr>
+      </thead>
+      <tbody>
+
+        <tr><td class="im">NCS0003<span>card 842</span></td><td class="urg"><span class="tag a">Crítica</span></td>
+        <td class="desc">Infiltração no quarto do térreo.<em>Avaliação de hóspede em 08/07: "quarto do térreo cheio de infiltração"</em></td>
+        <td class="atr a">55 d</td></tr>
+
+        <tr><td class="im">SPT0301<span>card 732</span></td><td class="urg"><span class="tag a">Crítica</span></td>
+        <td class="desc">Vazamento na torneira da pia do banheiro. Assento do vaso sanitário velho.<em>Avaliação de hóspede em 09/06</em></td>
+        <td class="atr a">96 d</td></tr>
+
+        <tr><td class="im">SPT0301<span>card 735</span></td><td class="urg"><span class="tag a">Crítica</span></td>
+        <td class="desc">Teto do banheiro com manchas — provavelmente o mesmo problema do vazamento acima. Faltam 2 travesseiros, pegador de macarrão, peneira, jarra de água e balde.</td>
+        <td class="atr a">94 d</td></tr>
+
+        <tr><td class="im">SPT0505<span>card 734</span></td><td class="urg"><span class="tag a">Crítica</span></td>
+        <td class="desc">Banheiro sem nenhuma saída de ar. Lâmpada queimada perto da janela. Sanduicheira precisando de limpeza. Faltam 2 travesseiros, 1 cabide, pegador, peneira, jarra e balde.</td>
+        <td class="atr a">94 d</td></tr>
+
+        <tr><td class="im">PIN1904<span>card 5913</span></td><td class="urg"><span class="tag a">Crítica</span></td>
+        <td class="desc">Micro-ondas sem funcionar.<em>Avaliação de hóspede em 11/09 · card sem prazo e nunca cobrado · hóspede no imóvel até 30/09</em></td>
+        <td class="atr n">sem prazo</td></tr>
+
+        <tr><td class="im">SPT0303<span>card 691</span></td><td class="urg"><span class="tag b">Média</span></td>
+        <td class="desc">Lençol queen manchado de sangue, sem possibilidade de limpeza — precisa de reposição. R$ 208,99.<em>Card mais antigo das três franquias</em></td>
+        <td class="atr a">122 d</td></tr>
+
+        <tr><td class="im">PIN1901<span>card 699</span></td><td class="urg"><span class="tag b">Média</span></td>
+        <td class="desc">Porta da geladeira amassada por dano de hóspede, sem possibilidade de desamassar — precisa de porta nova. R$ 1.300,00.<em>Evidência entregue em 19/09 — aguardando nossa aprovação</em></td>
+        <td class="atr a">109 d</td></tr>
+
+        <tr><td class="im">SPT0110<span>card 740</span></td><td class="urg"><span class="tag b">Média</span></td>
+        <td class="desc">Controle da TV danificado, lençol e toalha manchados, cortina a refixar. R$ 588,92 em danos.<em>Imóvel em locação longa até 15/08/2027 — sem janela de acesso</em></td>
+        <td class="atr a">88 d</td></tr>
+
+        <tr><td class="im">RUP1005<span>card 742</span></td><td class="urg"><span class="tag b">Média</span></td>
+        <td class="desc">Cadeira com assento frouxo. Sanduicheira com presilha quebrada. Suporte do desviador do chuveiro quebrado.<em>Avaliação de hóspede em 12/06, nota 6</em></td>
+        <td class="atr a">87 d</td></tr>
+
+        <tr><td class="im">OLA0006<span>card 664</span></td><td class="urg"><span class="tag c">Baixa</span></td>
+        <td class="desc">Uma lâmpada queimada no quarto.<em>Evidência entregue em 18/09 — aguardando nossa aprovação</em></td>
+        <td class="atr b">19 d</td></tr>
+
+        <tr><td class="im">ELN0905<span>card 967</span></td><td class="urg"><span class="tag c">Baixa</span></td>
+        <td class="desc">Repor 1 taça.<em>Evidência entregue em 18/09 — aguardando nossa aprovação</em></td>
+        <td class="atr b">26 d</td></tr>
+
+      </tbody>
+    </table>
+  </div>
+
+  <div class="concl">
+    <h3>Panorama — Dreicom Adolfo Neckel Wolter</h3>
+    <p><b>O problema não é volume, é velocidade.</b> Onze cards em dez imóveis de uma carteira de
+    46 ativos é 22% — nada alarmante. Mas o histórico é o pior das três: <b>150 dias em média</b>
+    entre abrir e concluir um card, contra 43 do Patrick e 40 da Evelyn. Dez dos onze já venceram,
+    e o mais antigo está parado há 122 dias.</p>
+    <p><b>Um terço da fila é nossa.</b> Três cards estão com evidência entregue entre 18 e 19/09 e
+    aguardam aprovação — inclusive a porta de geladeira de R$ 1.300. Enquanto não forem aprovados,
+    qualquer cobrança nesta franquia sai pela metade.</p>
+    <p><b>Gasto próprio: zero.</b> Os R$ 1.323,89 lançados desde maio são todos reembolso de dano
+    de hóspede, pagos pelo proprietário. Em manutenção corretiva própria não há lançamento nenhum
+    desde 24/05.</p>
+    <p><b>Dois casos exigem decisão, não cobrança.</b> O SPT0110 está em locação longa até
+    <b>agosto de 2027</b> — não existe janela de acesso, e o card vai envelhecer para sempre na
+    régua. O banheiro sem saída de ar do SPT0505 é obra, não manutenção.</p>
+    <div class="veredito">Veredito: franquia que faz, mas devagar demais. O caminho aqui é prazo
+    curto e acompanhado, não multa — e começa aprovando os três cards que ela já entregou.</div>
+  </div>
+</div>
+
+<!-- ======================= EVELYN ======================= -->
+<div class="franq f3">
+  <div class="fhead">
+    <h2>Evelyn Gabriela dos Santos</h2>
+    <span class="code">host 53 · FLN-003-CAN · 28 imóveis · 15 ativos</span>
+  </div>
+
+  <div class="stats">
+    <div class="st"><p class="v">4</p><p class="k">manutenções travadas</p></div>
+    <div class="st"><p class="v">2</p><p class="k">com prazo vencido · 1 sem prazo · 1 no prazo</p></div>
+    <div class="st"><p class="v">1</p><p class="k">crítica — e é um card malformado</p></div>
+    <div class="st"><p class="v">2 <small>/15</small></p><p class="k">imóveis ativos com pendência (13%)</p></div>
+    <div class="st"><p class="v">40 <small>d</small></p><p class="k">média histórica para concluir um card</p></div>
+    <div class="st info"><p class="v">3 <small>/4</small></p><p class="k">já entregues, esperando nossa aprovação</p></div>
+    <div class="st warn"><p class="v">9 <small>/10</small></p><p class="k">entregas anteriores saíram fora do prazo</p></div>
+    <div class="st"><p class="v">R$ 460</p><p class="k">em manutenção corretiva própria desde maio</p></div>
+  </div>
+
+  <div class="cards tablebox">
+    <table>
+      <thead>
+        <tr><th>Imóvel</th><th>Urgência</th><th>O que precisa ser corrigido</th><th style="text-align:right;">Atraso</th></tr>
+      </thead>
+      <tbody>
+
+        <tr><td class="im">EMP2201<span>card 5796</span></td><td class="urg"><span class="tag a">Crítica</span></td>
+        <td class="desc">"Ar-condicionado: não tem ar" — é toda a descrição do card. Não dá para saber se o aparelho quebrou, se nunca existiu ou se é queixa de hóspede.<em>Aberto pela limpeza em 14/09 · sem prazo, sem cobrança, uma linha de texto · precisa ser investigado antes de cobrado</em></td>
+        <td class="atr n">sem prazo</td></tr>
+
+        <tr><td class="im">EMP2201<span>card 917</span></td><td class="urg"><span class="tag b">Média</span></td>
+        <td class="desc">Cabeceira da cama de casal totalmente solta e descolada. Tampa da privada solta.<em>Evidência entregue em 14/09 — aguardando nossa aprovação</em></td>
+        <td class="atr b">32 d</td></tr>
+
+        <tr><td class="im">EMP2201<span>card 915</span></td><td class="urg"><span class="tag c">Baixa</span></td>
+        <td class="desc">Repor pilhas do controle remoto.<em>Evidência entregue em 18/09 — aguardando nossa aprovação</em></td>
+        <td class="atr b">32 d</td></tr>
+
+        <tr><td class="im">ATC0301<span>card 914</span></td><td class="urg"><span class="tag c">Baixa</span></td>
+        <td class="desc">LED do banheiro da suíte piscando.<em>Evidência entregue em 14/09, 16 dias antes do vencimento — aguardando nossa aprovação</em></td>
+        <td class="atr n">no prazo<br>(vence 30/09)</td></tr>
+
+      </tbody>
+    </table>
+  </div>
+
+  <div class="concl">
+    <h3>Panorama — Evelyn Gabriela dos Santos</h3>
+    <p><b>Esta franquia não tem problema de manutenção — nós temos um problema com ela.</b>
+    São 4 cards em 2 imóveis de 15 ativos (13% da carteira), e <b>três dos quatro já foram
+    entregues</b>, com foto, entre 14 e 18/09. Um deles foi entregue 16 dias antes do vencimento.
+    Os três estão parados na nossa fila de aprovação.</p>
+    <p><b>É a única das três com gasto real de manutenção própria.</b> R$ 459,80 desde maio em
+    guarda-roupa, chuveiro, vazamento de vaso e torneira de cozinha — tudo aprovado. As outras duas
+    ou gastaram quase nada, ou só reembolsaram dano de hóspede.</p>
+    <p><b>O ponto de atenção é o prazo, não a entrega.</b> Historicamente, 9 das 10 entregas com
+    prazo registrado saíram atrasadas, ainda que a média de conclusão seja boa (40 dias). Ela
+    entrega — só não entrega na data.</p>
+    <p><b>O único card de verdade é o pior formado das três franquias.</b> O 5796 tem uma linha de
+    descrição, nasceu sem prazo e nunca foi cobrado. Se for aparelho parado, é grave; se for
+    registro de cadastro, não é nada. Ninguém sabe, e ninguém perguntou em 7 dias.</p>
+    <div class="veredito">Veredito: nada a cobrar hoje. Aprovar os três cards, ligar para entender
+    o 5796 e — se a multa de 16/09 foi aplicada por atraso de entrega — revisar, porque a entrega
+    veio e parou do nosso lado.</div>
+  </div>
+</div>
+
+<div class="foot">
+  <p>Levantado em 21/09/2026 a partir do banco do Sapron: <code>maintenance_maintenancecard</code>
+  (57 cards abertos dos hosts 293, 148 e 53, status fora de <code>concluido</code> e
+  <code>cancelada</code>), <code>financial_expenses</code> (gastos de manutenção e multas desde
+  01/05/2026), <code>property_property</code> e <code>account_host</code> (carteira, imóveis ativos
+  e código de franquia), <code>reservation_reservation</code> (ocupação e entradas).</p>
+  <p>A urgência e o texto de "o que precisa ser corrigido" foram atribuídos na leitura item a item
+  das descrições dos cards — não são campo do sistema. O atraso é contado do vencimento original
+  até 21/09/2026, não da última cobrança. O Sapron não vincula despesa a card, então não existe
+  custo por pendência; os valores citados vêm do próprio texto dos cards de dano ou de despesas
+  aprovadas. Nomes de hóspedes das avaliações foram omitidos.</p>
+</div>
+
+</div>
+</body>
+</html>

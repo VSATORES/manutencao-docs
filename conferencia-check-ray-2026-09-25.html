@@ -1,0 +1,356 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Conferência do check da Ray</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500&family=Source+Sans+3:wght@400;600&display=swap">
+<style>
+  :root {
+    --ground: #F4F6F9; --surface: #FFFFFF; --line: #DDE3EB; --line-soft: #E9EEF4;
+    --ink: #101826; --ink-2: #44546A; --ink-3: #7A8799; --accent: #0055FF;
+    --ok-fg: #15803D; --ok-bg: rgba(34,197,94,.12);
+    --warn-fg: #B45309; --warn-bg: rgba(245,158,11,.13);
+    --bad-fg: #DC2626; --bad-bg: rgba(239,68,68,.11);
+    --info-fg: #1D4ED8; --info-bg: rgba(59,130,246,.11);
+    --code-bg: #EEF2F7;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ground: #0C1017; --surface: #141A24; --line: #263141; --line-soft: #1E2733;
+      --ink: #E8EDF4; --ink-2: #A8B5C6; --ink-3: #6F7E92; --accent: #5B8CFF;
+      --ok-fg: #4ADE80; --ok-bg: rgba(34,197,94,.15);
+      --warn-fg: #FBBF24; --warn-bg: rgba(245,158,11,.15);
+      --bad-fg: #F87171; --bad-bg: rgba(239,68,68,.15);
+      --info-fg: #93B4FF; --info-bg: rgba(59,130,246,.16);
+      --code-bg: #1B232F;
+    }
+  }
+  :root[data-theme="dark"] {
+    --ground: #0C1017; --surface: #141A24; --line: #263141; --line-soft: #1E2733;
+    --ink: #E8EDF4; --ink-2: #A8B5C6; --ink-3: #6F7E92; --accent: #5B8CFF;
+    --ok-fg: #4ADE80; --ok-bg: rgba(34,197,94,.15);
+    --warn-fg: #FBBF24; --warn-bg: rgba(245,158,11,.15);
+    --bad-fg: #F87171; --bad-bg: rgba(239,68,68,.15);
+    --info-fg: #93B4FF; --info-bg: rgba(59,130,246,.16);
+    --code-bg: #1B232F;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--ground); color: var(--ink);
+    font-family: 'Source Sans 3', system-ui, sans-serif; font-size: 15.5px; line-height: 1.55; }
+  .wrap { max-width: 980px; margin: 0 auto; padding: 40px 16px 64px; }
+  h1, h2, h3, .chip, .eyebrow, .num { font-family: Archivo, system-ui, sans-serif; }
+  code { font-family: 'IBM Plex Mono', ui-monospace, monospace; background: var(--code-bg);
+    padding: 1px 5px; border-radius: 4px; font-size: .84em; overflow-wrap: anywhere; }
+  .eyebrow { font-size: 11.5px; font-weight: 600; letter-spacing: .09em; text-transform: uppercase; color: var(--ink-3); }
+  h1 { font-size: clamp(26px, 5vw, 36px); font-weight: 700; letter-spacing: -.02em; line-height: 1.12; margin: 6px 0 10px; text-wrap: balance; }
+  .dek { color: var(--ink-2); max-width: 66ch; margin: 0; }
+  h2 { font-size: 20px; font-weight: 700; letter-spacing: -.01em; margin: 0 0 4px; }
+  section { margin-top: 46px; }
+  .sub { color: var(--ink-2); margin: 0 0 18px; max-width: 70ch; }
+
+  .tally { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px; margin-top: 24px; }
+  .t { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; }
+  .t .num { font-size: 30px; font-weight: 700; line-height: 1; }
+  .t .lbl { color: var(--ink-2); font-size: 14px; margin-top: 6px; }
+  .t.ok .num { color: var(--ok-fg); } .t.warn .num { color: var(--warn-fg); } .t.bad .num { color: var(--bad-fg); } .t.info .num { color: var(--info-fg); }
+
+  .chip { display: inline-block; font-size: 11.5px; font-weight: 600; padding: 2px 8px; border-radius: 999px; white-space: nowrap; }
+  .c-ok { color: var(--ok-fg); background: var(--ok-bg); }
+  .c-warn { color: var(--warn-fg); background: var(--warn-bg); }
+  .c-bad { color: var(--bad-fg); background: var(--bad-bg); }
+  .c-info { color: var(--info-fg); background: var(--info-bg); }
+
+  .stage { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; margin-bottom: 14px; overflow: hidden; }
+  .stage-h { display: flex; gap: 12px; align-items: baseline; padding: 14px 18px; border-bottom: 1px solid var(--line-soft); flex-wrap: wrap; }
+  .stage-n { font-family: 'IBM Plex Mono', monospace; color: var(--ink-3); font-size: 13px; }
+  .stage-h h3 { margin: 0; font-size: 16.5px; }
+  .stage-h .note { color: var(--ink-3); font-size: 13.5px; margin-left: auto; }
+  .item { display: grid; grid-template-columns: 52px 1fr; gap: 12px; padding: 14px 18px; border-top: 1px solid var(--line-soft); }
+  .item:first-of-type { border-top: 0; }
+  .id { font-family: Archivo, sans-serif; font-weight: 700; font-size: 15px; color: var(--ink-2); }
+  .it-top { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+  .it-top b { font-weight: 600; }
+  .kv { margin: 6px 0 0; display: grid; grid-template-columns: 110px 1fr; gap: 3px 12px; font-size: 14.5px; }
+  .kv dt { color: var(--ink-3); } .kv dd { margin: 0; color: var(--ink-2); }
+  @media (max-width: 620px) { .kv { grid-template-columns: 1fr; } .kv dt { margin-top: 6px; } .item { grid-template-columns: 1fr; gap: 4px; } }
+
+  .wave { margin-bottom: 26px; }
+  .wave h3 { font-size: 16px; margin: 0 0 4px; }
+  .wave p.w { color: var(--ink-2); margin: 0 0 10px; font-size: 14.5px; }
+  .act { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 12px 16px; margin-bottom: 8px;
+    display: grid; grid-template-columns: 26px 1fr; gap: 10px; }
+  .act input { width: 18px; height: 18px; margin-top: 3px; accent-color: var(--accent); }
+  .act.done { opacity: .55; } .act.done .a-t { text-decoration: line-through; }
+  .a-t { font-weight: 600; }
+  .a-meta { display: flex; gap: 6px; flex-wrap: wrap; margin: 4px 0; }
+  .a-d { color: var(--ink-2); font-size: 14.5px; }
+  .foot { margin-top: 48px; color: var(--ink-3); font-size: 13.5px; border-top: 1px solid var(--line); padding-top: 16px; }
+  ul.plain { margin: 6px 0 0; padding-left: 18px; color: var(--ink-2); }
+  .prog { font-family: Archivo, sans-serif; font-weight: 600; color: var(--ink-2); font-size: 14px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="eyebrow">Central de Manutenção · conferência de 25/09/2026</div>
+  <h1>O check da Ray contra o Sapron de verdade</h1>
+  <p class="dek">Cada item do check-list v1.4 (https://raayeoliveira.github.io/check-sapron-manutencao/) conferido no código publicado do Sapron (<code>main</code>; <code>develop</code> só difere nas tags da UTI, #4954) e no Processo v2.1. Organizado pelas etapas do processo, com o plano de ação no fim.</p>
+
+  <div class="tally">
+    <div class="t ok"><div class="num">7</div><div class="lbl">conferem, falta mesmo</div></div>
+    <div class="t warn"><div class="num">5</div><div class="lbl">já existe uma parte</div></div>
+    <div class="t bad"><div class="num">4</div><div class="lbl">errados, já existe ou o desenho está errado</div></div>
+    <div class="t info"><div class="num">1</div><div class="lbl">risco novo que a Ray não viu (quadro com no máximo 500 cards)</div></div>
+  </div>
+  <p class="sub" style="margin-top:14px">16 itens de sistema (7 gaps + S1–S9). Banco do Sapron <b>não</b> consultado nesta sessão (conexão fora): números de produção não foram medidos de novo.</p>
+
+  <section>
+    <h2>Resultado por etapa</h2>
+    <p class="sub">Etapas na ordem do Processo v2.1. "Existe" = o que já está no Sapron hoje; "Falta" = o que sobra de trabalho.</p>
+
+    <div class="stage">
+      <div class="stage-h"><span class="stage-n">§00</span><h3>Itens e elegibilidade</h3></div>
+      <div class="item"><div class="id">S5</div><div>
+        <div class="it-top"><b>Fonte única de elegibilidade</b><span class="chip c-warn">Parcial</span></div>
+        <dl class="kv"><dt>Existe</dt><dd><code>PropertyItemEvidence</code> guarda por imóvel se tem o item, com fonte <code>anuncio_airbnb</code> e data (<code>maintenance/models.py:138-216</code>); tipo de elegibilidade <code>evidencia</code> (<code>recurrence_eligibility.py:76-95</code>).</dd>
+        <dt>Falta</dt><dd>Carga é CSV manual (<code>importar_evidencia_de_item</code>). Regras de exemplo ainda usam o cadastro de amenities (piscina, jardim, churrasqueira, lareira).</dd>
+        <dt>Corrigir</dt><dd>Não é "criar fonte nova": é carregar automático toda noite e migrar as regras de amenity para <code>evidencia</code>.</dd></dl>
+      </div></div>
+      <div class="item"><div class="id">S7</div><div>
+        <div class="it-top"><b>Itens "Pendente" sem visibilidade</b><span class="chip c-ok">Confere</span></div>
+        <dl class="kv"><dt>Existe</dt><dd>Só um total <code>sem_fonte</code> por regra, na aba de recorrentes.</dd>
+        <dt>Falta</dt><dd>Contador no cadastro do imóvel (senha de fechadura, pilhas). Nada disso existe no módulo.</dd></dl>
+      </div></div>
+    </div>
+
+    <div class="stage">
+      <div class="stage-h"><span class="stage-n">§02</span><h3>Chega o mês</h3><span class="note">desde 22/09 a abertura é por clique, não automática</span></div>
+      <div class="item"><div class="id">01</div><div>
+        <div class="it-top"><b>Gate de 12 meses de ativação</b><span class="chip c-bad">Errado</span></div>
+        <dl class="kv"><dt>Existe</dt><dd>O motor já conta pela <code>activation_date</code> do imóvel no próprio Sapron (<code>property/models.py:291</code>; <code>recurrence_bootstrap.py:28-54</code>). Imóvel ativado em jul/26 <b>não</b> é cobrado em set/26.</dd>
+        <dt>Falta</dt><dd>O card vence no <b>aniversário do imóvel</b> (jul/27), não no mês fixo do item (set/27). O corte é pela periodicidade da regra, não 12 meses fixos. O processo se contradiz: §02 diz 12 meses, §03 diz "o ciclo do item".</dd>
+        <dt>Corrigir</dt><dd>Reescrever o gap como "vencimento por mês fixo do item". Tirar a referência a <code>listing_status</code> e o filtro <code>property_min_age_months</code>.</dd></dl>
+      </div></div>
+      <div class="item"><div class="id">S4</div><div>
+        <div class="it-top"><b>Bloqueio 01/12 – 31/03</b><span class="chip c-ok">Confere</span></div>
+        <dl class="kv"><dt>Existe</dt><dd>Nada. Hoje o "bloqueio" é simplesmente não clicar em disparar.</dd>
+        <dt>Falta</dt><dd>O monitor de atraso (todo dia 10h) e a cobrança (quarta 11h) rodam o ano todo: card aberto em novembro vence e é cobrado dentro do bloqueio.</dd></dl>
+      </div></div>
+    </div>
+
+    <div class="stage">
+      <div class="stage-h"><span class="stage-n">§03</span><h3>Já foi lançado? (as 4 perguntas)</h3></div>
+      <div class="item"><div class="id">02</div><div>
+        <div class="it-top"><b>Motor único das 4 perguntas</b><span class="chip c-warn">Parcial</span></div>
+        <dl class="kv"><dt>Existe</dt><dd><code>dimension_rule</code> conta sem criar card, na ordem maturidade → elegibilidade → card aberto → despesa (<code>recurrence_dimensioning.py:102-155</code>). Endpoints <code>recontar</code>, <code>dimensionamento</code> e <code>disparar</code> já usados na tela (<code>apis/viewsets.py:895, 923, 1011</code>).</dd>
+        <dt>Falta</dt><dd>Pergunta 4 (manutenção sem despesa); motivo por imóvel (<code>barred_at_question</code>); mês como parâmetro (hoje sempre "hoje").</dd>
+        <dt>Corrigir</dt><dd>Estender <code>recontar</code>/<code>dimensionamento</code>, não criar <code>preview-cycle</code>. O "74% de cancelamento" não tem fonte.</dd></dl>
+      </div></div>
+    </div>
+
+    <div class="stage">
+      <div class="stage-h"><span class="stage-n">§04</span><h3>Cadência de comunicação</h3></div>
+      <div class="item"><div class="id">03</div><div>
+        <div class="it-top"><b>Terça, quinta e sábado não disparam</b><span class="chip c-ok">Confere</span></div>
+        <dl class="kv"><dt>Existe</dt><dd>Nada agenda comunicado, reforço ou alerta (<code>config/settings.py:1238-1290</code>).</dd>
+        <dt>Falta</dt><dd>Todo o disparo. Depende da decisão 2 (canal, remetente, texto).</dd>
+        <dt>Corrigir</dt><dd>A abertura na 1ª segunda útil também é manual desde 22/09. O critério "job dispara na semana anterior" pressupõe uma abertura automática que não existe mais.</dd></dl>
+      </div></div>
+    </div>
+
+    <div class="stage">
+      <div class="stage-h"><span class="stage-n">§05</span><h3>Franquia executa · passou do prazo</h3></div>
+      <div class="item"><div class="id">05</div><div>
+        <div class="it-top"><b>Escalonamento D+7 / D+14 / D+21</b><span class="chip c-bad">Errado</span></div>
+        <dl class="kv"><dt>Existe</dt><dd><code>delay_monitor.py</code> manda D+7, D+14, D+21 e repete a cada 7 dias, com tom escalonado, no chat do card, todo dia 10h. Flag ligada em produção (PostHog 127887).</dd>
+        <dt>Falta</dt><dd>E-mail da franquia; marcar BackOffice no D+14 e Coordenação no D+21; cobrar card sem <code>due_at</code> (hoje nunca é cobrado); endpoint de buckets.</dd>
+        <dt>Corrigir</dt><dd>Trocar "API só grava timestamp" por "lembrete automático já existe no chat; falta aviso interno e e-mail".</dd></dl>
+      </div></div>
+      <div class="item"><div class="id">S8</div><div>
+        <div class="it-top"><b>Régua automática até D+21</b><span class="chip c-bad">Errado</span></div>
+        <dl class="kv"><dt>Existe</dt><dd>O aviso à franquia em D+14 e D+21 já é automático (mesmo monitor).</dd>
+        <dt>Corrigir</dt><dd>Repete o gap 05. Juntar os dois num item só.</dd></dl>
+      </div></div>
+    </div>
+
+    <div class="stage">
+      <div class="stage-h"><span class="stage-n">§06</span><h3>Evidência</h3></div>
+      <div class="item"><div class="id">S3</div><div>
+        <div class="it-top"><b>Anexo move o card sozinho</b><span class="chip c-warn">Parcial</span></div>
+        <dl class="kv"><dt>Existe</dt><dd>Só move no <b>1º</b> anexo, só em corretiva/recorrente/urgente, só vindo da franquia (<code>evidence_from_message.py:73-88</code>). O botão "concluído" já existe na API (<code>finalize=True</code>), mas a tela não usa. Desde 25/09 os agentes pedem o que falta em vez de devolver.</dd>
+        <dt>Falta</dt><dd>Expor o <code>finalize</code> na tela e parar de mover o card pelo anexo do chat.</dd></dl>
+      </div></div>
+      <div class="item"><div class="id">S2</div><div>
+        <div class="it-top"><b>Upload com campos estruturados</b><span class="chip c-ok">Confere</span></div>
+        <dl class="kv"><dt>Existe</dt><dd>O envio só tem texto, arquivos e <code>finalize</code> (<code>serializers.py:406-414</code>). O parecer item a item já é feito pela IA.</dd>
+        <dt>Falta</dt><dd>Só data do serviço e CNPJ do prestador (o CNPJ alimenta o gap 06).</dd></dl>
+      </div></div>
+    </div>
+
+    <div class="stage">
+      <div class="stage-h"><span class="stage-n">§07</span><h3>Validar</h3></div>
+      <div class="item"><div class="id">06</div><div>
+        <div class="it-top"><b>Certificado (CNPJ + responsável técnico)</b><span class="chip c-ok">Confere, pior</span></div>
+        <dl class="kv"><dt>Existe</dt><dd>Validador de IA (#4916), mas só lê imagem e vídeo (<code>evidence_files.py:76</code>). O PDF do certificado nem chega a ele e nem aparece como "ficou de fora".</dd>
+        <dt>Falta</dt><dd>Ler PDF; extrair CNPJ; consultar a Receita; status do certificado.</dd></dl>
+      </div></div>
+      <div class="item"><div class="id">04</div><div>
+        <div class="it-top"><b>Prazo da franquia não congela</b><span class="chip c-ok">Confere</span></div>
+        <dl class="kv"><dt>Existe</dt><dd>Card em "Aguardando aprovação" não é cobrado, mas o <code>due_at</code> não anda. Devolver só zera <code>evidence_received_at</code> (<code>audit_evidence.py:33</code>).</dd>
+        <dt>Falta</dt><dd>Descontar do prazo os dias em aprovação e aplicar o piso de 3 dias úteis na devolução. Hoje a franquia volta "atrasada" pelos dias parados com a Manutenção.</dd></dl>
+      </div></div>
+    </div>
+
+    <div class="stage">
+      <div class="stage-h"><span class="stage-n">§08</span><h3>Aprovar e finalizar</h3></div>
+      <div class="item"><div class="id">S1</div><div>
+        <div class="it-top"><b>Fechar card pela despesa</b><span class="chip c-warn">Parcial</span></div>
+        <dl class="kv"><dt>Existe</dt><dd>No disparo, se já há despesa do ciclo, o card nasce Concluído (<code>generate_recurrences.py:114-160</code>). Fechamento automático por evidência (<code>autoclose</code>) ligado em produção desde 25/09.</dd>
+        <dt>Falta</dt><dd>Fechar card <b>já aberto</b> quando a despesa chega depois. Não existe mais "varredura diária".</dd></dl>
+      </div></div>
+      <div class="item"><div class="id">07</div><div>
+        <div class="it-top"><b>Próxima entrada +12 meses</b><span class="chip c-bad">Errado</span></div>
+        <dl class="kv"><dt>Existe</dt><dd>Não existe <code>maintenance_schedule</code>. A agenda é <code>PropertyRecurrenceSchedule</code> com <code>next_due_on</code> (<code>models.py:219-268</code>), que avança na geração do card. A trava "não cria se há card aberto" já existe.</dd>
+        <dt>Falta</dt><dd>Mostrar a próxima data no cadastro do imóvel. <b>Risco:</b> card aberto além do próximo vencimento faz o ciclo ser pulado calado (só contador <code>cards_abertos_pulados</code>).</dd></dl>
+      </div></div>
+    </div>
+
+    <div class="stage">
+      <div class="stage-h"><span class="stage-n">§09</span><h3>Monitorar</h3></div>
+      <div class="item"><div class="id">S9</div><div>
+        <div class="it-top"><b>Carga de milhares de cards</b><span class="chip c-ok">Confere</span><span class="chip c-info">Risco novo</span></div>
+        <dl class="kv"><dt>Existe</dt><dd>Paginação, filtros no servidor, permissão por franquia (<code>viewsets.py:133-140</code>), disparo fora da requisição com trava de duplo clique.</dd>
+        <dt>Falta</dt><dd><b>O quadro busca as colunas ativas numa chamada só, com no máximo 500 cards</b>, incluindo os recorrentes (front <code>services/centralManutencao/api.ts:40</code>). Com o disparo de ~1.000 recorrentes, urgentes e corretivos podem sumir do quadro sem aviso. Backend sem teto de <code>page_size</code>. Lido no código, não testado.</dd></dl>
+      </div></div>
+      <div class="item"><div class="id">S6</div><div>
+        <div class="it-top"><b>Métricas de saúde do ciclo</b><span class="chip c-warn">Parcial</span></div>
+        <dl class="kv"><dt>Existe</dt><dd><code>/dashboard/</code> (prazo da franquia, cards &gt; 35 dias, por etapa, por regra, por franquia, por período) e <code>/kpis-diarios/</code> com 11 KPIs.</dd>
+        <dt>Falta</dt><dd>Evidência → aprovação; % de ciclos concluídos por item; tempo por etapa (precisa de tabela de transições).</dd></dl>
+      </div></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Plano de ação</h2>
+    <p class="sub">Em ondas, pela ordem que protege a operação. Marque o que for resolvendo; fica salvo neste navegador. <span class="prog" id="prog"></span></p>
+
+    <div class="wave">
+      <h3>Onda 1 · Agora (antes do próximo disparo grande)</h3>
+      <p class="w">Riscos que já machucam ou vão machucar no primeiro disparo em massa.</p>
+      <div class="act" data-k="a1"><input type="checkbox" aria-label="feito"><div>
+        <div class="a-t">Tirar os recorrentes da busca principal do quadro e pôr teto no page_size</div>
+        <div class="a-meta"><span class="chip c-info">S9</span><span class="chip c-bad">dev · front + back</span><span class="chip c-warn">pequeno</span></div>
+        <div class="a-d">Antes: reproduzir em staging com 600+ cards semeados (<code>semear-cards-teste-stg.py</code>) para confirmar que urgentes somem. Depois: coluna Recorrente só pela busca própria dela; <code>max_page_size</code> no backend.</div></div></div>
+      <div class="act" data-k="a2"><input type="checkbox" aria-label="feito"><div>
+        <div class="a-t">Prazo justo na devolução: descontar os dias em aprovação e aplicar o piso de 3 dias úteis</div>
+        <div class="a-meta"><span class="chip c-info">04</span><span class="chip c-bad">dev · back</span><span class="chip c-warn">médio</span></div>
+        <div class="a-d">Guardar quanto tempo o card ficou em "Aguardando aprovação" e empurrar o <code>due_at</code> na devolução. Sem isso, o monitor de atraso cobra a franquia por atraso da Seazone.</div></div></div>
+      <div class="act" data-k="a3"><input type="checkbox" aria-label="feito"><div>
+        <div class="a-t">Validador passar a olhar PDF, ou pelo menos avisar "certificado não conferido"</div>
+        <div class="a-meta"><span class="chip c-info">06</span><span class="chip c-bad">dev · back</span><span class="chip c-warn">pequeno → médio</span></div>
+        <div class="a-d">Passo 1 (pequeno): em caixa d'água e dedetização, marcar no parecer que existe PDF não lido. Passo 2: ler o PDF e extrair CNPJ. Passo 3: consulta na Receita.</div></div></div>
+      <div class="act" data-k="a4"><input type="checkbox" aria-label="feito"><div>
+        <div class="a-t">Alertar ciclo pulado quando o card anterior segue aberto</div>
+        <div class="a-meta"><span class="chip c-info">07</span><span class="chip c-bad">dev · back</span><span class="chip c-warn">pequeno</span></div>
+        <div class="a-d">Hoje vira só o contador <code>cards_abertos_pulados</code>. Listar os imóveis pulados na tela da regra.</div></div></div>
+    </div>
+
+    <div class="wave">
+      <h3>Onda 2 · Próximo (fecha o ciclo sem gente olhando)</h3>
+      <p class="w">Completa o que já existe pela metade.</p>
+      <div class="act" data-k="b1"><input type="checkbox" aria-label="feito"><div>
+        <div class="a-t">Aviso interno no D+14 (BackOffice) e no D+21 (Coordenação), e cobrar card sem prazo</div>
+        <div class="a-meta"><span class="chip c-info">05 + S8</span><span class="chip c-bad">dev · back</span><span class="chip c-warn">pequeno</span></div>
+        <div class="a-d">Estender o <code>delay_monitor</code>, que já roda. E-mail para a franquia entra quando a decisão 2 (canal) fechar.</div></div></div>
+      <div class="act" data-k="b2"><input type="checkbox" aria-label="feito"><div>
+        <div class="a-t">Fechar card aberto quando a despesa do ciclo é lançada</div>
+        <div class="a-meta"><span class="chip c-info">S1</span><span class="chip c-bad">dev · back</span><span class="chip c-warn">médio</span></div>
+        <div class="a-d">Reusar a conferência de despesa que já existe no disparo (<code>recurrence_dedup.py</code>), numa tarefa de hora em hora sobre os cards abertos. Depende da regra do custo do proprietário (P6).</div></div></div>
+      <div class="act" data-k="b3"><input type="checkbox" aria-label="feito"><div>
+        <div class="a-t">Botão "concluído" na tela e parar de mover card pelo anexo do chat</div>
+        <div class="a-meta"><span class="chip c-info">S3</span><span class="chip c-bad">dev · front + back</span><span class="chip c-warn">médio</span></div>
+        <div class="a-d">O <code>finalize</code> já existe na API. Falta ligar na tela da franquia.</div></div></div>
+      <div class="act" data-k="b4"><input type="checkbox" aria-label="feito"><div>
+        <div class="a-t">Recontar com pergunta 4, motivo por imóvel e mês escolhido</div>
+        <div class="a-meta"><span class="chip c-info">02</span><span class="chip c-bad">dev · back</span><span class="chip c-warn">médio</span></div>
+        <div class="a-d">Estender <code>recontar</code>/<code>dimensionamento</code>. É o que deixa conferir o ciclo antes de clicar em disparar.</div></div></div>
+      <div class="act" data-k="b5"><input type="checkbox" aria-label="feito"><div>
+        <div class="a-t">Próxima manutenção prevista no cadastro do imóvel</div>
+        <div class="a-meta"><span class="chip c-info">07</span><span class="chip c-bad">dev · front</span><span class="chip c-warn">pequeno</span></div>
+        <div class="a-d">A data já existe (<code>next_due_on</code>); só mostrar.</div></div></div>
+    </div>
+
+    <div class="wave">
+      <h3>Onda 3 · Depende de decisão do processo</h3>
+      <p class="w">Não adianta codar antes da regra fechar.</p>
+      <div class="act" data-k="c1"><input type="checkbox" aria-label="feito"><div>
+        <div class="a-t">Decidir: vence no mês fixo do item ou no aniversário do imóvel? E o corte é 12 meses ou a periodicidade?</div>
+        <div class="a-meta"><span class="chip c-info">01</span><span class="chip c-ok">processo · Vinicius + Ray</span></div>
+        <div class="a-d">Corrige a contradição §02 × §03. Só depois o motor muda.</div></div></div>
+      <div class="act" data-k="c2"><input type="checkbox" aria-label="feito"><div>
+        <div class="a-t">Janela de bloqueio dez–mar na regra, valendo também para monitor e cobrança</div>
+        <div class="a-meta"><span class="chip c-info">S4</span><span class="chip c-bad">dev · back</span><span class="chip c-warn">médio</span></div>
+        <div class="a-d">Precisa decidir antes: card aberto em novembro pausa o prazo no bloqueio?</div></div></div>
+      <div class="act" data-k="c3"><input type="checkbox" aria-label="feito"><div>
+        <div class="a-t">Cadência terça, quinta e sábado agrupada por franqueado</div>
+        <div class="a-meta"><span class="chip c-info">03</span><span class="chip c-ok">processo → dev</span></div>
+        <div class="a-d">Travada na decisão 2 (canal, remetente, texto) e em quando o disparo acontece, já que hoje é manual.</div></div></div>
+      <div class="act" data-k="c4"><input type="checkbox" aria-label="feito"><div>
+        <div class="a-t">Carga noturna da evidência do Airbnb e migrar regras de amenity</div>
+        <div class="a-meta"><span class="chip c-info">S5</span><span class="chip c-bad">dev · back</span><span class="chip c-warn">médio</span></div>
+        <div class="a-d">Decidir quem cura os 73 indefinidos do AC (P7) antes.</div></div></div>
+      <div class="act" data-k="c5"><input type="checkbox" aria-label="feito"><div>
+        <div class="a-t">Métricas que faltam, campos do upload, contador de Pendentes</div>
+        <div class="a-meta"><span class="chip c-info">S6 · S2 · S7</span><span class="chip c-bad">dev</span></div>
+        <div class="a-d">Depois de definir os 2 KPIs de cabeceira (P9): só constrói a métrica que vai ser acompanhada.</div></div></div>
+    </div>
+
+    <div class="wave">
+      <h3>Onda 0 · Corrigir o check-list antes de mandar ao dev</h3>
+      <p class="w">Para a Ray. Evita que o dev construa o que já existe.</p>
+      <div class="act" data-k="d1"><input type="checkbox" aria-label="feito"><div>
+        <div class="a-t">Reescrever 01, 05, 07 e juntar S8 com 05</div>
+        <div class="a-meta"><span class="chip c-ok">Ray</span></div>
+        <div class="a-d">Usar os textos de "Corrigir" acima. Tirar <code>maintenance_schedule</code>, <code>preview-cycle</code> e <code>property_min_age_months</code>.</div></div></div>
+      <div class="act" data-k="d2"><input type="checkbox" aria-label="feito"><div>
+        <div class="a-t">Acertar números e seções</div>
+        <div class="a-meta"><span class="chip c-ok">Ray</span></div>
+        <div class="a-d"><ul class="plain">
+          <li>"§11 onde o sistema não acompanha" é §10; "§9" é §05; "§10 report" é §09; "§6 Atenção" é §07; §7.1, §7.4 e §7.8 não existem (estão em §00, §03 e §08).</li>
+          <li>74% de cancelamento: sem fonte. Folha de contexto (01–02/09, janela set/25–ago/26) dá 22,9% (934 de 4.080).</li>
+          <li>~3.300 cards em setembro: são 2 itens cobrados (filtro de água é Pendente) e 1.091 é só do AC (16/09).</li>
+          <li>Enxoval "subcat 12 / 13": nomes não batem com a árvore do financeiro; as categorias de manutenção já existem.</li>
+          <li>"Só Ray e Carol veem o report": o processo não diz "só".</li>
+          <li>Abertura da recorrente é manual desde 22/09: vale citar em 03, 07 e S4.</li>
+        </ul></div></div></div>
+    </div>
+  </section>
+
+  <div class="foot">
+    Conferido em 25/09/2026 por leitura do código publicado (sapron-backend e sapron-frontend, <code>origin/main</code>) e do Processo de Manutenção Recorrente v2.1 (17/09/2026). Banco do Sapron não consultado. Detalhe com arquivo e linha: <code>/root/manutencao/conferencia-check-ray-2026-09-25.md</code>.
+  </div>
+</div>
+<script>
+(function () {
+  var KEY = 'conf_check_ray_2026_09_25';
+  var st = {};
+  try { st = JSON.parse(localStorage.getItem(KEY) || '{}'); } catch (e) {}
+  var acts = document.querySelectorAll('.act');
+  function prog() {
+    var n = document.querySelectorAll('.act.done').length;
+    document.getElementById('prog').textContent = n + ' de ' + acts.length + ' feitos.';
+  }
+  acts.forEach(function (a) {
+    var cb = a.querySelector('input'), k = a.dataset.k;
+    if (st[k]) { cb.checked = true; a.classList.add('done'); }
+    cb.addEventListener('change', function () {
+      st[k] = cb.checked; a.classList.toggle('done', cb.checked);
+      try { localStorage.setItem(KEY, JSON.stringify(st)); } catch (e) {}
+      prog();
+    });
+  });
+  prog();
+})();
+</script>
+</body>
+</html>

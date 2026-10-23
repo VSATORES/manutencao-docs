@@ -1,0 +1,218 @@
+<title>Heartbeat dos Agentes</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&amp;family=Newsreader:opsz,wght@6..72,500;6..72,600&amp;family=Source+Sans+3:wght@400;600&amp;display=swap">
+<style>
+:root{
+  --ground:#F6F6F3; --surface:#FFFFFF; --line:#DEDFD8; --line-soft:#EAEBE4;
+  --ink:#17201C; --ink-2:#4A574F; --ink-3:#7D8981;
+  --accent:#0B6B62; --accent-soft:rgba(11,107,98,.09);
+  --ok-fg:#15803D; --ok-bg:rgba(22,163,74,.12);
+  --wait-fg:#B45309; --wait-bg:rgba(217,119,6,.13);
+  --stop-fg:#B91C1C; --stop-bg:rgba(220,38,38,.11);
+  --code-bg:#EDEEE8;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --ground:#0E1311; --surface:#161D1A; --line:#2A3531; --line-soft:#1F2825;
+    --ink:#E9EEEA; --ink-2:#A9B6AF; --ink-3:#74837B;
+    --accent:#4FB3A6; --accent-soft:rgba(79,179,166,.13);
+    --ok-fg:#5FD68A; --ok-bg:rgba(22,163,74,.17);
+    --wait-fg:#F0B429; --wait-bg:rgba(217,119,6,.17);
+    --stop-fg:#FCA5A5; --stop-bg:rgba(220,38,38,.17);
+    --code-bg:#1E2622;
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#0E1311; --surface:#161D1A; --line:#2A3531; --line-soft:#1F2825;
+  --ink:#E9EEEA; --ink-2:#A9B6AF; --ink-3:#74837B;
+  --accent:#4FB3A6; --accent-soft:rgba(79,179,166,.13);
+  --ok-fg:#5FD68A; --ok-bg:rgba(22,163,74,.17);
+  --wait-fg:#F0B429; --wait-bg:rgba(217,119,6,.17);
+  --stop-fg:#FCA5A5; --stop-bg:rgba(220,38,38,.17);
+  --code-bg:#1E2622;
+}
+body{background:var(--ground);color:var(--ink);font-family:'Source Sans 3',system-ui,-apple-system,sans-serif;font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased;}
+.wrap{max-width:760px;margin:0 auto;padding:0 16px;padding-block:40px 72px;}
+.eyebrow{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);font-weight:600;margin:0 0 10px;}
+h1{font-family:'Newsreader',Georgia,serif;font-weight:600;font-size:clamp(30px,6vw,42px);line-height:1.12;margin:0 0 14px;text-wrap:balance;letter-spacing:-.01em;}
+.lede{font-size:18px;color:var(--ink-2);margin:0 0 28px;max-width:62ch;}
+h2{font-family:'Newsreader',Georgia,serif;font-weight:600;font-size:24px;line-height:1.25;margin:0 0 14px;text-wrap:balance;}
+h3{font-size:15px;font-weight:600;margin:22px 0 8px;letter-spacing:-.005em;}
+p{margin:0 0 14px;max-width:66ch;}
+section{margin-top:38px;}
+.rule{height:1px;background:var(--line);border:0;margin:0 0 26px;}
+.sec-head{display:flex;align-items:baseline;gap:12px;margin-bottom:14px;}
+.sec-head h2{margin:0;}
+.sec-n{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--ink-3);padding-top:4px;}
+code,.mono{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:.88em;background:var(--code-bg);padding:.12em .38em;border-radius:3px;}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:18px 20px;}
+.meta{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:6px;overflow:hidden;margin-bottom:34px;}
+.meta div{background:var(--surface);padding:12px 14px;}
+.meta dt{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3);margin:0 0 4px;}
+.meta dd{margin:0;font-size:14px;font-weight:600;}
+.tag{display:inline-block;font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;padding:3px 8px;border-radius:3px;vertical-align:1px;}
+.t-ok{color:var(--ok-fg);background:var(--ok-bg);}
+.t-wait{color:var(--wait-fg);background:var(--wait-bg);}
+.t-stop{color:var(--stop-fg);background:var(--stop-bg);}
+.tbl-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:6px;background:var(--surface);}
+table{width:100%;border-collapse:collapse;font-size:14.5px;}
+th{text-align:left;font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-3);font-weight:600;padding:11px 14px;border-bottom:1px solid var(--line);white-space:nowrap;}
+td{padding:11px 14px;border-bottom:1px solid var(--line-soft);vertical-align:top;}
+tr:last-child td{border-bottom:0;}
+td.num{font-variant-numeric:tabular-nums;white-space:nowrap;}
+.flow{list-style:none;counter-reset:s;margin:0;padding:0;}
+.flow li{counter-increment:s;position:relative;padding:0 0 20px 44px;border-left:1px solid var(--line);margin-left:13px;}
+.flow li:last-child{border-left-color:transparent;padding-bottom:0;}
+.flow li::before{content:counter(s);position:absolute;left:-13px;top:-2px;width:26px;height:26px;border-radius:50%;background:var(--accent-soft);color:var(--accent);border:1px solid var(--accent);display:grid;place-items:center;font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:500;}
+.flow b{display:block;font-size:15px;margin-bottom:3px;}
+.flow p{margin:0;color:var(--ink-2);font-size:14.5px;}
+.callout{border-left:3px solid var(--accent);background:var(--accent-soft);padding:14px 16px;border-radius:0 5px 5px 0;margin:20px 0;}
+.callout.warn{border-left-color:var(--wait-fg);background:var(--wait-bg);}
+.callout.stop{border-left-color:var(--stop-fg);background:var(--stop-bg);}
+.callout p:last-child{margin-bottom:0;}
+.callout b{font-weight:600;}
+ul.plain{margin:0 0 14px;padding-left:20px;}
+ul.plain li{margin-bottom:7px;max-width:64ch;}
+pre{background:var(--code-bg);border:1px solid var(--line);border-radius:5px;padding:13px 15px;overflow-x:auto;font-family:'IBM Plex Mono',monospace;font-size:13px;line-height:1.55;margin:0 0 16px;}
+pre code{background:none;padding:0;font-size:inherit;}
+.foot{margin-top:48px;padding-top:18px;border-top:1px solid var(--line);font-size:13px;color:var(--ink-3);}
+.foot p{max-width:none;margin-bottom:6px;}
+@media (max-width:520px){.flow li{padding-left:36px;}}
+</style>
+<style>
+.t-mute{color:var(--ink-3);background:var(--code-bg);}
+</style>
+<div class="wrap">
+
+<p class="eyebrow">Central de Manutenção · Heartbeat da semana</p>
+<h1>Agentes de IA: semana de 09 a 15/10</h1>
+<p class="lede">Semana com quatro dias sem card. Entre 08/10 23:53 e 13/10 11:55 <b>nenhum card nasceu em produção</b>, porque o código antigo rodou com o banco já migrado. Desde a volta, os sete agentes rodam. O antifraude foi ligado em 13/10, mas a trava que impede o auditor de baixar card com foto suspeita só entrou hoje às 11:17. Nesse intervalo, <b>36 cards com sinal alto foram baixados</b> automaticamente.</p>
+
+<dl class="meta">
+  <div><dt>Data</dt><dd>15/10/2026, 17h20</dd></div>
+  <div><dt>Rodando em produção</dt><dd>7 de 7 agentes</dd></div>
+  <div><dt>Cards sem nascer</dt><dd>08/10 23:53 → 13/10 11:55</dd></div>
+  <div><dt>Sinais do antifraude revisados</dt><dd>0 de 64</dd></div>
+</dl>
+
+<section>
+  <div class="sec-head"><span class="sec-n">01</span><h2>Pulso de cada agente</h2></div>
+  <div class="tbl-wrap"><table>
+    <thead><tr><th>Agente</th><th>Estado</th><th>Trabalho desde 08/10</th><th>Última execução</th></tr></thead>
+    <tbody>
+      <tr><td>Classificador de urgência</td><td><span class="tag t-ok">rodando</span></td><td class="num">132 de 135 cards novos</td><td class="num">15/10 16:15</td></tr>
+      <tr><td>Triagem automática</td><td><span class="tag t-ok">rodando</span></td><td class="num">128 cards</td><td class="num">15/10 16:20</td></tr>
+      <tr><td>Verificador de duplicata</td><td><span class="tag t-ok">rodando</span></td><td class="num">124 conferidos · 0 fechados</td><td class="num">15/10 16:17</td></tr>
+      <tr><td>Validador de evidência</td><td><span class="tag t-ok">rodando</span></td><td class="num">416 leituras · 48 pedidos</td><td class="num">15/10 15:55</td></tr>
+      <tr><td>Auditor do parecer</td><td><span class="tag t-ok">rodando</span></td><td class="num">403 auditorias · 289 baixas</td><td class="num">15/10 16:05</td></tr>
+      <tr><td>Antifraude de evidência<br><small>ligado 13/10</small></td><td><span class="tag t-wait">rodando, sem revisão</span></td><td class="num">299 cards checados</td><td class="num">15/10 15:57</td></tr>
+      <tr><td>Despesa prova o card</td><td><span class="tag t-wait">em sombra</span></td><td>não graduou; ninguém confere desde 04/10</td><td>—</td></tr>
+    </tbody>
+  </table></div>
+  <p>Horários de Brasília. Fonte: campos <span class="mono">ai_*_at</span> de <span class="mono">maintenance_maintenancecard</span> no banco de produção do Sapron, lidos em 15/10/2026 às 17h20. Despesa: memória do projeto, situação de 13/10.</p>
+
+  <div class="tbl-wrap"><table>
+    <thead><tr><th>Dia</th><th>Cards criados</th><th>Baixas do auditor</th><th>Pedidos do validador</th><th>Checagens do antifraude</th></tr></thead>
+    <tbody>
+      <tr><td>08/10</td><td class="num">26</td><td class="num">46</td><td class="num">9</td><td class="num">—</td></tr>
+      <tr><td>09 a 12/10</td><td class="num"><b>0</b></td><td class="num">52</td><td class="num">12</td><td class="num">—</td></tr>
+      <tr><td>13/10</td><td class="num">33</td><td class="num">58</td><td class="num">8</td><td class="num">125</td></tr>
+      <tr><td>14/10</td><td class="num">45</td><td class="num">64</td><td class="num">11</td><td class="num">78</td></tr>
+      <tr><td>15/10 (até 17h)</td><td class="num">31</td><td class="num">66</td><td class="num">8</td><td class="num">96</td></tr>
+    </tbody>
+  </table></div>
+  <p>Mesmo sem card novo, o auditor continuou trabalhando a fila que já existia. Dos 289 cards baixados por ele desde 08/10, nenhum foi reaberto até agora.</p>
+</section>
+
+<section>
+  <div class="sec-head"><span class="sec-n">02</span><h2>O defeito da semana: a trava do antifraude chegou dois dias depois do antifraude</h2></div>
+  <p>O antifraude só sinaliza. A única consequência automática prevista para ele (regra R35) é <b>segurar a baixa do auditor</b> quando a foto tem sinal forte ou suspeito e ninguém descartou o sinal. O antifraude foi ligado em 13/10, mas a trava (#5234) só entrou em produção em 15/10 às 11:17, quando a migração 0044 foi aplicada. A entrada na <span class="mono">main</span>, em 14/10, não significou que já estava no ar.</p>
+  <div class="tbl-wrap"><table>
+    <thead><tr><th>Período</th><th>Baixas com sinal alto</th><th>Leitura</th></tr></thead>
+    <tbody>
+      <tr><td>13/10 até 15/10 11:17</td><td class="num"><b>36</b> (26 fortes, 10 suspeitos)</td><td>o antifraude já tinha marcado cada um <b>antes</b> da baixa</td></tr>
+      <tr><td>depois de 15/10 11:17</td><td class="num">0 de 18 baixas</td><td>a trava funciona: 6 cards já foram segurados</td></tr>
+    </tbody>
+  </table></div>
+  <div class="callout stop"><p><b>Regra que fica:</b> quando um agente só é seguro com outro agente travando, os dois entram no ar juntos. A conferência é pela migração aplicada no banco, e não pelo merge na <span class="mono">main</span>.</p></div>
+  <p>Os 36 cards já baixados precisam de olho humano. Eles estão na lista de sinais altos, que hoje ninguém revisa (seção 06).</p>
+</section>
+
+<section>
+  <div class="sec-head"><span class="sec-n">03</span><h2>O que fechou nesta semana</h2></div>
+  <div class="tbl-wrap"><table>
+    <thead><tr><th>Entrega</th><th>PR</th><th>Onde está</th></tr></thead>
+    <tbody>
+      <tr><td>Antifraude de evidência (sinaliza foto reaproveitada)</td><td>#5196 #5198</td><td>main · ligado 13/10</td></tr>
+      <tr><td>Antifraude na aba Agentes de IA (só Admin)</td><td>front #3688</td><td>main</td></tr>
+      <tr><td><b>Antifraude segura a baixa do auditor e ganha revisão de gente</b></td><td>#5234</td><td>main · no ar 15/10 11:17</td></tr>
+      <tr><td>Validador e auditor na mesma régua de prova</td><td>#5226</td><td>main</td></tr>
+      <tr><td>Card nasce lendo o banco principal, não a réplica</td><td>#5239</td><td>main</td></tr>
+      <tr><td>Despesa de dano de outra estadia não casa com o card</td><td>#5227</td><td>main</td></tr>
+      <tr><td>Score da franquia calculado toda segunda</td><td>#5139 #5177</td><td>main · <span class="tag t-wait">tabela vazia</span></td></tr>
+      <tr><td>Validador atende primeiro quem espera há mais tempo</td><td>#5170</td><td>main</td></tr>
+      <tr><td>Card aberto vai com o imóvel na migração</td><td>#5238</td><td><span class="tag t-wait">PR aberto</span></td></tr>
+    </tbody>
+  </table></div>
+  <p>Fonte: histórico de <span class="mono">develop</span>, <span class="mono">staging</span> e <span class="mono">main</span> do sapron-backend e do sapron-frontend no GitHub, e <span class="mono">django_migrations</span> de produção, lidos em 15/10/2026.</p>
+  <div class="callout warn"><p><b>O score não gravou nada.</b> A tabela <span class="mono">maintenance_franchisescore</span> está vazia em produção, apesar de a migração estar aplicada desde 08/10. A segunda-feira 12/10 caiu dentro da janela do incidente. Precisa rodar à mão ou esperar 19/10, e o processo mensal é no dia 10.</p></div>
+</section>
+
+<section>
+  <div class="sec-head"><span class="sec-n">04</span><h2>O incidente dos cards parados</h2></div>
+  <ul class="plain">
+    <li><b>O que houve:</b> entre 08/10 23:53 e 13/10 11:55 nenhum card foi criado. A imagem anterior subiu sobre um banco já migrado (0042), e todo insert de card falhou.</li>
+    <li><b>Volta:</b> o deploy de 13/10 às 11:44 resolveu. A ponte do Suporte criou os cards 7991–7995 às 11:55 sem erro.</li>
+    <li><b>O que ficou para trás:</b> 18 cards de danos (recriáveis ao salvar de novo a negociação), cerca de 6 de comentários e de 20 a 30 da Consultoria Regional, cujos dados ficam no sistema dela.</li>
+    <li><b>Ainda não conferido:</b> se os 18 de danos foram recriados. Desde 13/10 nasceram 40 cards de danos, 39 da Consultoria e 19 de comentários, mas não cruzei esses números com a lista de perdidos.</li>
+  </ul>
+  <p>Fonte: <span class="mono">/root/manutencao/incidente-cards-2026-10-09/perdidos.md</span> e contagem por <span class="mono">origin</span> no banco de produção em 15/10.</p>
+</section>
+
+<section>
+  <div class="sec-head"><span class="sec-n">05</span><h2>As linhas da Fase 3</h2></div>
+  <div class="tbl-wrap"><table>
+    <thead><tr><th>Linha do quadro</th><th>25/09</th><th>15/10</th></tr></thead>
+    <tbody>
+      <tr><td>Auto-classificação de categoria e urgência</td><td><span class="tag t-ok">rodando</span></td><td><span class="tag t-ok">rodando</span></td></tr>
+      <tr><td>Agente de triagem e priorização</td><td><span class="tag t-ok">rodando</span></td><td><span class="tag t-ok">rodando</span></td></tr>
+      <tr><td>Agente que verifica cards duplicados</td><td><span class="tag t-ok">rodando</span></td><td><span class="tag t-ok">rodando</span> só marca, 0 fechados</td></tr>
+      <tr><td>Agente de encerramento inteligente</td><td><span class="tag t-wait">ligado</span></td><td><span class="tag t-ok">rodando</span> 289 baixas, 0 reabertas</td></tr>
+      <tr><td>Agente de preenchimento automático</td><td><span class="tag t-wait">parcial</span></td><td><span class="tag t-wait">parcial</span></td></tr>
+      <tr><td>Auditoria amostral dos agentes</td><td><span class="tag t-mute">não iniciada</span></td><td><span class="tag t-mute">não iniciada</span></td></tr>
+      <tr><td>Finaliza quando a despesa foi lançada</td><td><span class="tag t-mute">não iniciada</span></td><td><span class="tag t-wait">em sombra</span> sem conferência humana</td></tr>
+      <tr><td>Score da franquia</td><td><span class="tag t-mute">não iniciada</span></td><td><span class="tag t-wait">no ar, sem dado</span></td></tr>
+      <tr><td>Anti-fraude na evidência</td><td><span class="tag t-mute">não iniciada</span></td><td><span class="tag t-ok">rodando</span> trava desde hoje</td></tr>
+    </tbody>
+  </table></div>
+  <p>A coluna de 15/10 vem do banco de produção e do código em <span class="mono">main</span>. O quadro no TaskDex não foi alterado.</p>
+</section>
+
+<section>
+  <div class="sec-head"><span class="sec-n">06</span><h2>Decisões que dependem de gente</h2></div>
+  <div class="tbl-wrap"><table>
+    <thead><tr><th>Decisão</th><th>Por que agora</th></tr></thead>
+    <tbody>
+      <tr><td><b>Quem revisa os sinais do antifraude</b></td><td>64 cards com sinal forte ou suspeito e 0 decisões até hoje. O mais antigo espera desde 13/10 11:57. Com a trava no ar, cada sinal sem revisão segura uma baixa.</td></tr>
+      <tr><td>Olhar os 36 cards baixados com sinal alto antes da trava</td><td>Foram finalizados pelo auditor com foto suspeita, entre 13/10 e 15/10 11:17.</td></tr>
+      <tr><td>Retomar a conferência do "Despesa prova o card"</td><td>Ninguém confere desde 04/10, com 13 pendentes. Sem isso ele não sai da sombra.</td></tr>
+      <tr><td>Rodar o score à mão ou esperar 19/10</td><td>A tabela está vazia, e o processo do score é mensal, no dia 10.</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section>
+  <div class="sec-head"><span class="sec-n">07</span><h2>Próxima semana</h2></div>
+  <ol class="flow">
+    <li><b>Abrir a fila de revisão do antifraude</b><p>Aba Agentes de IA, só Admin. Começar pelos 47 fortes. O alerta da R44 acende quando o mais antigo passa de 4 horas, e hoje ele já passou de 2 dias.</p></li>
+    <li><b>Cruzar os perdidos do incidente</b><p>Os 18 de danos contra os cards criados depois de 13/10. O que faltar, salvar a negociação de novo.</p></li>
+    <li><b>Confirmar o score de 19/10</b><p>Na segunda-feira, a <span class="mono">maintenance_franchisescore</span> tem de ter linhas.</p></li>
+    <li><b>Levar o #5238 para a develop</b><p>Card aberto acompanha o imóvel na migração. O PR segue aberto.</p></li>
+  </ol>
+</section>
+
+<div class="foot">
+  <p>Fontes: banco de produção do Sapron (<span class="mono">maintenance_maintenancecard</span>, <span class="mono">maintenance_franchisescore</span>, <span class="mono">maintenance_evidencefraudreview</span>, <span class="mono">django_migrations</span>), lido em 15/10/2026 às 17h20 · GitHub, <span class="mono">develop</span>/<span class="mono">staging</span>/<span class="mono">main</span> do sapron-backend e do sapron-frontend, lidos em 15/10/2026 · registro do incidente em <span class="mono">/root/manutencao/incidente-cards-2026-10-09/</span>.</p>
+  <p>Heartbeat anterior: <span class="mono">heartbeat-agentes-2026-09-25.html</span> (25/09/2026) · Vinicius Satores · Manutenção / Tecnologia</p>
+</div>
+
+</div>

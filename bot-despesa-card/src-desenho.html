@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Bot Despesa e Card</title>
+<style>{{css}}</style></head><body><main>
+
+<h1>Bot Despesa → Card de Manutenção</h1>
+<p class="sub">Brainstorm do desenho · Central de Manutenção + Lançamento de Despesas</p>
+
+<blockquote><b>v0.2 · 29/09/2026</b> · situação: <b>construído, em revisão</b>. Os PRs estão abertos para a <code>develop</code>: backend #4986 e front #3599. O agente nasce desligado · dono: Vinicius Satores (Manutenção)</blockquote>
+
+<h2>🎯 1. O que o bot resolve</h2>
+<p>A franquia lança a despesa do serviço no Sapron e ela é aprovada no financeiro. <b>O card de manutenção do mesmo serviço continua aberto</b>, esperando uma foto que já está na despesa. O bot liga as duas pontas: quando a despesa é aprovada e bate com um card aberto, ele <b>puxa a evidência da despesa para o card e dá a baixa</b>.</p>
+
+<h2>📊 2. O tamanho do problema</h2>
+<p>Fonte: API de produção do Sapron, 28/09/2026 às 20h37. A leitura não alterou nenhum dado. Entraram os cards abertos e as despesas registradas de 01 a 28/09.</p>
+<div class="grade">
+<div><span class="num">450</span><small>cards abertos</small></div>
+<div><span class="num">3.612</span><small>despesas registradas em setembro</small></div>
+<div><span class="num">187</span><small>cards com despesa no mesmo imóvel depois de abertos</small></div>
+<div><span class="num">37</span><small>batem por palavra e já têm a despesa aprovada ou paga</small></div>
+<div><span class="num">159</span><small>dos 450 abertos são de Danos, o melhor alvo</small></div>
+</div>
+<blockquote class="atencao"><b>Comparar palavra não basta.</b> Dos 187 cards, a maioria tem só despesa sem relação com o card (água, energia, vassoura, condomínio). A regra simples de palavra erra para os dois lados: casa despesa errada e perde a certa. Por isso o bot precisa de um juiz, detalhado na seção 4.</blockquote>
+
+<h2>🔍 3. O que já existe no sistema</h2>
+<div class="tabela"><table>
+<tr><th>Peça</th><th>Situação</th></tr>
+<tr><td>Ligação entre card e despesa</td><td><span class="tag nao">não existe</span> Nenhum campo liga uma à outra</td></tr>
+<tr><td>Arquivos da despesa</td><td><span class="tag ok">existe</span> A despesa guarda a foto do serviço e a nota ou recibo</td></tr>
+<tr><td>Enviar evidência no card</td><td><span class="tag ok">existe</span> É o mesmo caminho que a franquia usa hoje, e leva o card para "Aguardando aprovação"</td></tr>
+<tr><td>Dar baixa no card</td><td><span class="tag ok">existe</span> É o mesmo botão de aprovar da Central</td></tr>
+<tr><td>Casar despesa com manutenção</td><td><span class="tag meio">em parte</span> A recorrente do ar-condicionado já faz isso com os itens 298 e 405 e com palavra-chave. Os cards comuns não têm nada</td></tr>
+<tr><td>Validador de evidência (IA)</td><td><span class="tag ok">em produção</span> Lê a foto e diz se ela cobre todos os itens do card</td></tr>
+</table></div>
+
+<h2>🔄 4. Como o bot funciona</h2>
+<ol class="etapas">
+<li><b>Acorda a cada 15 minutos</b> e procura as despesas que acabaram de ser aprovadas ou pagas. Segue o esquema dos outros agentes da Central, e o código do financeiro fica como está.</li>
+<li><b>Procura os cards candidatos:</b> abertos, do mesmo imóvel e abertos antes da data da despesa, com 2 dias de folga. Despesa de conta (água, luz, condomínio, internet) e de reserva nem entra.</li>
+<li><b>O juiz decide se bate</b>, com três caminhos:
+  <ul>
+  <li><b>Danos:</b> o card já traz o item e o valor ("Cadeira R$ 850"). Item e valor iguais casam sem IA.</li>
+  <li><b>Recorrente:</b> usa os itens da regra, como o sistema já faz.</li>
+  <li><b>Resto:</b> a IA lê o card e a despesa e responde se a despesa cobre <b>todos os itens</b>, <b>só parte</b> ou <b>nenhum</b>.</li>
+  </ul></li>
+<li><b>Age conforme a resposta</b> (seção 5).</li>
+<li><b>Registra tudo:</b> qual despesa, qual card, por que casou e quem decidiu (a regra ou a IA).</li>
+</ol>
+
+<h2>✅ 5. O que o bot faz em cada caso</h2>
+<div class="tabela"><table>
+<tr><th>O juiz disse</th><th>O bot faz</th><th>Como o card fica</th></tr>
+<tr><td><span class="tag ok">cobre todos os itens</span></td><td>Posta no chamado do card as fotos e a nota da despesa, sem copiar o arquivo. Grava a ligação e a etiqueta <code>despesa:&lt;número&gt;</code></td><td>Baixa dada, com a data da despesa como data da evidência</td></tr>
+<tr><td><span class="tag meio">cobre só parte</span></td><td>Anexa a evidência e escreve no card quais itens faltam</td><td>Continua aberto</td></tr>
+<tr><td><span class="tag info">em dúvida</span></td><td>Só registra, para a gente olhar depois</td><td>Não muda</td></tr>
+<tr><td><span class="tag nao">despesa cancelada depois</span></td><td>Avisa internamente. Não reabre sozinho</td><td>Uma pessoa decide</td></tr>
+</table></div>
+<p><b>Por que a data da despesa:</b> o score da franquia conta os dias até a evidência. Com a data em que o bot rodou, a demora da aprovação no financeiro contaria contra ela.</p>
+
+<h2>🧪 6. Casos reais do dia 28/09</h2>
+<div class="tabela"><table>
+<tr><th>Caso</th><th>O que a regra de palavra fez</th><th>O que o bot tem de fazer</th></tr>
+<tr><td>Card "Cadeira R$ 850" (Danos) e despesa descrita só como "Danos"</td><td><span class="tag nao">perdeu</span></td><td>Casar por item e valor</td></tr>
+<tr><td>Dois cards de toalha (de banho e de rosto) e uma despesa de toalha de banho</td><td><span class="tag nao">casou os dois</span></td><td>Casar só o de banho, ou os dois se a despesa listar os dois itens</td></tr>
+<tr><td>Card com 3 itens (chuveiro, pia, tomada) e despesa só da pia</td><td><span class="tag nao">não viu</span></td><td>Anexar e dizer que faltam chuveiro e tomada</td></tr>
+<tr><td>Card de ar-condicionado e despesa "Higienização de ar condicionado"</td><td><span class="tag ok">acertou</span></td><td>Dar baixa</td></tr>
+<tr><td>Card de infiltração e despesas de água e energia</td><td><span class="tag ok">ignorou</span></td><td>Ignorar, porque despesa de conta nem entra</td></tr>
+</table></div>
+
+<h2>🛡️ 7. Sistema de aprovação</h2>
+<p>A ideia é conferir no começo, para o agente aprender, e deixar de conferir quando ele provar que acerta.</p>
+
+<h3>7.1 Três fases, uma de cada vez</h3>
+<div class="tabela"><table>
+<tr><th>Fase</th><th>O que o agente faz</th><th>O que a pessoa faz</th></tr>
+<tr><td><span class="tag info">1 · Sombra</span></td><td>Só anota o que faria. Não mexe em card nenhum</td><td>Diz "concordo" ou "discordo" na aba Agentes de IA</td></tr>
+<tr><td><span class="tag meio">2 · Anexar</span></td><td>Põe a foto e a nota da despesa no card. Se a despesa cobre todos os itens, o card vai para "Aguardando aprovação"</td><td>Dá a baixa normal na Central. Essa baixa já conta como "concordo"</td></tr>
+<tr><td><span class="tag ok">3 · Baixa</span></td><td>Fecha sozinho o card coberto por inteiro, mas só no tipo de caso que passou na régua</td><td>Confere só as baixas sorteadas para auditoria</td></tr>
+</table></div>
+<p>Cada fase tem uma chave própria, e todas nascem fechadas. Todos os tipos de caso passam pela sombra.</p>
+
+<h3>7.2 A régua é separada por tipo de caso</h3>
+<div class="tabela"><table>
+<tr><th>Tipo de caso</th><th>Como decide</th><th>Libera a baixa sozinha com</th></tr>
+<tr><td>Danos</td><td>O valor total do card é igual ao da despesa. É conta, sem IA</td><td><b>15 conferências sem nenhum erro</b></td></tr>
+<tr><td>Recorrente</td><td>A despesa foi lançada no item da regra, sem IA</td><td><b>30 conferências com até 1 erro</b></td></tr>
+<tr><td>IA</td><td>A IA lê o card e a despesa item a item</td><td><b>30 conferências com até 1 erro</b> (97%)</td></tr>
+</table></div>
+<p>A régua olha sempre as últimas conferências. Se o erro passar do limite, o tipo perde a baixa sozinha e volta a só anexar.</p>
+
+<h3>7.3 Conferir quase sem clique</h3>
+<ul>
+<li><b>Baixa no card</b> que o agente anexou conta como "concordo".</li>
+<li><b>Devolver a evidência</b> desse card conta como "discordo".</li>
+<li><b>Na aba:</b> os botões Concordo e Discordo. O Discordo pede o motivo.</li>
+</ul>
+
+<h3>7.4 Como o agente aprende</h3>
+<p>O motivo de cada "discordo" volta para a IA como exemplo na leitura seguinte. Um motivo como "pia não é chuveiro" ensina mais do que um "discordo" sem explicação.</p>
+
+<h3>7.5 Auditoria depois de liberar</h3>
+<p>Depois que um tipo ganha a baixa sozinha, <b>1 em cada 10</b> dessas baixas é sorteada e volta para a conferência. Sem isso, o tipo liberado nunca mais seria medido. Um "discordo" numa baixa sorteada entra na mesma régua.</p>
+
+<h3>7.6 Quem confere, e o registro</h3>
+<p>Qualquer pessoa que opera a Central pode conferir. Fica gravado <b>quem</b>, <b>quando</b>, <b>por onde</b> (aba, baixa no card ou devolução) e o <b>motivo</b>. A aba mostra as últimas 20 conferências.</p>
+
+<h3>7.7 O que nunca muda</h3>
+<ul>
+<li>Despesa que cobre só parte nunca fecha o card: o agente anexa e escreve o que falta.</li>
+<li>Na dúvida, não fecha.</li>
+<li>A data da evidência é a do serviço na despesa, nunca antes da abertura do card.</li>
+<li>Despesa cancelada depois gera só um aviso interno. O agente não reabre o card sozinho.</li>
+</ul>
+
+<figure><img src="print-aba.png" alt="Aba Agentes de IA com o agente Despesa prova o card">
+<figcaption>O agente na aba Agentes de IA, com a mesma cara dos outros cinco. <b>Print do Sapron local com dados de exemplo</b> (29/09), não de produção.</figcaption></figure>
+
+<h2>✅ 8. Decisões tomadas</h2>
+<div class="tabela"><table>
+<tr><th>#</th><th>Pergunta</th><th>Decisão</th></tr>
+<tr><td>1</td><td>Baixa sozinha desde o começo?</td><td>Não. Começa com aprovação de gente e libera a baixa pela régua (Vinicius, 29/09)</td></tr>
+<tr><td>2</td><td>Uma despesa pode provar mais de um card?</td><td>Sim, desde que a IA diga qual item cobre cada card</td></tr>
+<tr><td>3</td><td>Despesa "Pré-aprovada" conta?</td><td>Não. Só "Aprovada" e "Paga"</td></tr>
+<tr><td>4</td><td>Régua</td><td>Danos: 15 sem erro. Recorrente e IA: 30 com até 1 erro</td></tr>
+<tr><td>5</td><td>Danos pode pular a sombra?</td><td>Não. Todos os tipos passam pela sombra</td></tr>
+<tr><td>6</td><td>Auditoria depois de liberar?</td><td>Sim, 1 em cada 10 baixas</td></tr>
+<tr><td>7</td><td>Quem confere?</td><td>Qualquer pessoa que opera a Central, com registro de quem, quando e por onde (Vinicius, 29/09)</td></tr>
+</table></div>
+
+<h2>🚀 9. Próximos passos</h2>
+<ol class="etapas">
+<li>O Alfred revisa, e os PRs entram na <code>develop</code>. Depois seguem para <code>staging</code> e <code>main</code></li>
+<li>Criar a chave <code>AI_HUB_API_KEY_MAINTENANCE_EXPENSE</code> em staging e em produção (o Vinicius roda)</li>
+<li>Criar as 3 chaves das fases no PostHog, todas fechadas</li>
+<li>Abrir a primeira fase: 1 a 2 semanas em sombra, conferindo pela aba</li>
+<li>Abrir a fase de anexar. As baixas na Central seguem ensinando o agente</li>
+<li>Abrir a fase de baixa. Cada tipo libera sozinho quando passar na régua</li>
+</ol>
+
+<footer>Números: API de produção do Sapron, 28/09/2026 às 20h37, só leitura · print: Sapron local com dados de exemplo, 29/09/2026 · Manutenção · Seazone</footer>
+</main></body></html>

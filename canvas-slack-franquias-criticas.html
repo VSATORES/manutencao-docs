@@ -1,0 +1,230 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Recuperação de Franquias Críticas · canvas</title>
+<style>
+body{font-family:-apple-system,"Segoe UI",Lato,sans-serif;max-width:860px;margin:32px auto;padding:0 16px;color:#1d1c1d;line-height:1.5;font-size:15px}
+.dica{background:#fff8e1;border:1px solid #f2c94c;border-radius:6px;padding:10px 14px;font-size:13px;margin-bottom:28px}
+table{border-collapse:collapse;width:100%;margin:6px 0 14px}
+th,td{border:1px solid #ddd;padding:6px 9px;text-align:left;vertical-align:top;font-size:14px}
+th{background:#f4f4f4}
+blockquote{border-left:4px solid #ddd;margin:0 0 12px;padding:2px 12px;color:#555}
+h2{margin-top:26px}
+</style>
+</head>
+<body>
+<div class="dica"><b>Como usar:</b> selecione tudo abaixo desta caixa (clique antes de "Documento oficial", Shift+clique no fim), copie com Ctrl+C e cole no canvas do Slack com Ctrl+V. Títulos, tabelas, negrito e listas entram formatados. Fonte do conteúdo: processo Recuperação de Franquias Críticas v1.3, de 28/09/2026 (<code>processo-recuperacao-franquias-criticas.html</code>).</div>
+
+<blockquote><p>Documento oficial · <b>v1.3 · 28/09/2026</b> · dono: Central de Manutenção · valida: Diretoria de Franquias, Financeiro e Jurídico.</p></blockquote>
+<hr>
+<h2>📌 1. Identificação do Processo</h2>
+<ul>
+<li><b>Nome do processo:</b> Recuperação de Franquias Críticas</li>
+<li><b>Setor responsável:</b> Central de Manutenção</li>
+<li><b>Valida:</b> Diretoria de Franquias, Financeiro e Jurídico</li>
+<li><b>Sistema:</b> Sapron · Central de Manutenção (dados) e skill <code>/recuperacao-franquias</code> no Claude Code (triagem)</li>
+</ul>
+<hr>
+<h2>🎯 2. Objetivo</h2>
+<p>Definir o que a Seazone faz quando uma franquia para de resolver manutenção: como ela entra, quem conduz, o que acontece em cada etapa e como ela sai. <b>O processo trata a franquia, não o card.</b></p>
+<p><b>Resultados esperados:</b></p>
+<ul>
+<li>Ninguém entra por percepção ou por pedido: só pela triagem semanal</li>
+<li>Cada franquia com um responsável nomeado e uma data por etapa</li>
+<li>Caso que não entrega sobe sem nova reunião para decidir</li>
+<li>Saída da faixa só com critério sustentado no tempo</li>
+</ul>
+<hr>
+<h2>📝 3. Escopo</h2>
+<p><b>Dentro do escopo:</b></p>
+<ul>
+<li>A triagem semanal, que classifica cada franquia em faixa</li>
+<li>As etapas Recuperação, Crítica, UTI e Observação</li>
+<li>O ciclo Plano · Ação · Resultado de cada semana</li>
+</ul>
+<p><b>Fora do escopo:</b></p>
+<ul>
+<li>O card individual (segue a régua automática do Sapron)</li>
+<li>Decisão de encerrar o contrato da franquia: é da Diretoria, no dia 60 da UTI</li>
+</ul>
+<p><b>Interfaces com outros processos:</b></p>
+<ul>
+<li><b>Régua do Sapron:</b> roda sozinha no card; este processo começa depois dela. O Sapron manda lembrete no chat do card em D+7, D+14, D+21 e a cada 7 dias depois</li>
+<li><b>Ocorrência formal e multa:</b> BackOffice, Financeiro e Jurídico</li>
+</ul>
+<blockquote><p><b>Atenção:</b> acionar o gestor por nome em D+14 e passar à Coordenação em D+21 ainda é <b>manual</b> (aviso no Slack em construção). Conferido no código em 25/09/2026.</p></blockquote>
+<hr>
+<h2>📖 4. Definições</h2>
+<table>
+<tr><th>Termo</th><th>Significado</th></tr>
+<tr><td><b>Triagem</b></td><td>Rotina semanal que recalcula os cinco sinais no Sapron e classifica cada franquia em faixa</td></tr>
+<tr><td><b>Sinal</b></td><td>Um dos cinco indicadores medidos por franquia; "ruim" quando passa do limite</td></tr>
+<tr><td><b>Faixa</b></td><td>Atenção, Recuperação, Crítica, UTI ou Observação; diz quanta energia investir</td></tr>
+<tr><td><b>Plano · Ação · Resultado</b></td><td>O ciclo da semana: o que foi combinado, o que aconteceu, o que mudou</td></tr>
+<tr><td><b>Alta</b></td><td>Descida de faixa, só quando o critério se sustenta no tempo</td></tr>
+<tr><td><b>Observação</b></td><td>90 dias de leitura semanal depois de qualquer alta</td></tr>
+</table>
+<hr>
+<h2>👥 5. Responsáveis e Papéis</h2>
+<table>
+<tr><th>Etapa</th><th>Quem conduz</th></tr>
+<tr><td>Atenção</td><td>BackOffice · Franquias</td></tr>
+<tr><td>Recuperação</td><td>Coordenação de Consultoria de Franquias</td></tr>
+<tr><td>Crítica</td><td>Gerência de BackOffice · Franquias</td></tr>
+<tr><td>UTI</td><td>Diretoria de Franquias, com a COO informada</td></tr>
+<tr><td>Triagem e relatórios</td><td>Central de Manutenção</td></tr>
+</table>
+<p><b>Três regras valem em toda a linha:</b></p>
+<ul>
+<li><b>Um rosto por franquia, por etapa.</b> Quem sai de cena não volta a cobrar em paralelo</li>
+<li><b>Sobe rápido, desce devagar.</b> Um gatilho basta para subir; para descer, o critério precisa se sustentar</li>
+<li><b>Ninguém sai por tempo decorrido.</b> Prazo de etapa vencido sem alta faz o caso subir, não renovar</li>
+</ul>
+<hr>
+<h2>🔄 6. Fluxo</h2>
+<p>Cinco etapas em sequência. As passagens marcadas como <b>automáticas</b> acontecem sem nova reunião.</p>
+
+<h3>6.1 Triagem · toda semana, dia fixo</h3>
+<p>É a única porta de entrada.</p>
+<ul>
+<li><b>Dar o start com o input da semana</b> (dono da faixa): data de corte, o que cada call combinou (card, responsável, dia) e os fatos de fora do sistema — ocorrência, reincidência, multa</li>
+<li><b>Rodar a triagem</b> (Central de Manutenção): recalcula os cinco sinais, classifica cada franquia e gera o relatório Plano · Ação · Resultado</li>
+<li><b>Aprovar os cards que já vieram com evidência</b> e estão parados na nossa fila (Central de Manutenção)</li>
+<li><b>Avisar a franquia que entrou</b>, com o responsável nomeado e a data da primeira call (BackOffice · Franquias)</li>
+</ul>
+
+<h3>6.2 Recuperação · call quinzenal de 30 min</h3>
+<p><b>Entra com</b> dois sinais ruins, ou qualquer card vencido há mais de 60 dias. <b>Conduz:</b> Coordenação de Consultoria de Franquias.</p>
+<ul>
+<li>Montar a planilha da franquia e quebrar os cards mistos em franquia × proprietário (Central de Manutenção)</li>
+<li>Call com a franquia, card a card, saindo com data assumida por ela em cada um (Coordenação + consultor regional)</li>
+<li>Confirmar em campo o que a franquia declarou. <b>Declaração sem confirmação não fecha card</b> (Consultoria Regional)</li>
+<li>Encaminhar ao proprietário o que depender de orçamento dele (Relacionamento)</li>
+<li><b>Sobe (automático):</b> duas calls seguidas sem entrega → Crítica</li>
+<li><b>Alta:</b> nenhum card vencido há mais de 30 dias e evidência acima de 50% dos abertos</li>
+</ul>
+
+<h3>6.3 Crítica · call semanal de 45 min, dia fixo</h3>
+<p><b>Entra com</b> três sinais ruins, alcance acima de 50% da carteira, ou card de avaliação de hóspede aberto há mais de 30 dias. <b>Conduz:</b> Gerência de BackOffice · Franquias.</p>
+<ul>
+<li>Publicar a ordem de ataque da franquia e enviar o relatório antes de cada call (Central de Manutenção)</li>
+<li>Fechar a posição da Seazone em 15 minutos antes da call. <b>Ninguém negocia prazo ao vivo</b> (Gerência + Coordenação + Manutenção)</li>
+<li>Call semanal com a franquia. Termina sempre com card, responsável e dia (Gerência de BackOffice)</li>
+<li>Registrar ocorrência formal com o prazo final declarado por escrito (Gerência de BackOffice)</li>
+<li><b>Sobe (automático):</b> prazo da ocorrência vencido sem entrega → UTI</li>
+<li><b>Alta:</b> plano cumprido por 30 dias seguidos, sem card novo vencendo</li>
+</ul>
+
+<h3>6.4 UTI · prazo máximo de 60 dias</h3>
+<p><b>Entra com</b> quatro ou cinco sinais ruins, descumprimento do prazo da ocorrência, ou reincidência. <b>Conduz:</b> Diretoria de Franquias, com a COO informada.</p>
+<ul>
+<li>Bloquear a entrada de novos imóveis e comunicar a franquia por escrito, com prazo e consequência (Diretoria de Franquias)</li>
+<li>Acionar multa e o caminho contratual (Financeiro + Jurídico)</li>
+<li>Onde houver risco ao hóspede, executar direto pela Seazone e cobrar da franquia depois (Diretoria + Financeiro)</li>
+<li>Comitê quinzenal: entregou o quê, o que falta, segue ou encerra. Decisão registrada com data (Diretoria + COO + BackOffice + Manutenção)</li>
+<li><b>Dia 60:</b> decisão de continuidade da franquia. <b>A UTI não se renova</b></li>
+<li><b>Alta:</b> zero cards críticos e 60 dias sem reincidência → desce para Recuperação, <b>nunca direto para fora</b></li>
+</ul>
+
+<h3>6.5 Observação · 90 dias após a alta</h3>
+<p>Sair da faixa não é sair do radar.</p>
+<ul>
+<li>Manter a franquia na leitura semanal por 90 dias (BackOffice · Franquias)</li>
+<li><b>Volta (automático):</b> voltar à faixa Crítica dentro dos 90 dias → vai direto para a UTI, sem passar pelas intermediárias</li>
+</ul>
+<hr>
+<h2>📋 7. Regras de Negócio</h2>
+
+<h3>7.1 Os cinco sinais</h3>
+<p>Lidos na triagem semanal. Fila grande sozinha não classifica ninguém: o que conta é quantos sinais estão ruins ao mesmo tempo.</p>
+<table>
+<tr><th>Sinal</th><th>O que mede</th><th>Ruim quando</th></tr>
+<tr><td><b>Alcance</b></td><td>Imóveis com card aberto sobre imóveis ativos</td><td>≥ 40%</td></tr>
+<tr><td><b>Idade</b></td><td>Atraso médio dos cards vencidos</td><td>≥ 45 dias</td></tr>
+<tr><td><b>Teimosia</b></td><td>Quanto da fila passou de 90 dias</td><td>≥ 25%</td></tr>
+<tr><td><b>Silêncio</b></td><td>Cards abertos com evidência entregue</td><td>&lt; 20%</td></tr>
+<tr><td><b>Parada</b></td><td>Despesas de manutenção nos últimos 90 dias</td><td>zero</td></tr>
+</table>
+
+<h3>7.2 As faixas</h3>
+<table>
+<tr><th>Faixa</th><th>Entra com</th><th>Conduz</th></tr>
+<tr><td><b>Atenção</b></td><td>Um sinal ruim; segue só na régua automática</td><td>BackOffice · Franquias</td></tr>
+<tr><td><b>Recuperação</b></td><td>Dois sinais, ou card vencido há mais de 60 dias</td><td>Coordenação de Consultoria</td></tr>
+<tr><td><b>Crítica</b></td><td>Três sinais, ou alcance acima de 50%, ou card de avaliação aberto há mais de 30 dias</td><td>Gerência de BackOffice</td></tr>
+<tr><td><b>UTI</b></td><td>Quatro ou cinco sinais, prazo de ocorrência descumprido, ou reincidência</td><td>Diretoria de Franquias</td></tr>
+</table>
+
+<h3>7.3 Por que ela travou</h3>
+<p>Classificado junto com a faixa. A faixa diz quanta energia investir; o tipo de trava diz o que fazer. É uma <b>sugestão tirada dos números</b>: quem confirma é a call.</p>
+<table>
+<tr><th>Quando parece</th><th>O que fazer</th></tr>
+<tr><td><b>Parada</b> · a fila cresce em tudo, silêncio quase total, nenhuma despesa de manutenção</td><td>Único caso que justifica escalada contratual desde o início</td></tr>
+<tr><td><b>Seletiva</b> · fecha o que é novo e fácil, o passivo antigo não anda</td><td>Mutirão do passivo: congelar cards novos por duas semanas e dar data aos antigos. Sem multa, ela está produzindo</td></tr>
+<tr><td><b>Executa e não comprova</b> · gasta em manutenção mas quase não fecha card</td><td>Treino de evidência e conferência de despesa × card; o que bater, fecha em lote. Sem multa, o serviço foi feito</td></tr>
+<tr><td><b>Abandono de fila pequena</b> · poucos cards, todos muito velhos</td><td>Uma call de 30 minutos com a lista na tela. Não abrir programa para isso</td></tr>
+</table>
+
+<h3>7.4 Por onde começar dentro da franquia</h3>
+<p>Três cortes, nesta ordem, para montar a planilha e a ordem de ataque.</p>
+<ol>
+<li><b>Janela:</b> card em imóvel que recebe hóspede nos próximos 7 dias vem primeiro, sempre. O serviço se encaixa entre o check-out e o check-in seguinte</li>
+<li><b>Urgência:</b> risco e habitabilidade antes de experiência do hóspede; experiência antes de reposição de item</li>
+<li><b>Responsabilidade:</b> separar o que é da franquia do que é do proprietário antes de cobrar. Card misto não fecha, porque quem recebe a cobrança não controla metade do conteúdo</li>
+</ol>
+
+<h3>7.5 Toda semana: Plano · Ação · Resultado</h3>
+<p>A triagem não é uma foto da semana: ela confere o que foi prometido na semana anterior e devolve o que prometer na próxima.</p>
+<table>
+<tr><th>Coluna</th><th>O que é</th></tr>
+<tr><td><b>Plano</b></td><td>Sai da call: card, responsável e dia, um por linha. <b>Promessa sem dia não entra.</b> O relatório leva a ordem de ataque pronta, com responsável e dia em branco para preencher ao vivo</td></tr>
+<tr><td><b>Ação</b></td><td>Na triagem seguinte, cada linha do plano é conferida no Sapron: concluído, evidência entregue, no prazo ou não cumpriu o dia. <b>Vale o que o sistema mostra, não o que a franquia declarou</b></td></tr>
+<tr><td><b>Resultado</b></td><td>Os cinco sinais antes e agora, e a faixa antes e agora. Decide se o caso sobe, fica ou desce, e dele sai o plano da próxima call</td></tr>
+</table>
+<p><b>O que entra no start e não está no Sapron:</b> o plano combinado em cada call, ocorrência formal com prazo, prazo de ocorrência descumprido, reincidência e multa aplicada. Fica registrado de uma semana para a outra; sem ele não existe "semana anterior".</p>
+<hr>
+<h2>🔑 8. Sistemas</h2>
+<ul>
+<li><b>Sapron · Central de Manutenção:</b> fonte dos cinco sinais, via MCP do Sapron. Se o Sapron estiver fora, a triagem não roda: <b>não se estima sinal</b></li>
+<li><b>Skill <code>/recuperacao-franquias</code> (Claude Code):</b> puxa os sinais, aplica as faixas e as passagens automáticas e guarda o plano de uma semana para a outra</li>
+<li><b>Registro semanal:</b> fica na máquina de quem roda a triagem. <b>Um dono por semana</b>: a triagem é da Central de Manutenção; quem só prepara uma call usa o pedido "prepara a call da franquia X", que não mexe no registro</li>
+</ul>
+<p><b>Como rodar:</b></p>
+<ol>
+<li><b>Start:</b> digitar <code>/recuperacao-franquias</code>. Ela pede o input da semana</li>
+<li><b>Sinais:</b> ela consulta o Sapron</li>
+<li><b>Relatório:</b> sai um HTML com as faixas da rede e um bloco Plano · Ação · Resultado por franquia, com a ordem de ataque da próxima call</li>
+<li><b>Gravar:</b> ela mostra quem subiu, quem desceu e o que está pendente, e só grava a semana depois do "pode"</li>
+<li><b>Depois de cada call:</b> dizer à skill o que foi combinado (card, responsável, dia)</li>
+</ol>
+<hr>
+<h2>⏳ 9. Reuniões, Prazos e SLA</h2>
+<table>
+<tr><th>Reunião</th><th>Etapa</th><th>Quando</th><th>Quem</th></tr>
+<tr><td><b>Triagem</b></td><td>1</td><td>Semanal · 20 min</td><td>Manutenção + BackOffice</td></tr>
+<tr><td><b>Call de Recuperação</b></td><td>2</td><td>Quinzenal · 30 min</td><td>Coordenação de Consultoria + consultor regional</td></tr>
+<tr><td><b>Call Crítica</b></td><td>3</td><td>Semanal · 45 min</td><td>Gerência de BackOffice + Coordenação + Manutenção</td></tr>
+<tr><td><b>Comitê de UTI</b></td><td>4</td><td>Quinzenal · 45 min</td><td>Diretoria + COO + BackOffice + Manutenção</td></tr>
+</table>
+<ul>
+<li><b>UTI:</b> prazo máximo de 60 dias, sem renovação</li>
+<li><b>Observação:</b> 90 dias após qualquer alta</li>
+</ul>
+<hr>
+<h2>⚠️ 10. Estado atual e pendências</h2>
+<ul>
+<li>A skill de triagem foi testada só com dados fictícios em 28/09/2026 e <b>ainda não rodou contra o Sapron</b>. Na primeira rodada real, conferir a consulta e os números antes de confiar nas faixas</li>
+<li>D+14 (BackOffice) e D+21 (Coordenação) por nome ainda não são automáticos</li>
+<li>O critério de alta da UTI ("zero crítico") fica frouxo enquanto o agente de urgência estiver inerte</li>
+</ul>
+<hr>
+<h2>🕘 11. Histórico de Alterações</h2>
+<table>
+<tr><th>Versão</th><th>Data</th><th>Alteração</th></tr>
+<tr><td>1.3</td><td>28/09/2026</td><td>Start com input da semana, ciclo Plano · Ação · Resultado; correção de que D+14 e D+21 por nome ainda não são automáticos</td></tr>
+</table>
+<hr>
+<p>Dono: Central de Manutenção · Valida: Diretoria de Franquias, Financeiro e Jurídico · v1.3, 28/09/2026</p>
+</body>
+</html>

@@ -1,0 +1,440 @@
+<title>Classificador e Triagem</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Newsreader:opsz,wght@6..72,500;6..72,600&family=Source+Sans+3:wght@400;600&display=swap">
+<style>
+  :root {
+    --ground: #F6F6F3;
+    --surface: #FFFFFF;
+    --line: #DEDFD8;
+    --line-soft: #EAEBE4;
+    --ink: #17201C;
+    --ink-2: #4A574F;
+    --ink-3: #7D8981;
+    --accent: #0B6B62;
+    --accent-soft: rgba(11, 107, 98, 0.09);
+    --feito-fg: #166534;
+    --feito-bg: rgba(22, 163, 74, 0.12);
+    --falta-fg: #B45309;
+    --falta-bg: rgba(217, 119, 6, 0.13);
+    --code-bg: #EDEEE8;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ground: #0E1311;
+      --surface: #161D1A;
+      --line: #2A3531;
+      --line-soft: #1F2825;
+      --ink: #E9EEEA;
+      --ink-2: #A9B6AF;
+      --ink-3: #74837B;
+      --accent: #4FB3A6;
+      --accent-soft: rgba(79, 179, 166, 0.13);
+      --feito-fg: #5FD68A;
+      --feito-bg: rgba(22, 163, 74, 0.17);
+      --falta-fg: #F0B429;
+      --falta-bg: rgba(217, 119, 6, 0.17);
+      --code-bg: #1E2622;
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --ground: #0E1311;
+    --surface: #161D1A;
+    --line: #2A3531;
+    --line-soft: #1F2825;
+    --ink: #E9EEEA;
+    --ink-2: #A9B6AF;
+    --ink-3: #74837B;
+    --accent: #4FB3A6;
+    --accent-soft: rgba(79, 179, 166, 0.13);
+    --feito-fg: #5FD68A;
+    --feito-bg: rgba(22, 163, 74, 0.17);
+    --falta-fg: #F0B429;
+    --falta-bg: rgba(217, 119, 6, 0.17);
+    --code-bg: #1E2622;
+  }
+
+  body {
+    background: var(--ground);
+    color: var(--ink);
+    font-family: 'Source Sans 3', system-ui, -apple-system, sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+  }
+
+  .wrap {
+    max-width: 880px;
+    margin: 0 auto;
+    padding-inline: 20px;
+    padding-block: 44px 72px;
+  }
+
+  h1, h2, h3 { font-family: Newsreader, Georgia, serif; font-weight: 600; }
+
+  code, .mono {
+    font-family: 'IBM Plex Mono', ui-monospace, monospace;
+    font-variant-numeric: tabular-nums;
+  }
+
+  code {
+    background: var(--code-bg);
+    padding: 1px 5px;
+    border-radius: 4px;
+    font-size: 0.85em;
+  }
+
+  .eyebrow {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+  }
+
+  h1 {
+    font-size: clamp(30px, 6vw, 44px);
+    line-height: 1.08;
+    letter-spacing: -0.015em;
+    margin: 8px 0 14px;
+    text-wrap: balance;
+  }
+
+  .dek { color: var(--ink-2); max-width: 60ch; margin: 0; font-size: 17px; }
+
+  .achado {
+    margin-top: 26px;
+    background: var(--accent-soft);
+    border-left: 3px solid var(--accent);
+    border-radius: 0 8px 8px 0;
+    padding: 15px 18px;
+  }
+  .achado p { margin: 0; color: var(--ink); }
+  .achado p + p { margin-top: 8px; color: var(--ink-2); }
+
+  section { margin-top: 52px; }
+
+  .agente-topo {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 10px 14px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid var(--ink);
+  }
+
+  h2 { font-size: 25px; margin: 0; letter-spacing: -0.01em; }
+
+  .estado {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11.5px;
+    font-weight: 500;
+    padding: 3px 9px;
+    border-radius: 999px;
+    white-space: nowrap;
+  }
+  .estado.no-ar   { background: var(--feito-bg); color: var(--feito-fg); }
+  .estado.parcial { background: var(--falta-bg); color: var(--falta-fg); }
+
+  .ficha {
+    margin: 16px 0 0;
+    display: grid;
+    grid-template-columns: max-content 1fr;
+    gap: 5px 16px;
+    font-size: 14.5px;
+  }
+  .ficha dt { color: var(--ink-3); font-family: 'IBM Plex Mono', monospace; font-size: 12.5px; }
+  .ficha dd { margin: 0; color: var(--ink-2); }
+
+  .citacao {
+    margin: 20px 0 0;
+    padding: 14px 16px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    font-family: Newsreader, Georgia, serif;
+    font-size: 17px;
+    color: var(--ink);
+  }
+  .citacao span { display: block; margin-top: 8px; font-family: 'IBM Plex Mono', monospace; font-size: 11.5px; color: var(--ink-3); }
+
+  h3 { font-size: 18px; margin: 30px 0 10px; }
+
+  .linhas { border-top: 1px solid var(--line-soft); }
+
+  .linha {
+    display: grid;
+    grid-template-columns: 26px 1fr;
+    gap: 12px;
+    padding: 13px 0;
+    border-bottom: 1px solid var(--line-soft);
+    align-items: start;
+  }
+
+  .marca {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 1.5;
+  }
+  .marca.sim  { color: var(--feito-fg); }
+  .marca.nao  { color: var(--falta-fg); }
+
+  .linha b { font-weight: 600; }
+  .linha p { margin: 3px 0 0; color: var(--ink-2); font-size: 14.5px; }
+
+  .escala {
+    margin: 14px 0 0;
+    display: grid;
+    gap: 6px;
+  }
+  .faixa {
+    display: grid;
+    grid-template-columns: 78px 1fr;
+    gap: 12px;
+    align-items: baseline;
+    font-size: 14.5px;
+  }
+  .faixa .n { font-family: 'IBM Plex Mono', monospace; color: var(--ink); }
+  .faixa .d { color: var(--ink-2); }
+
+  .decisoes { counter-reset: d; border-top: 1px solid var(--line-soft); }
+  .decisao {
+    padding: 15px 0;
+    border-bottom: 1px solid var(--line-soft);
+    display: grid;
+    grid-template-columns: 30px 1fr;
+    gap: 12px;
+  }
+  .decisao::before {
+    counter-increment: d;
+    content: counter(d);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 13px;
+    color: var(--accent);
+    padding-top: 2px;
+  }
+  .decisao h3 { margin: 0; font-size: 17px; }
+  .decisao p { margin: 4px 0 0; color: var(--ink-2); font-size: 14.5px; }
+
+  footer {
+    margin-top: 52px;
+    padding-top: 18px;
+    border-top: 1px solid var(--line);
+    color: var(--ink-3);
+    font-size: 13.5px;
+  }
+
+  @media (max-width: 520px) {
+    .ficha { grid-template-columns: 1fr; gap: 2px; }
+    .ficha dd { margin-bottom: 8px; }
+    .faixa { grid-template-columns: 70px 1fr; }
+  }
+</style>
+
+<div class="wrap">
+
+  <p class="eyebrow">Projeto Central de Manutenção · TaskDex</p>
+  <h1>Classificador e Triagem</h1>
+  <p class="dek">
+    As duas linhas da planilha estão marcadas <strong>Não Iniciada</strong>. As duas descrevem,
+    em partes, um agente que está em produção desde 16 de setembro.
+  </p>
+
+  <div class="achado">
+    <p>
+      <strong>São a mesma coisa, vista de dois lugares.</strong> A linha da Fase 2 descreve o motor
+      — categoria e nota. A linha da Fase 3 descreve o que a pessoa vê — o selo no card e a fila
+      ordenada. Fechar uma sem a outra deixa metade do trabalho invisível no quadro.
+    </p>
+    <p>
+      O que falta de verdade não é o agente: é foto, sugestão de itens a cobrar e a decisão sobre
+      quem declara “programada”.
+    </p>
+  </div>
+
+  <section>
+    <div class="agente-topo">
+      <h2>Auto-classificação de categoria e urgência</h2>
+      <span class="estado no-ar">no ar desde 16/09</span>
+    </div>
+
+    <dl class="ficha">
+      <dt>fase</dt><dd>Fase 2 · Semana 4 · prioridade 3</dd>
+      <dt>status</dt><dd>Não Iniciada <em>— desatualizado</em></dd>
+      <dt>código</dt><dd><code>maintenance/services/card_classifier_ai.py</code></dd>
+      <dt>cadência</dt><dd>a cada 15 minutos</dd>
+    </dl>
+
+    <p class="citacao">
+      Classificador texto+foto define categoria, urgência (0–100) e itens a cobrar sugeridos —
+      resolve o <code>category=''</code> e outros bagunçado.
+      <span>Entregável, como está escrito na planilha</span>
+    </p>
+
+    <h3>Linha a linha do que foi prometido</h3>
+    <div class="linhas">
+      <div class="linha">
+        <span class="marca sim">feito</span>
+        <div>
+          <b>Define categoria</b>
+          <p>
+            Devolve a lista de categorias e elege uma principal. O desempate é o declarado no
+            desenho: maior risco, depois maior valor, depois a primeira que aparece no texto — nunca
+            a mais frequente.
+          </p>
+        </div>
+      </div>
+      <div class="linha">
+        <span class="marca sim">feito</span>
+        <div>
+          <b>Resolve o “outros bagunçado”</b>
+          <p>
+            Era o defeito nomeado na própria planilha. A guarda entrou em 18/09: quando a IA elege
+            <code>outros</code> como principal mas citou uma categoria de verdade na lista, a
+            principal é promovida para essa. Determinístico, fora do prompt, com log.
+          </p>
+        </div>
+      </div>
+      <div class="linha">
+        <span class="marca sim">feito</span>
+        <div>
+          <b>Urgência de 0 a 100</b>
+          <p>A nota tem três parcelas, e a escala abaixo é a régua real do código.</p>
+          <div class="escala">
+            <div class="faixa"><span class="n">0–80</span><span class="d">severidade julgada pelo modelo, sem considerar ocupação</span></div>
+            <div class="faixa"><span class="n">+0–20</span><span class="d">reincidência no imóvel em 90 dias, calculada em SQL</span></div>
+            <div class="faixa"><span class="n">piso 95</span><span class="d">gatilho duro no texto — vai ao topo sem depender do modelo</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="linha">
+        <span class="marca sim">feito</span>
+        <div>
+          <b>Entrada por texto</b>
+          <p>Lê título, descrição e os itens a cobrar do card.</p>
+        </div>
+      </div>
+      <div class="linha">
+        <span class="marca nao">falta</span>
+        <div>
+          <b>Entrada por foto</b>
+          <p>
+            <code>classify_card_text</code> recebe só texto. Nenhuma imagem chega ao modelo. Medi o
+            volume: cerca de 1.900 anexos por mês no chamado individual, sendo 81% JPEG — é um
+            custo conhecido, não uma incógnita.
+          </p>
+        </div>
+      </div>
+      <div class="linha">
+        <span class="marca nao">falta</span>
+        <div>
+          <b>Itens a cobrar sugeridos</b>
+          <p>
+            Hoje os itens são <em>entrada</em> do prompt, não saída. O esquema de resposta tem
+            quatro campos — categorias, principal, severidade e justificativa — e nenhum deles é
+            uma sugestão de cobrança. Inverter isso é trabalho novo, não ajuste.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="agente-topo">
+      <h2>Triagem e priorização</h2>
+      <span class="estado parcial">parcial</span>
+    </div>
+
+    <dl class="ficha">
+      <dt>fase</dt><dd>Fase 3 · Semana 3</dd>
+      <dt>status</dt><dd>Não Iniciada <em>— parcialmente entregue</em></dd>
+      <dt>título</dt><dd>Urgente vs programada, ícone de prioridade</dd>
+    </dl>
+
+    <h3>O que existe e o que não existe</h3>
+    <div class="linhas">
+      <div class="linha">
+        <span class="marca sim">feito</span>
+        <div>
+          <b>Ícone de prioridade no card</b>
+          <p>
+            É o selo de urgência, em produção. A faixa vem da nota: crítico a partir de 95, urgente
+            de 70 a 94, atenção de 40 a 69, baixo abaixo disso.
+          </p>
+        </div>
+      </div>
+      <div class="linha">
+        <span class="marca sim">feito</span>
+        <div>
+          <b>Fila ordenável pela nota</b>
+          <p>Quem opera o board consegue puxar o mais grave para cima sem ler card por card.</p>
+        </div>
+      </div>
+      <div class="linha">
+        <span class="marca nao">falta</span>
+        <div>
+          <b>Urgente <em>vs</em> programada</b>
+          <p>
+            O agente não move card de coluna, de propósito: ele escreve a nota e a justificativa, e
+            mudar status segue sendo decisão de quem opera. Hoje “programada” é declaração da
+            franquia, não conclusão da IA. Transformar isso em proposta automática é uma decisão de
+            processo, não uma linha de código.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="agente-topo">
+      <h2>O que decidir para fechar as duas linhas</h2>
+    </div>
+
+    <div class="decisoes">
+      <div class="decisao">
+        <div>
+          <h3>Foto entra no classificador?</h3>
+          <p>
+            Antes de ligar: 22% das imagens chegam pelo WhatsApp e só 8% como original de câmera.
+            Para classificar categoria isso basta; para qualquer coisa que dependa de metadado, não.
+          </p>
+        </div>
+      </div>
+      <div class="decisao">
+        <div>
+          <h3>Sugerir itens a cobrar, ou manter como entrada?</h3>
+          <p>
+            Sugerir cobrança é o primeiro lugar onde o agente toca em dinheiro. Vale decidir se ele
+            propõe e uma pessoa confirma, ou se fica de fora desta rodada.
+          </p>
+        </div>
+      </div>
+      <div class="decisao">
+        <div>
+          <h3>O agente propõe “programada”?</h3>
+          <p>
+            Se sim, ele passa a opinar sobre fluxo e não só sobre gravidade — e aí a auditoria
+            amostral deixa de ser desejável e vira pré-requisito.
+          </p>
+        </div>
+      </div>
+      <div class="decisao">
+        <div>
+          <h3>Atualizar o quadro</h3>
+          <p>
+            Duas linhas marcadas Não Iniciada descrevem trabalho que está em produção há cinco dias.
+            Enquanto o quadro disser isso, o planejamento da Fase 3 parte de um número errado.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    Lido da lista “Projeto Central de manutenção” no TaskDex em 21/09/2026, e conferido contra o
+    código no <code>sapron-backend</code>. As faixas, as parcelas da nota e os campos da resposta
+    da IA vêm do arquivo do classificador e de <code>maintenance/constants.py</code>, não de
+    memória.
+  </footer>
+
+</div>

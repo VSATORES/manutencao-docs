@@ -1,0 +1,212 @@
+<title>Classificador de Chamados</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&amp;family=Newsreader:opsz,wght@6..72,500;6..72,600&amp;family=Source+Sans+3:wght@400;600&amp;display=swap">
+<style>
+:root{
+  --ground:#F6F6F3; --surface:#FFFFFF; --line:#DEDFD8; --line-soft:#EAEBE4;
+  --ink:#17201C; --ink-2:#4A574F; --ink-3:#7D8981;
+  --accent:#0B6B62; --accent-soft:rgba(11,107,98,.09);
+  --ok-fg:#15803D; --ok-bg:rgba(22,163,74,.12);
+  --wait-fg:#B45309; --wait-bg:rgba(217,119,6,.13);
+  --stop-fg:#B91C1C; --stop-bg:rgba(220,38,38,.11);
+  --code-bg:#EDEEE8;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --ground:#0E1311; --surface:#161D1A; --line:#2A3531; --line-soft:#1F2825;
+    --ink:#E9EEEA; --ink-2:#A9B6AF; --ink-3:#74837B;
+    --accent:#4FB3A6; --accent-soft:rgba(79,179,166,.13);
+    --ok-fg:#5FD68A; --ok-bg:rgba(22,163,74,.17);
+    --wait-fg:#F0B429; --wait-bg:rgba(217,119,6,.17);
+    --stop-fg:#FCA5A5; --stop-bg:rgba(220,38,38,.17);
+    --code-bg:#1E2622;
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#0E1311; --surface:#161D1A; --line:#2A3531; --line-soft:#1F2825;
+  --ink:#E9EEEA; --ink-2:#A9B6AF; --ink-3:#74837B;
+  --accent:#4FB3A6; --accent-soft:rgba(79,179,166,.13);
+  --ok-fg:#5FD68A; --ok-bg:rgba(22,163,74,.17);
+  --wait-fg:#F0B429; --wait-bg:rgba(217,119,6,.17);
+  --stop-fg:#FCA5A5; --stop-bg:rgba(220,38,38,.17);
+  --code-bg:#1E2622;
+}
+body{background:var(--ground);color:var(--ink);font-family:'Source Sans 3',system-ui,-apple-system,sans-serif;font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased;}
+.wrap{max-width:760px;margin:0 auto;padding:0 16px;padding-block:40px 72px;}
+.eyebrow{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);font-weight:600;margin:0 0 10px;}
+h1{font-family:'Newsreader',Georgia,serif;font-weight:600;font-size:clamp(30px,6vw,42px);line-height:1.12;margin:0 0 14px;text-wrap:balance;letter-spacing:-.01em;}
+.lede{font-size:18px;color:var(--ink-2);margin:0 0 28px;max-width:62ch;}
+h2{font-family:'Newsreader',Georgia,serif;font-weight:600;font-size:24px;line-height:1.25;margin:0 0 14px;text-wrap:balance;}
+h3{font-size:15px;font-weight:600;margin:22px 0 8px;letter-spacing:-.005em;}
+p{margin:0 0 14px;max-width:66ch;}
+section{margin-top:38px;}
+.rule{height:1px;background:var(--line);border:0;margin:0 0 26px;}
+.sec-head{display:flex;align-items:baseline;gap:12px;margin-bottom:14px;}
+.sec-head h2{margin:0;}
+.sec-n{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--ink-3);padding-top:4px;}
+code,.mono{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:.88em;background:var(--code-bg);padding:.12em .38em;border-radius:3px;}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:18px 20px;}
+.meta{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:6px;overflow:hidden;margin-bottom:34px;}
+.meta div{background:var(--surface);padding:12px 14px;}
+.meta dt{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3);margin:0 0 4px;}
+.meta dd{margin:0;font-size:14px;font-weight:600;}
+.tag{display:inline-block;font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;padding:3px 8px;border-radius:3px;vertical-align:1px;}
+.t-ok{color:var(--ok-fg);background:var(--ok-bg);}
+.t-wait{color:var(--wait-fg);background:var(--wait-bg);}
+.t-stop{color:var(--stop-fg);background:var(--stop-bg);}
+.tbl-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:6px;background:var(--surface);}
+table{width:100%;border-collapse:collapse;font-size:14.5px;}
+th{text-align:left;font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-3);font-weight:600;padding:11px 14px;border-bottom:1px solid var(--line);white-space:nowrap;}
+td{padding:11px 14px;border-bottom:1px solid var(--line-soft);vertical-align:top;}
+tr:last-child td{border-bottom:0;}
+td.num{font-variant-numeric:tabular-nums;white-space:nowrap;}
+.flow{list-style:none;counter-reset:s;margin:0;padding:0;}
+.flow li{counter-increment:s;position:relative;padding:0 0 20px 44px;border-left:1px solid var(--line);margin-left:13px;}
+.flow li:last-child{border-left-color:transparent;padding-bottom:0;}
+.flow li::before{content:counter(s);position:absolute;left:-13px;top:-2px;width:26px;height:26px;border-radius:50%;background:var(--accent-soft);color:var(--accent);border:1px solid var(--accent);display:grid;place-items:center;font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:500;}
+.flow b{display:block;font-size:15px;margin-bottom:3px;}
+.flow p{margin:0;color:var(--ink-2);font-size:14.5px;}
+.callout{border-left:3px solid var(--accent);background:var(--accent-soft);padding:14px 16px;border-radius:0 5px 5px 0;margin:20px 0;}
+.callout.warn{border-left-color:var(--wait-fg);background:var(--wait-bg);}
+.callout.stop{border-left-color:var(--stop-fg);background:var(--stop-bg);}
+.callout p:last-child{margin-bottom:0;}
+.callout b{font-weight:600;}
+ul.plain{margin:0 0 14px;padding-left:20px;}
+ul.plain li{margin-bottom:7px;max-width:64ch;}
+pre{background:var(--code-bg);border:1px solid var(--line);border-radius:5px;padding:13px 15px;overflow-x:auto;font-family:'IBM Plex Mono',monospace;font-size:13px;line-height:1.55;margin:0 0 16px;}
+pre code{background:none;padding:0;font-size:inherit;}
+.foot{margin-top:48px;padding-top:18px;border-top:1px solid var(--line);font-size:13px;color:var(--ink-3);}
+.foot p{max-width:none;margin-bottom:6px;}
+@media (max-width:520px){.flow li{padding-left:36px;}}
+</style>
+<div class="wrap">
+
+<p class="eyebrow">Central de Manutenção · Processo do agente</p>
+<h1>Classificador de Chamados</h1>
+<p class="lede">Lê o card que acabou de nascer e devolve três respostas: em que categoria ele cai, quanto ele urge numa nota de 0 a 100, e quais serviços resolvem o pedido. Não move card, não cobra ninguém, não abre conversa.</p>
+
+<dl class="meta">
+  <div><dt>Linha do quadro</dt><dd>Auto-classificação de categoria e urgência</dd></div>
+  <div><dt>Código</dt><dd><span class="mono">maintenance/actions/classify_card.py</span></dd></div>
+  <div><dt>No ar em</dt><dd>staging <span class="tag t-ok">ligado</span></dd></div>
+  <div><dt>Produção</dt><dd><span class="tag t-stop">flag não existe</span></dd></div>
+</dl>
+
+<hr class="rule">
+
+<section>
+  <div class="sec-head"><span class="sec-n">01</span><h2>O caminho do card</h2></div>
+  <ol class="flow">
+    <li><b>O card nasce sem nota</b><p>Vem da franquia, da Central de Danos ou de uma regra de recorrência. O campo <code>ai_classified_at</code> fica vazio — é ele que marca quem ainda não passou pelo agente.</p></li>
+    <li><b>O beat recolhe o lote</b><p>De 15 em 15 minutos, até 200 cards por vez, do mais antigo para o mais novo. A ordem importa: a parcela de reincidência conta cards já classificados do mesmo imóvel, e começando pelos recentes o histórico ainda não existiria.</p></li>
+    <li><b>O texto (e as fotos) vão ao AI Hub</b><p>Título, descrição e itens já escritos no card. Com a flag de fotos ligada, vão junto até três imagens do chamado individual.</p></li>
+    <li><b>A nota é montada aqui, não lá</b><p>O modelo devolve severidade e categorias; a reincidência sai de uma consulta SQL e os gatilhos duros de uma regra de texto. A soma é determinística e auditável.</p></li>
+    <li><b>O resultado é gravado no card</b><p>Os campos <code>ai_*</code>, e a categoria só quando ninguém classificou antes.</p></li>
+  </ol>
+</section>
+
+<section>
+  <div class="sec-head"><span class="sec-n">02</span><h2>Como a nota de 0 a 100 é montada</h2></div>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>Parcela</th><th>Faixa</th><th>Quem calcula</th><th>Regra</th></tr></thead>
+      <tbody>
+        <tr><td>Severidade</td><td class="num">0–80</td><td>modelo (AI Hub)</td><td>quanto o problema compromete o imóvel: 65–80 impede o uso, 45–64 atrapalha, 20–44 é conforto, 0–19 é estético</td></tr>
+        <tr><td>Reincidência</td><td class="num">0–20</td><td>SQL</td><td>mesma categoria e mesmo imóvel em 90 dias: nenhum card = 0, um card = 10, dois ou mais = 20</td></tr>
+        <tr><td>Gatilho duro</td><td class="num">piso 95</td><td>texto do card</td><td>gás, choque, sem água, sem energia, alagamento, hóspede sem acesso — ignora a soma e joga a nota no piso</td></tr>
+        <tr><td>Corte de urgente</td><td class="num">≥ 70</td><td>constante</td><td>é o que vira o booleano <code>ai_is_urgent</code></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p style="margin-top:14px">A nota não fica guardada como opinião: o card recebe também a frase que a explica, no formato <span class="mono">«87/100 — severidade 70/80 (IA: …); reincidência 20/20 (3 cards da mesma categoria em 90d)»</span>. É essa frase que se leva para uma conversa com a franquia quando ela discorda da prioridade.</p>
+  <div class="callout">
+    <p><b>Por que a ocupação do imóvel não entra na nota.</b> Quem está na casa muda a cada dia. Gravar isso num campo produziria uma nota que envelhece sozinha — o card pontuado com “entrada em 5 dias” continuaria dizendo isso na véspera do check-in. Hóspede na casa é filtro do board, calculado a cada leitura.</p>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head"><span class="sec-n">03</span><h2>O que ele escreve, e o que nunca escreve</h2></div>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>Campo</th><th>Escreve?</th><th>Condição</th></tr></thead>
+      <tbody>
+        <tr><td><code>ai_urgency</code>, <code>ai_is_urgent</code>, <code>ai_urgency_reason</code></td><td><span class="tag t-ok">sim</span></td><td>sempre que a chamada volta</td></tr>
+        <tr><td><code>ai_categories</code>, <code>ai_classified_at</code>, <code>ai_model</code></td><td><span class="tag t-ok">sim</span></td><td>sempre</td></tr>
+        <tr><td><code>ai_items_to_charge</code></td><td><span class="tag t-ok">sim</span></td><td>até 4 itens; lista vazia quando o texto não permite nomear o serviço</td></tr>
+        <tr><td><code>category</code></td><td><span class="tag t-wait">condicional</span></td><td>só se estiver vazia ou em <code>outros</code>, e nunca em card concluído ou cancelado</td></tr>
+        <tr><td><code>status</code>, <code>urgent</code>, <code>due_at</code>, <code>items_to_charge</code></td><td><span class="tag t-stop">nunca</span></td><td>a fila continua decisão humana — a nota ordena, não move</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <h3>Por que <code>outros</code> conta como “sem categoria”</h3>
+  <p>Em produção, 395 dos 398 cards com essa categoria vieram do fallback automático do signal da Central de Danos, não de alguém escolhendo — são coisas como “Sujeira excessiva deixada por hóspedes” e “Cafeteira”, que têm categoria própria na taxonomia. Tratar <code>outros</code> como decisão a respeitar congelaria o card no rótulo que significa “não soube dizer”. <span class="mono">(medição no banco de produção registrada no próprio código, 09/2026)</span></p>
+  <h3>Itens a cobrar: sugestão, não cobrança</h3>
+  <p>A sugestão vai para um campo separado (<code>ai_items_to_charge</code>) exatamente porque <code>items_to_charge</code> é o que vira cobrança na franquia. O modelo propõe o serviço — “troca da resistência do chuveiro”, “limpeza do filtro do ar-condicionado” — <b>sem preço, sem quantidade e sem fornecedor</b>: preço é negociação da franquia, e inventá-lo aqui viraria cobrança errada. Quem aceita é gente.</p>
+</section>
+
+<section>
+  <div class="sec-head"><span class="sec-n">04</span><h2>As fotos do chamado</h2></div>
+  <p>Ligadas por flag própria. Quando entram, a instrução é explícita: a foto manda mais que o texto na escolha da <b>categoria</b> — o pedido diz “não funciona” e a imagem mostra o que é —, mas na <b>severidade</b> ela só sobe a nota, nunca baixa, porque o defeito pode estar fora do enquadramento.</p>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>Filtro</th><th>Por quê</th></tr></thead>
+      <tbody>
+        <tr><td>Só do chamado individual</td><td>o canal permanente é do <b>imóvel</b> e é compartilhado por vários cards — em produção há conversa com 11 apontando para ela. Sem essa trava, o card de hoje seria classificado com a foto do vazamento de três meses atrás.</td></tr>
+        <tr><td>Nada de nota interna</td><td>nota interna é da Seazone; o que o agente precisa ler é o problema como a franquia o descreveu. Foto de nota interna costuma ser print de conversa.</td></tr>
+        <tr><td>Só <code>image/*</code>, upload concluído</td><td>PDF e vídeo não entram; chave de upload que falhou aponta para nada.</td></tr>
+        <tr><td>Até 8 MB por imagem</td><td>anexo grande demais é falha <b>permanente</b> do Hub, e falha permanente não pode virar retry. O corte é determinístico, antes do modelo.</td></tr>
+        <tr><td>No máximo 3, as mais antigas</td><td>a primeira foto descreve o problema; as seguintes costumam ser a evidência do reparo, que responde outra pergunta.</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p style="margin-top:14px">O teto de 8 MB custa quase nada: das <b>880 imagens elegíveis em produção, 878 cabem</b> e 2 não — 0,2% das fotos, em troca de eliminar uma classe inteira de erro. <span class="mono">(consulta ao banco de produção, 21/09/2026)</span></p>
+</section>
+
+<section>
+  <div class="sec-head"><span class="sec-n">05</span><h2>Ligar, desligar e o que acontece quando algo cai</h2></div>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>Flag (PostHog)</th><th>O que liga</th><th>Se o PostHog cair</th></tr></thead>
+      <tbody>
+        <tr><td><code>ff_sapron_backend_enable_maintenance_card_classifier</code></td><td>o agente inteiro</td><td><b>fail-closed</b> — ninguém é classificado</td></tr>
+        <tr><td><code>ff_sapron_backend_enable_maintenance_classify_with_images</code></td><td>as fotos</td><td><b>fail-open</b> — segue só com texto, que é o comportamento de hoje</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="callout warn">
+    <p><b>A flag tem que ser 100% de todos os usuários, sem filtro de propriedade.</b> O backend consulta o PostHog usando o nome do ambiente como identificador da pessoa (<span class="mono">STAGING</span>, <span class="mono">PRODUCTION</span>). Qualquer condição de liberação por usuário, e-mail ou grupo não casa com nada e a flag responde “desligada” para todo mundo.</p>
+  </div>
+  <p>Sem chave de API pessoal não há avaliação local: mudar a flag no PostHog vale na hora, sem restart de pod e sem deploy. Desligar é o rollback — a IA que falha já é engolida e o card segue como está.</p>
+  <div class="callout stop">
+    <p><b>Em produção o agente nunca rodou.</b> A flag existe no projeto <i>Sapron Staging</i> a 100% e <b>não existe</b> no projeto <i>Sapron Production</i> — por isso o beat é inerte lá desde sempre. Na última consulta ao banco de produção, <b>0 de 5.917 cards</b> tinham <code>ai_classified_at</code> preenchido. <span class="mono">(semana de 20/09/2026)</span></p>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head"><span class="sec-n">06</span><h2>Como conferir que está funcionando</h2></div>
+  <ul class="plain">
+    <li>No log da fila <code>maintenance</code>, a linha <span class="mono">[classify] lote: {'avaliados': …, 'classificados': …, 'falhas': …, 'urgentes': …}</span> a cada 15 minutos. <b>Zero avaliados</b> significa que não há card pendente; <span class="mono">{'skipped': 'flag'}</span> significa que a flag está desligada.</li>
+    <li>No card, o campo de urgência traz a frase completa da nota. Se a frase não bate com o card, o defeito é de <i>prompt</i>, não de nota.</li>
+    <li>Card com <code>ai_classified_at</code> preenchido e <code>ai_urgency</code> zerado é sinal de falha silenciosa — vale abrir.</li>
+  </ul>
+  <h3>Primeira leva em produção, sem ligar a flag para todo mundo</h3>
+  <p>A função de lote não consulta a flag — quem consulta é a task do beat. Isso deixa a porta aberta para uma leva controlada pelo shell, com a flag ainda desligada:</p>
+  <pre><code>from maintenance.actions.classify_card import classify_pending_cards
+classify_pending_cards(limit=20)   # 20 cards, conferidos a olho antes de abrir</code></pre>
+</section>
+
+<section>
+  <div class="sec-head"><span class="sec-n">07</span><h2>O que ele ainda não faz</h2></div>
+  <ul class="plain">
+    <li><b>Não move o card.</b> Quem move é a Triagem Automática, agente separado e com flag separada.</li>
+    <li><b>Não reclassifica.</b> Cada card é classificado uma vez; a nota não é recalculada quando o texto muda.</li>
+    <li><b>Não lê o histórico da conversa</b> — só o que está escrito no card e, com a flag, as fotos.</li>
+    <li><b>Não aprende com correção.</b> Quando alguém troca a categoria na mão, o agente não fica sabendo. Essa é a matéria-prima da auditoria amostral, que ainda está por fazer.</li>
+  </ul>
+</section>
+
+<div class="foot">
+  <p>Código: <span class="mono">maintenance/actions/classify_card.py</span> · <span class="mono">services/card_classifier_ai.py</span> · <span class="mono">actions/card_images.py</span></p>
+  <p>Entregas: #4860 (itens a cobrar) e #4861 (fotos), em <span class="mono">staging</span> desde 21/09/2026 pela promoção #4851 · Vinicius Satores</p>
+</div>
+
+</div>

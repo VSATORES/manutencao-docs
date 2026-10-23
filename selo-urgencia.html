@@ -1,0 +1,185 @@
+<title>Selo de Urgência</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;600;700&family=Inter:wght@400;500;600&display=swap">
+<style>
+  :root {
+    --ground: #F3F6F9;
+    --surface: #FFFFFF;
+    --surface-2: #EBF0F5;
+    --ink: #151B26;
+    --ink-2: #51626F;
+    --ink-3: #888E9B;
+    --rule: #E1E7ED;
+    --rule-2: #C0CDDD;
+    --blue: #0055FF;
+    --red-fg: #DC2626;   --red-bg: rgba(239, 68, 68, 0.1);
+    --amber-fg: #B45309; --amber-bg: rgba(245, 158, 11, 0.12);
+    --slate-fg: #475569; --slate-bg: rgba(100, 116, 139, 0.1);
+    --code-bg: #EFF2F6;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ground: #151B26; --surface: #1B212C; --surface-2: #232B38;
+      --ink: #F3F6F9; --ink-2: #B2BBC3; --ink-3: #888E9B;
+      --rule: #2E3644; --rule-2: #3D4756;
+      --blue: #3CC3EE;
+      --red-fg: #F87171;   --red-bg: rgba(239, 68, 68, 0.16);
+      --amber-fg: #FBBF24; --amber-bg: rgba(245, 158, 11, 0.16);
+      --slate-fg: #94A3B8; --slate-bg: rgba(148, 163, 184, 0.16);
+      --code-bg: #232B38;
+    }
+  }
+  :root[data-theme="dark"] {
+    --ground: #151B26; --surface: #1B212C; --surface-2: #232B38;
+    --ink: #F3F6F9; --ink-2: #B2BBC3; --ink-3: #888E9B;
+    --rule: #2E3644; --rule-2: #3D4756;
+    --blue: #3CC3EE;
+    --red-fg: #F87171;   --red-bg: rgba(239, 68, 68, 0.16);
+    --amber-fg: #FBBF24; --amber-bg: rgba(245, 158, 11, 0.16);
+    --slate-fg: #94A3B8; --slate-bg: rgba(148, 163, 184, 0.16);
+    --code-bg: #232B38;
+  }
+
+  body {
+    background: var(--ground);
+    color: var(--ink);
+    font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-size: 14.5px;
+    line-height: 1.6;
+    margin: 0;
+    padding-inline: 20px;
+    padding-block: 0 56px;
+  }
+  .wrap { max-width: 760px; margin: 0 auto; }
+  h1, h2, h3 { font-family: Quicksand, "Trebuchet MS", sans-serif; margin: 0; line-height: 1.2; text-wrap: balance; }
+
+  header { padding-block: 36px 22px; border-bottom: 3px solid var(--blue); display: flex; flex-direction: column; gap: 10px; }
+  .kicker { font-size: 11px; font-weight: 600; letter-spacing: .15em; text-transform: uppercase; color: var(--blue); }
+  h1 { font-size: clamp(25px, 5vw, 34px); letter-spacing: -.02em; }
+  .deck { color: var(--ink-2); max-width: 58ch; }
+
+  section { padding-block: 30px 6px; }
+  section + section { border-top: 1px solid var(--rule); }
+  h2 { font-size: 19px; letter-spacing: -.012em; margin-bottom: 6px; }
+  .sub { color: var(--ink-2); font-size: 14px; max-width: 62ch; }
+
+  /* card do board */
+  .board { background: var(--surface-2); border-radius: 12px; padding: 18px; margin-top: 18px; }
+  .kcard { background: var(--surface); border: 1px solid var(--rule); border-radius: 8px; padding: 12px 14px; box-shadow: 0 1px 3px rgba(0,0,0,.08); display: flex; flex-direction: column; gap: 7px; max-width: 420px; }
+  .ktop { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .kcode { font-family: Quicksand, sans-serif; font-weight: 700; font-size: 13.5px; letter-spacing: .01em; }
+  .kflags { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin-left: auto; }
+  .ktitle { font-size: 14px; font-weight: 500; }
+  .kmeta { font-size: 12px; color: var(--ink-3); display: flex; gap: 8px; flex-wrap: wrap; }
+
+  .chip { font-size: 11px; font-weight: 700; border-radius: 999px; padding: 2px 9px; white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .chip.unread { background: var(--blue); color: #fff; }
+  .chip.cat { background: var(--surface-2); color: var(--ink-2); border: 1px solid var(--rule); font-weight: 600; }
+  .chip.origin { background: var(--slate-bg); color: var(--slate-fg); font-weight: 600; }
+  .urg { font-size: 11px; font-weight: 700; border-radius: 999px; padding: 2px 9px; font-variant-numeric: tabular-nums; }
+  .urg.alta { background: var(--red-bg); color: var(--red-fg); }
+  .urg.media { background: var(--amber-bg); color: var(--amber-fg); }
+  .urg.baixa { background: var(--slate-bg); color: var(--slate-fg); }
+
+  .pointer { display: flex; align-items: center; gap: 8px; margin-top: 12px; font-size: 12.5px; color: var(--ink-2); }
+  .pointer svg { flex: none; color: var(--blue); }
+
+  /* faixas */
+  .bands { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-top: 18px; }
+  .band { background: var(--surface); border: 1px solid var(--rule); border-radius: 10px; padding: 14px 16px; display: flex; flex-direction: column; gap: 8px; }
+  .band .row { display: flex; align-items: center; gap: 10px; }
+  .band .faixa { font-family: Quicksand, sans-serif; font-weight: 700; font-size: 15px; }
+  .band p { margin: 0; font-size: 13px; color: var(--ink-2); line-height: 1.5; }
+
+  /* estados */
+  .states { display: flex; flex-direction: column; gap: 10px; margin-top: 18px; }
+  .state { background: var(--surface); border: 1px solid var(--rule); border-left: 4px solid var(--rule-2); border-radius: 8px; padding: 12px 15px; display: flex; gap: 14px; align-items: flex-start; flex-wrap: wrap; }
+  .state.vazio { border-left-color: var(--ink-3); }
+  .state.ok { border-left-color: var(--red-fg); }
+  .state .what { font-family: Quicksand, sans-serif; font-weight: 700; font-size: 14px; min-width: 132px; }
+  .state .why { font-size: 13px; color: var(--ink-2); flex: 1 1 260px; }
+
+  code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: .88em; background: var(--code-bg); padding: 1px 5px; border-radius: 4px; }
+  .note { margin-top: 16px; background: var(--surface); border: 1px solid var(--rule); border-radius: 8px; padding: 13px 16px; font-size: 13.5px; color: var(--ink-2); }
+  .note b { color: var(--ink); font-weight: 600; }
+  footer { margin-top: 30px; padding-top: 14px; border-top: 1px solid var(--rule); font-size: 12px; color: var(--ink-3); }
+</style>
+
+<div class="wrap">
+
+  <header>
+    <span class="kicker">Central de Manutenção · staging</span>
+    <h1>Selo de Urgência</h1>
+    <p class="deck">Como o selo aparece no card quando o classificador está gravando nota — e por que a ausência dele não prova nada sozinha.</p>
+  </header>
+
+  <section>
+    <h2>Onde ele fica</h2>
+    <p class="sub">No topo do card, na linha de chips à direita do código do imóvel — depois do contador de mensagens não lidas, antes da categoria e da origem.</p>
+
+    <div class="board">
+      <div class="kcard">
+        <div class="ktop">
+          <span class="kcode">CPR0108</span>
+          <span class="kflags">
+            <span class="chip unread">2</span>
+            <span class="urg alta" title="Vazamento de gás — risco imediato, imóvel inutilizável">95</span>
+            <span class="chip cat">Elétrica</span>
+            <span class="chip origin">danos</span>
+          </span>
+        </div>
+        <div class="ktitle">Cheiro de gás na cozinha</div>
+        <div class="kmeta"><span>Franquia Floripa Norte</span><span>·</span><span>há 2 dias</span></div>
+      </div>
+
+      <div class="pointer">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5"/><path d="m5 12 7-7 7 7"/></svg>
+        <span>O selo é só o número. A justificativa que o modelo escreveu aparece no <i>tooltip</i>, ao passar o mouse.</span>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>As três faixas</h2>
+    <p class="sub">Faixa e não cor contínua: quem varre o board decide “atendo agora, hoje ou depois”, e gradiente não responde isso. Os cortes são os mesmos do backend — 70 é o corte de urgente.</p>
+
+    <div class="bands">
+      <div class="band">
+        <div class="row"><span class="urg alta">95</span><span class="faixa">70 a 100</span></div>
+        <p>Urgente. Inutilizável, risco ou gatilho duro — vazamento de gás, falta de água, fechadura quebrada.</p>
+      </div>
+      <div class="band">
+        <div class="row"><span class="urg media">62</span><span class="faixa">40 a 69</span></div>
+        <p>Função essencial parada. Só vira urgente quando há reincidência nos últimos 90 dias.</p>
+      </div>
+      <div class="band">
+        <div class="row"><span class="urg baixa">18</span><span class="faixa">0 a 39</span></div>
+        <p>Conforto e estético. Nunca chega a urgente, por mais que se repita.</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Card sem selo</h2>
+    <p class="sub">Card não classificado não ganha chip nenhum — nem traço, nem espaço vazio. Foi decisão explícita: um “—” na coluna inteira sugeriria que o agente rodou e não achou nada.</p>
+
+    <div class="states">
+      <div class="state ok">
+        <span class="what">Tem selo</span>
+        <span class="why">O agente classificou e gravou. A cadeia inteira funcionou: chave no SSM, rollout dos pods, flag no PostHog e modelo válido no AI Hub.</span>
+      </div>
+      <div class="state vazio">
+        <span class="what">Sem selo</span>
+        <span class="why">Três causas produzem exatamente a mesma tela: o agente não rodou (flag desligada ou no projeto errado do PostHog), rodou e falhou em silêncio (sem chave, fail-open), ou não havia card aberto para classificar.</span>
+      </div>
+    </div>
+
+    <div class="note">
+      <b>O teste que separa as três.</b> DevTools → Network → recarregue o board → resposta da chamada que lista os cards. Se <code>ai_urgency</code>, <code>ai_model</code> e <code>ai_classified_at</code> <b>não existirem</b> no JSON, o backend de staging é anterior ao classificador. Se existirem e vierem nulos, o backend é o novo e ninguém escreveu — aí a causa está no cluster. Se vierem preenchidos e o selo não aparecer, o defeito é do front.
+    </div>
+  </section>
+
+  <footer>
+    Fonte: <code>Badges.tsx</code> (<code>URGENCY_BANDS</code>, <code>UrgencyBadge</code>) e <code>CentralCardsTab.tsx</code> no <code>sapron-frontend</code>, na versão promovida para staging em 16/09/2026. O card acima é ilustrativo.
+  </footer>
+
+</div>

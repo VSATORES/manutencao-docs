@@ -1,0 +1,160 @@
+<title>Urgência × Comentários</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Literata:opsz,wght@7..72,400;7..72,600&display=swap">
+<style>
+/* Layout: relatório de uma coluna, tabelas de leitura rápida, faixa navy no topo no padrão BackOffice */
+:root{
+ --bg:oklch(96.5% .012 260);--paper:oklch(99.4% .003 250);--ink:oklch(24% .02 255);--ink2:oklch(42% .018 255);--ink3:oklch(55% .014 255);
+ --line:oklch(89% .01 255);--navy:oklch(19% .05 260);--hero-fg:oklch(94% .01 260);--hero-muted:oklch(74% .02 260);--coral:oklch(66% .17 32);
+ --red:oklch(52% .17 27);--redbg:oklch(95.5% .03 27);--amber:oklch(52% .12 70);--amberbg:oklch(95.5% .04 80);--green:oklch(48% .11 155);--greenbg:oklch(95.5% .035 155);
+ --sans:"Bricolage Grotesque",system-ui,sans-serif;--serif:Literata,Georgia,serif;--mono:ui-monospace,"Cascadia Mono",Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+ --bg:oklch(17% .02 260);--paper:oklch(21% .02 260);--ink:oklch(93% .01 260);--ink2:oklch(78% .015 260);--ink3:oklch(64% .015 260);
+ --line:oklch(32% .02 260);--navy:oklch(13% .04 260);--red:oklch(72% .15 27);--redbg:oklch(30% .06 27);--amber:oklch(78% .12 75);--amberbg:oklch(30% .05 75);--green:oklch(74% .12 155);--greenbg:oklch(28% .05 155);color-scheme:dark}}
+:root[data-theme="dark"]{
+ --bg:oklch(17% .02 260);--paper:oklch(21% .02 260);--ink:oklch(93% .01 260);--ink2:oklch(78% .015 260);--ink3:oklch(64% .015 260);
+ --line:oklch(32% .02 260);--navy:oklch(13% .04 260);--red:oklch(72% .15 27);--redbg:oklch(30% .06 27);--amber:oklch(78% .12 75);--amberbg:oklch(30% .05 75);--green:oklch(74% .12 155);--greenbg:oklch(28% .05 155);color-scheme:dark}
+body{background:var(--bg);color:var(--ink);font:400 15px/1.6 var(--serif)}
+.band{background:var(--navy);color:var(--hero-fg);padding-block:36px 30px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.wrap{max-width:980px;margin:0 auto}
+main.wrap{padding-block:28px 48px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:grid;gap:34px}
+.eyebrow{font:700 12px/1 var(--sans);letter-spacing:.14em;text-transform:uppercase;color:var(--coral)}
+h1{font:700 clamp(28px,5vw,40px)/1.1 var(--sans);margin:10px 0 12px;text-wrap:balance}
+.lede{color:var(--hero-muted);max-width:68ch;margin:0}
+h2{font:700 21px/1.25 var(--sans);margin:0 0 6px;text-wrap:balance}
+.sub{color:var(--ink2);margin:0 0 14px;max-width:70ch}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+.kpi{background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:14px 16px;display:grid;gap:4px}
+.kpi b{font:700 28px/1 var(--sans);font-variant-numeric:tabular-nums}
+.kpi span{color:var(--ink2);font-size:13.5px;line-height:1.4}
+.tbl{overflow-x:auto;background:var(--paper);border:1px solid var(--line);border-radius:8px}
+table{border-collapse:collapse;width:100%;min-width:640px;font-size:14px}
+th,td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font:700 11.5px/1.2 var(--sans);letter-spacing:.06em;text-transform:uppercase;color:var(--ink3)}
+tr:last-child td{border-bottom:0}
+td.n{font-family:var(--mono);font-variant-numeric:tabular-nums;white-space:nowrap}
+.pill{display:inline-block;font:700 11px/1 var(--sans);letter-spacing:.04em;text-transform:uppercase;border-radius:4px;padding:4px 6px;white-space:nowrap}
+.u{color:var(--red);background:var(--redbg)} .m{color:var(--amber);background:var(--amberbg)} .b{color:var(--green);background:var(--greenbg)}
+.lvl{display:grid;gap:12px}
+.lv{background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:14px 16px;display:grid;gap:6px}
+.lv h3{font:700 16px/1.3 var(--sans);margin:0;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.lv p{margin:0;color:var(--ink2)}
+ul{margin:0;padding-left:20px}
+li{margin:2px 0}
+.note{font-size:13px;color:var(--ink3)}
+.dec{display:grid;gap:10px}
+.dec div{background:var(--paper);border:1px dashed var(--amber);border-radius:8px;padding:12px 16px}
+.dec b{font-family:var(--sans)}
+footer{color:var(--ink3);font-size:13px;border-top:1px solid var(--line);padding-top:14px}
+</style>
+
+<header class="band"><div class="wrap">
+ <span class="eyebrow">Manutenção · proposta para a Ray · 16/10/2026</span>
+ <h1>Comentários do hóspede × nível de urgência</h1>
+ <p class="lede">O relatório de comentários de outubro mostra hóspede reclamando de coisas que o agente de urgência classificou como não urgentes. A proposta é subir para urgente (24 horas) tudo que deixa o imóvel sem condição de uso, e medir antes quantos cards isso gera.</p>
+</div></header>
+
+<main class="wrap">
+
+<section>
+ <h2>O que o cruzamento mostrou</h2>
+ <p class="sub">Os 13 cards de manutenção citados no relatório da Vick (checkouts de 01 a 09/10), conferidos no banco de produção do Sapron em 16/10/2026.</p>
+ <div class="kpis">
+  <div class="kpi"><b>3 de 13</b><span>foram marcados urgentes pelo agente (nota 70 ou mais)</span></div>
+  <div class="kpi"><b>11 de 13</b><span>ficam urgentes com a regra nova, simulada no banco de produção (fora: wi-fi e geladeira)</span></div>
+  <div class="kpi"><b>40</b><span>foi a nota do mofo crônico no forro do RGN0205, que voltou na avaliação seguinte</span></div>
+ </div>
+</section>
+
+<section>
+ <h2>Card a card</h2>
+ <p class="sub">A causa é a régua do agente: ar-condicionado, chuveiro e vazamento ativo estão na faixa de 45 a 69 ("função essencial parada"), e o urgente só começa em 70. Mofo e pragas ficam em "conforto".</p>
+ <div class="tbl"><table>
+  <thead><tr><th>Imóvel</th><th>Card</th><th>Problema</th><th>Nota do agente</th><th>Hoje</th><th>Proposta</th></tr></thead>
+  <tbody>
+   <tr><td>RGN0205</td><td class="n">#6027</td><td>Mofo crônico no forro, máquina de lavar</td><td class="n">40</td><td><span class="pill b">não urgente</span></td><td><span class="pill u">urgente</span> mofo</td></tr>
+   <tr><td>SVM1409</td><td class="n">#7757</td><td>Ar-condicionado vazando sobre a cama</td><td class="n">65</td><td><span class="pill b">não urgente</span></td><td><span class="pill u">urgente</span> ar-condicionado</td></tr>
+   <tr><td>NWT1324</td><td class="n">#7837</td><td>Cheiro de esgoto e baratas na cozinha</td><td class="n">50</td><td><span class="pill b">não urgente</span></td><td><span class="pill u">urgente</span> esgoto e praga</td></tr>
+   <tr><td>TVT1009</td><td class="n">#7842</td><td>Vaso sanitário entupido</td><td class="n">60</td><td><span class="pill b">não urgente</span></td><td><span class="pill u">urgente</span> hidráulica</td></tr>
+   <tr><td>DAC0402</td><td class="n">#7845</td><td>Infiltração ativa no box, porta emperrada</td><td class="n">50</td><td><span class="pill b">não urgente</span></td><td><span class="pill u">urgente</span> hidráulica</td></tr>
+   <tr><td>BHC1405</td><td class="n">#7846</td><td>Chuveiros sem funcionar</td><td class="n">55</td><td><span class="pill b">não urgente</span></td><td><span class="pill u">urgente</span> hidráulica</td></tr>
+   <tr><td>PRB0405</td><td class="n">#7871</td><td>Janela quebrada, porta que não fecha, ar sem aquecer</td><td class="n">55</td><td><span class="pill b">não urgente</span></td><td><span class="pill u">urgente</span> vidro e segurança</td></tr>
+   <tr><td>LII0089</td><td class="n">#7916</td><td>Vaso solto vazando, piso escorregadio</td><td class="n">52</td><td><span class="pill b">não urgente</span></td><td><span class="pill u">urgente</span> hidráulica</td></tr>
+   <tr><td>PILB0701</td><td class="n">#7841</td><td>Micro-ondas e geladeira sem funcionar</td><td class="n">60</td><td><span class="pill b">não urgente</span></td><td><span class="pill u">urgente</span> geladeira</td></tr>
+   <tr><td>EMM0202</td><td class="n">#6114</td><td>Wi-fi fora do ar, ventilador com ruído</td><td class="n">30</td><td><span class="pill b">não urgente</span></td><td><span class="pill m">médio</span></td></tr>
+   <tr><td>PIN1901</td><td class="n">#7840</td><td>Fechadura digital, hóspede sem acesso</td><td class="n">75</td><td><span class="pill u">urgente</span></td><td><span class="pill u">urgente</span></td></tr>
+   <tr><td>VAC0601</td><td class="n">#7785</td><td>Chuveiro sem água quente</td><td class="n">95</td><td><span class="pill u">urgente</span></td><td><span class="pill u">urgente</span></td></tr>
+   <tr><td>SVM1409</td><td class="n">#7917</td><td>Ar-condicionado vazando (2º card, reincidência)</td><td class="n">78</td><td><span class="pill u">urgente</span></td><td><span class="pill u">urgente</span></td></tr>
+  </tbody>
+ </table></div>
+ <p class="note">Nota do agente: campo ai_urgency de maintenance_maintenancecard, produção, lido em 16/10/2026. O #7917 só passou de 70 porque somou 20 pontos de reincidência; o mesmo defeito, uma semana antes (#7757), ficou em 65.</p>
+</section>
+
+<section>
+ <h2>Proposta de níveis</h2>
+ <p class="sub">Critério único: o hóspede consegue usar o imóvel com segurança? Se não, é urgente, e o imóvel fica bloqueado até resolver.</p>
+ <div class="lvl">
+  <div class="lv">
+   <h3><span class="pill u">Urgente · 24 horas</span>Imóvel sem condição de uso ou com risco</h3>
+   <p>Já é urgente hoje: gás, choque, fiação exposta, fumaça, sem água, sem energia, alagamento, esgoto vazando, hóspede sem acesso.</p>
+   <p><b>Passa a ser urgente:</b></p>
+   <ul>
+    <li><b>Mofo e bolor</b> visíveis (parede, forro, cortina, colchão)</li>
+    <li><b>Ar-condicionado</b> vazando, pingando ou sem funcionar no único aparelho do quarto</li>
+    <li><b>Hidráulica:</b> vaso entupido ou solto, vazamento ativo, infiltração ativa, cheiro de esgoto, chuveiro sem funcionar ou sem água quente</li>
+    <li><b>Vidro e segurança:</b> janela ou vidro quebrado, porta externa que não fecha ou não tranca, móvel quebrado com risco de queda</li>
+    <li><b>Praga:</b> baratas ou outra infestação</li>
+    <li><b>Geladeira</b> sem funcionar</li>
+   </ul>
+  </div>
+  <div class="lv">
+   <h3><span class="pill m">Médio · prazo do card</span>Atrapalha a estadia, mas o imóvel funciona</h3>
+   <ul>
+    <li>Wi-fi, TV, micro-ondas, cafeteira, máquina de lavar</li>
+    <li>Móvel ou utensílio quebrado sem risco</li>
+    <li><b>Odor sem causa visível</b> (cigarro, cheiro de guardado): fica no médio porque é difícil provar. Se tiver foto de mofo ou esgoto, sobe.</li>
+   </ul>
+  </div>
+  <div class="lv">
+   <h3><span class="pill b">Baixo</span>Estético</h3>
+   <p>Pintura, arranhão, desgaste, sugestão de item.</p>
+  </div>
+ </div>
+</section>
+
+<section>
+ <h2>Quanto isso aumenta a fila</h2>
+ <p class="sub">Simulação da regra nova com a lista de gatilhos que vai no agente, aplicada aos cards de produção fora da recorrente. Nenhum card foi alterado.</p>
+ <div class="tbl"><table>
+  <thead><tr><th>Recorte</th><th>Urgentes hoje</th><th>Subiriam</th><th>Total com a regra</th></tr></thead>
+  <tbody>
+   <tr><td>Cards criados nos últimos 30 dias (585)</td><td class="n">41</td><td class="n">+49</td><td class="n">90 (3 por dia)</td></tr>
+   <tr><td>Cards abertos hoje (570)</td><td class="n">55</td><td class="n">+68</td><td class="n">só se reclassificar</td></tr>
+  </tbody>
+ </table></div>
+ <p class="note">Dos 49 dos últimos 30 dias: hidráulica (vaso, vazamento, infiltração, esgoto, chuveiro) 26, mofo 10, vidro e janela 8, pragas 3, ar-condicionado 2. Fonte: maintenance_maintenancecard, produção, 16/10/2026. A regra vale para card novo; os abertos só mudam se forem reclassificados de propósito.</p>
+ <p class="sub">O urgente pode mais que dobrar. Por isso a proposta vem junto com a regra das 48 horas úteis (ocorrência automática) e com o aviso no card quando a trava é do proprietário, para a fila nova não ficar parada.</p>
+</section>
+
+<section>
+ <h2>Como entra no agente</h2>
+ <ul>
+  <li>Criar uma lista de <b>gatilhos de bloqueio</b> (mofo, ar-condicionado vazando, vaso entupido, infiltração, esgoto, vidro quebrado, porta que não fecha, baratas, geladeira) que leva a nota a 75: acima do corte de urgente (70) e abaixo do piso de gás e choque (95).</li>
+  <li>Ajustar o texto que orienta a IA: ar-condicionado, chuveiro e vazamento ativo saem da faixa de 45 a 69 e vão para 70 a 80.</li>
+  <li>Rodar em simulação no fim de semana, sem mover card, e conferir segunda (19/10) quantos cards subiriam antes de ligar.</li>
+ </ul>
+ <p class="note">A triagem automática usa essa nota para mover o card para Urgente e abrir a conversa com a franquia com o aviso de manutenção urgente. Mudar a régua muda o que a franquia recebe como urgente.</p>
+</section>
+
+<section>
+ <h2>Para a Ray decidir</h2>
+ <div class="dec">
+  <div><b>1. Ar-condicionado:</b> decidido em 16/10, urgente o ano todo.</div>
+  <div><b>2. Chuveiro sem água quente é urgente?</b> A régua do agente desarma de propósito o gatilho para "sem água quente" e trata como conforto. O hóspede do VAC0601 deu nota 3 por isso.</div>
+  <div><b>3. Geladeira entra no urgente?</b> Está na proposta, mas pode ficar no médio se a fila pesar.</div>
+ </div>
+</section>
+
+<footer>Vinicius Satores · Manutenção · fontes: relatório "Comentários Airbnb · Outubro 2026" (Qualidade, 13/10/2026), banco de produção do Sapron (16/10/2026) e código do classificador em sapron-backend (maintenance/services/card_classifier_ai.py e constants.py).</footer>
+</main>

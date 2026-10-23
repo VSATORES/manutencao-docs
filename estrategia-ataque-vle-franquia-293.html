@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Estratégia de Ataque VLE</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ground:#F2F5F3; --surface:#FFFFFF; --surface-2:#E9EFEC;
+  --line:#D6E0DB; --line-soft:#E6ECE9;
+  --ink:#151B26; --ink-2:#44524D; --ink-3:#6B7A74;
+  --accent:#2C8F73; --accent-soft:#E2F1EB;
+  --crit:#C0341F; --crit-bg:#FAE7E3;
+  --med:#C2810E; --med-bg:#FBF0DC;
+  --low:#2D8E71; --low-bg:#E2F1EB;
+  --display:'Quicksand','Trebuchet MS',sans-serif;
+  --body:'IBM Plex Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --ground:#12161A; --surface:#1A1F23; --surface-2:#232A2E;
+    --line:#303A3E; --line-soft:#262E32;
+    --ink:#EDF2F0; --ink-2:#B3C0BB; --ink-3:#8A9994;
+    --accent:#4FC3A1; --accent-soft:#1E332C;
+    --crit:#F0705C; --crit-bg:#3A201B;
+    --med:#E8B33C; --med-bg:#362C16;
+    --low:#4FC3A1; --low-bg:#1E332C;
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#12161A; --surface:#1A1F23; --surface-2:#232A2E;
+  --line:#303A3E; --line-soft:#262E32;
+  --ink:#EDF2F0; --ink-2:#B3C0BB; --ink-3:#8A9994;
+  --accent:#4FC3A1; --accent-soft:#1E332C;
+  --crit:#F0705C; --crit-bg:#3A201B;
+  --med:#E8B33C; --med-bg:#362C16;
+  --low:#4FC3A1; --low-bg:#1E332C;
+}
+*{box-sizing:border-box;}
+body{margin:0; background:var(--ground); color:var(--ink); font-family:var(--body); line-height:1.55;}
+.wrap{max-width:1060px; margin:0 auto; padding-inline:16px; padding-block:40px 64px;}
+h1,h2,h3,h4{font-family:var(--display); text-wrap:balance; margin:0;}
+p{margin:0;}
+.eyebrow{font-family:var(--display); font-size:12px; font-weight:700; letter-spacing:.14em;
+  text-transform:uppercase; color:var(--accent);}
+header h1{font-size:clamp(28px,5vw,40px); font-weight:700; letter-spacing:-.01em; margin-top:10px;}
+.sub{color:var(--ink-2); font-size:15px; margin-top:12px; max-width:64ch;}
+.meta{display:flex; flex-wrap:wrap; gap:8px 22px; margin-top:20px; font-size:13px; color:var(--ink-3);}
+.meta b{font-weight:600; color:var(--ink-2);}
+
+.kpis{display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-top:34px;}
+@media (max-width:760px){ .kpis{grid-template-columns:repeat(2,1fr);} }
+.kpi{background:var(--surface); border:1px solid var(--line); border-radius:10px; padding:16px 18px;}
+.kpi .v{font-family:var(--display); font-size:clamp(26px,5vw,34px); font-weight:700; line-height:1.1;
+  letter-spacing:-.02em; font-variant-numeric:tabular-nums;}
+.kpi .v small{font-size:15px; font-weight:600; color:var(--ink-3); margin-left:3px;}
+.kpi .k{font-size:12.5px; color:var(--ink-3); margin-top:6px;}
+.kpi.hot{border-color:var(--crit);} .kpi.hot .v{color:var(--crit);}
+
+section{margin-top:52px;}
+section > h2{font-size:21px; font-weight:700; letter-spacing:-.01em;}
+section > .lede{color:var(--ink-2); font-size:14.5px; margin-top:8px; max-width:72ch;}
+
+.callout{background:var(--surface); border:1px solid var(--line); border-left:3px solid var(--accent);
+  border-radius:0 10px 10px 0; padding:18px 20px; margin-top:20px;}
+.callout.crit{border-left-color:var(--crit);}
+.callout h3{font-size:15px; font-weight:700;}
+.callout p{font-size:14px; color:var(--ink-2); margin-top:8px;}
+.callout p + p{margin-top:10px;}
+
+.principio{display:grid; grid-template-columns:repeat(2,1fr); gap:14px; margin-top:20px;}
+@media (max-width:760px){ .principio{grid-template-columns:1fr;} }
+.pass{background:var(--surface); border:1px solid var(--line); border-radius:10px; padding:20px;
+  border-top:3px solid var(--accent);}
+.pass .n{font-family:var(--display); font-size:11px; font-weight:700; letter-spacing:.12em;
+  text-transform:uppercase; color:var(--accent);}
+.pass h3{font-size:16px; font-weight:700; margin-top:8px;}
+.pass p{font-size:13.5px; color:var(--ink-2); margin-top:10px;}
+.pass .ganho{margin-top:14px; padding-top:12px; border-top:1px solid var(--line-soft);
+  font-size:12.5px; color:var(--ink-3);}
+.pass .ganho b{color:var(--ink-2); font-weight:600;}
+
+.imoveis{display:grid; grid-template-columns:repeat(2,1fr); gap:14px; margin-top:22px;}
+@media (max-width:860px){ .imoveis{grid-template-columns:1fr;} }
+.imovel{background:var(--surface); border:1px solid var(--line); border-radius:10px; padding:18px 20px;}
+.imovel.a{border-top:3px solid var(--crit);}
+.imovel.b{border-top:3px solid var(--med);}
+.imovel.c{border-top:3px solid var(--low);}
+.imovel .top{display:flex; align-items:baseline; justify-content:space-between; gap:12px; flex-wrap:wrap;}
+.imovel h3{font-size:17px; font-weight:700; letter-spacing:.01em;}
+.imovel .cnt{font-size:12px; color:var(--ink-3); font-variant-numeric:tabular-nums; white-space:nowrap;}
+.imovel .diag{font-size:13.5px; color:var(--ink-2); margin-top:10px;}
+.imovel h4{font-size:11px; font-weight:700; letter-spacing:.1em; text-transform:uppercase;
+  color:var(--ink-3); margin-top:16px;}
+.imovel ul{margin:8px 0 0; padding-left:18px;}
+.imovel li{font-size:13px; color:var(--ink-2); margin-top:5px;}
+.imovel li b{color:var(--ink); font-weight:600;}
+.imovel .visita{margin-top:14px; padding:12px 14px; background:var(--surface-2); border-radius:8px;
+  font-size:12.5px; color:var(--ink-2);}
+.imovel .visita b{color:var(--ink); font-weight:600;}
+
+.tag{display:inline-flex; align-items:center; gap:6px; font-size:11px; font-weight:600;
+  padding:3px 9px; border-radius:999px; white-space:nowrap;}
+.tag.a{background:var(--crit-bg); color:var(--crit);}
+.tag.b{background:var(--med-bg); color:var(--med);}
+.tag.c{background:var(--low-bg); color:var(--low);}
+
+.tablebox{overflow-x:auto; margin-top:20px; border:1px solid var(--line); border-radius:10px;
+  background:var(--surface);}
+table{border-collapse:collapse; width:100%; min-width:760px; font-size:13.2px;}
+th{font-family:var(--display); font-size:11px; font-weight:700; letter-spacing:.1em;
+  text-transform:uppercase; color:var(--ink-3); text-align:left; padding:13px 14px;
+  border-bottom:1px solid var(--line); background:var(--surface-2); white-space:nowrap;}
+td{padding:12px 14px; border-bottom:1px solid var(--line-soft); vertical-align:top; color:var(--ink-2);}
+tr:last-child td{border-bottom:0;}
+td.tipo{font-weight:600; color:var(--ink); min-width:150px;}
+td.un{font-variant-numeric:tabular-nums; white-space:nowrap; text-align:center; font-weight:600; color:var(--ink);}
+td.vol{font-variant-numeric:tabular-nums; color:var(--ink-2); min-width:130px;}
+td.como{min-width:250px;}
+td.onda{white-space:nowrap;}
+tbody tr.sep td{background:var(--surface-2); font-family:var(--display); font-size:11px;
+  font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:var(--ink-3); padding:9px 14px;}
+
+.ondas{display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-top:22px;}
+@media (max-width:860px){ .ondas{grid-template-columns:1fr;} }
+.onda-c{background:var(--surface); border:1px solid var(--line); border-radius:10px; padding:20px;}
+.onda-c.a{border-top:3px solid var(--crit);}
+.onda-c.b{border-top:3px solid var(--med);}
+.onda-c.c{border-top:3px solid var(--low);}
+.onda-c .when{font-family:var(--display); font-size:11px; font-weight:700; letter-spacing:.12em;
+  text-transform:uppercase; color:var(--ink-3);}
+.onda-c h3{font-size:16px; font-weight:700; margin-top:8px;}
+.onda-c .why{font-size:13px; color:var(--ink-2); margin-top:10px;}
+.onda-c ul{margin:14px 0 0; padding-left:18px;}
+.onda-c li{font-size:12.8px; color:var(--ink-2); margin-top:6px;}
+.onda-c li b{color:var(--ink); font-weight:600;}
+
+.agente{display:grid; grid-template-columns:repeat(2,1fr); gap:14px; margin-top:22px;}
+@media (max-width:760px){ .agente{grid-template-columns:1fr;} }
+.ag{background:var(--surface); border:1px solid var(--line); border-radius:10px; padding:20px;}
+.ag h3{font-size:15px; font-weight:700; display:flex; align-items:center; gap:8px;}
+.ag .dot{width:9px; height:9px; border-radius:50%; flex:none;}
+.ag.faz .dot{background:var(--accent);}
+.ag.nao .dot{background:var(--crit);}
+.ag ol, .ag ul{margin:12px 0 0; padding-left:20px;}
+.ag li{font-size:13px; color:var(--ink-2); margin-top:8px;}
+.ag li b{color:var(--ink); font-weight:600;}
+
+.foot{margin-top:56px; padding-top:22px; border-top:1px solid var(--line);
+  font-size:12.5px; color:var(--ink-3);}
+.foot p + p{margin-top:8px;}
+.foot code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:11.8px;
+  background:var(--surface-2); padding:1px 5px; border-radius:4px; color:var(--ink-2);}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <p class="eyebrow">Central de Manutenção · Franquia 293</p>
+  <h1>Como atacar as pendências do condomínio VLE</h1>
+  <p class="sub">Os 32 cards abertos da franquia Patrick Josoe Brando nos oito imóveis VLE,
+  reorganizados em duas passadas: primeiro por imóvel, para caber numa visita só; depois por
+  tipo de manutenção, para caber numa compra só. O card não é a unidade de trabalho — ele é
+  só o registro.</p>
+  <div class="meta">
+    <span><b>Franquia</b> 293 · Patrick Josoe Brando</span>
+    <span><b>Imóveis</b> VLE001 a VLE008, todos ativos</span>
+    <span><b>Data de corte</b> 21/09/2026</span>
+    <span><b>Fonte</b> Sapron · maintenance_maintenancecard</span>
+  </div>
+</header>
+
+<div class="kpis">
+  <div class="kpi hot">
+    <p class="v">8 <small>dias</small></p>
+    <p class="k">até 29/09, quando as 8 unidades recebem hóspede no mesmo dia</p>
+  </div>
+  <div class="kpi">
+    <p class="v">32</p>
+    <p class="k">cards abertos · 0 marcados como urgentes</p>
+  </div>
+  <div class="kpi hot">
+    <p class="v">108 <small>d</small></p>
+    <p class="k">de atraso nos 8 cards de migração, vencidos em 05/06</p>
+  </div>
+  <div class="kpi">
+    <p class="v">R$ 140</p>
+    <p class="k">tudo que foi gasto em manutenção nos 8 imóveis desde 29/05</p>
+  </div>
+</div>
+
+<section>
+  <h2>A régua que decide a ordem</h2>
+  <p class="lede">Não é gravidade sozinha, nem antiguidade sozinha. É o que um hóspede encontra
+  no dia 29 de setembro.</p>
+
+  <div class="callout crit">
+    <h3>Os oito imóveis estão vazios hoje e recebem hóspede no dia 29</h3>
+    <p>Nenhuma das oito unidades tem hóspede neste momento, e cada uma tem exatamente uma
+    entrada marcada para <b>29/09/2026</b>. É a única janela limpa que existe: oito casas vazias
+    ao mesmo tempo, oito dias de prazo. Depois disso qualquer reparo passa a disputar espaço com
+    reserva, e higienização de ar-condicionado com hóspede dentro vira remarcação.</p>
+    <p>Essa data é o argumento da call com a franquia. Não é "vocês estão atrasados há quatro
+    meses" — é "em oito dias entra gente nas oito casas".</p>
+    <p style="font-size:12.5px; color:var(--ink-3);">Fonte: <code>reservation_reservation</code>,
+    status Concluded, consultado em 21/09/2026.</p>
+  </div>
+
+  <div class="callout">
+    <h3>Gravidade não está no sistema — ela foi lida à mão</h3>
+    <p>Os 32 cards estão com <code>urgent = false</code>, <code>category</code> em branco e sem
+    nenhum campo de IA preenchido. O agente de classificação de urgência existe, está mergeado
+    na <code>main</code>, e está inerte: falta a flag no PostHog e a chave do AI Hub no SSM de
+    produção. Enquanto isso, a ordem deste documento foi atribuída na leitura item a item das
+    descrições.</p>
+    <p>Quando a flag subir, os <b>396 cards abertos da base inteira</b> são classificados em
+    dois lotes de 200 a cada 15 minutos — <b>meia hora</b> até tudo ter nota. A estratégia abaixo
+    é o que o agente passa a fazer sozinho, e é também o gabarito para conferir se ele acertou.</p>
+  </div>
+</section>
+
+<section>
+  <h2>O princípio: duas passadas, nunca card a card</h2>
+  <p class="lede">Atacar os 32 cards em sequência é 32 deslocamentos e 32 compras. As mesmas
+  pendências resolvidas em duas passadas cruzadas custam muito menos e cabem no prazo.</p>
+
+  <div class="principio">
+    <div class="pass">
+      <p class="n">Passada 1</p>
+      <h3>Por imóvel — uma visita resolve o imóvel inteiro</h3>
+      <p>Tudo que exige alguém dentro da casa entra numa ida só: trocar assento de privada,
+      repor lâmpada, descongelar freezer, testar fogão, ajustar fechadura, conferir ar-condicionado.
+      São serviços de 10 a 30 minutos que só são caros porque estão espalhados em cards separados.</p>
+      <p class="ganho"><b>Ganho:</b> o VLE005 tem 7 cards abertos que uma visita de meio período
+      encerra quase por inteiro.</p>
+    </div>
+    <div class="pass">
+      <p class="n">Passada 2</p>
+      <h3>Por tipo — uma compra abastece as oito casas</h3>
+      <p>Tudo que é reposição de item vira uma lista de compras única para o condomínio, não oito
+      compras avulsas. Liquidificador, ferro de passar, travesseiro, cabide, taça, assento de
+      privada: o mesmo item se repete em quase todas as unidades.</p>
+      <p class="ganho"><b>Ganho:</b> 8 liquidificadores e 7 ferros de passar são uma nota fiscal,
+      não quinze idas ao mercado.</p>
+    </div>
+  </div>
+
+  <div class="callout">
+    <h3>A ordem entre as duas</h3>
+    <p>A compra da Passada 2 tem que ser disparada <b>antes</b> da visita da Passada 1, senão o
+    técnico chega no imóvel sem o item na mão e a visita vira um segundo deslocamento. Na prática:
+    fecha a lista de compras hoje, agenda as visitas para depois que o material chegar, e usa a
+    mesma ida para instalar o que foi comprado e resolver o que é serviço.</p>
+  </div>
+</section>
+
+<section>
+  <h2>Passada 1 — imóvel por imóvel</h2>
+  <p class="lede">Ordenados pelo que mais pesa na experiência do hóspede que entra em 29/09.
+  Cada ficha traz o que trava, o que a visita única resolve e o que fica para orçamento.</p>
+
+  <div class="imoveis">
+
+    <div class="imovel a">
+      <div class="top">
+        <h3>VLE005</h3>
+        <span class="cnt">7 cards abertos · o mais carregado</span>
+      </div>
+      <p class="diag">É o pior da carteira e o único com dano que piora sozinho. Cupim em quatro
+      pontos de madeira e os dois ar-condicionados com defeito — um não liga, o outro não ventila.</p>
+      <h4>O que trava</h4>
+      <ul>
+        <li><b>Cupim</b> na porta do quarto, na porta da sala, na janela da sala e no armário da TV <span class="tag a">não espera</span></li>
+        <li><b>Ar-condicionado</b>: quarto de solteiro não liga, quarto de casal não ventila</li>
+        <li>Plafon da cozinha queimado · controle da TV não liga · tampa da privada manchada</li>
+        <li>Duas portas sem chave · acabamento de tomada · TV a configurar</li>
+        <li>Da migração: 2 travesseiros, cabideiro, liquidificador, ferro, taças, panos, balde, tampa do freezer, fogão e forno nunca testados</li>
+      </ul>
+      <div class="visita"><b>A visita única:</b> elétrica (plafon, tomada), assento de privada,
+      teste de fogão/forno, TV e controle, fechaduras. O cupim e o ar-condicionado precisam de
+      terceiro — <b>orçar hoje</b>, não na semana que vem.</div>
+    </div>
+
+    <div class="imovel a">
+      <div class="top">
+        <h3>VLE003</h3>
+        <span class="cnt">5 cards abertos</span>
+      </div>
+      <p class="diag">O consultor marcou como <b>grave</b>: os assentos de privada dos dois
+      banheiros estão inutilizáveis. É o único card do condomínio com essa palavra.</p>
+      <h4>O que trava</h4>
+      <ul>
+        <li><b>2 assentos de privada inutilizáveis</b>, um em cada banheiro <span class="tag a">grave</span></li>
+        <li>Controle da TV sem funcionar, sem acesso à smart TV</li>
+        <li>Sanduicheira remendada com fita isolante · colheres de cozinhar derretidas e mofadas</li>
+        <li>Puxador de gaveta da cozinha quebrado · cafeteira sem filtro · caneca quebrada</li>
+        <li>Da migração: 7 travesseiros, 8 cabides, porta sem chave, ventilador, liquidificador, ferro, fogão e forno nunca testados</li>
+      </ul>
+      <div class="visita"><b>A visita única:</b> os dois assentos, puxador, tampa da lixeira,
+      teste de fogão/forno, controle e configuração da TV. O resto é compra.</div>
+    </div>
+
+    <div class="imovel b">
+      <div class="top">
+        <h3>VLE006</h3>
+        <span class="cnt">5 cards abertos</span>
+      </div>
+      <p class="diag">Cupim no armário do banheiro e três pontos de luz apagados. Nenhum dos dois
+      aparece para quem faz reserva, os dois aparecem para quem dorme lá.</p>
+      <h4>O que trava</h4>
+      <ul>
+        <li><b>Cupim</b> no armário do banheiro <span class="tag a">não espera</span></li>
+        <li>Lâmpada da cozinha, lâmpada do corredor e lâmpada do ventilador da sala queimadas</li>
+        <li>Luz interna da geladeira queimada · assento de privada sujo</li>
+        <li>Forma de inox acabada · chuveiro enrolado sem suporte · falta torneira na área de serviço</li>
+        <li>Da migração: 2 travesseiros, arara, 5 cabides, higienização do AC, chave na porta, liquidificador, ferro, fogão e forno nunca testados</li>
+      </ul>
+      <div class="visita"><b>A visita única:</b> três lâmpadas, luz da geladeira, chuveiro,
+      torneira, chave da porta, limpeza do assento, teste de fogão/forno. Uma ida encerra 4 dos
+      5 cards. O cupim vai junto com o do VLE005 no mesmo orçamento de dedetizadora.</div>
+    </div>
+
+    <div class="imovel b">
+      <div class="top">
+        <h3>VLE004</h3>
+        <span class="cnt">4 cards abertos</span>
+      </div>
+      <p class="diag">É o imóvel do histórico furado: dois cards foram criados e fechados no
+      mesmo dia 08/06 e os mesmos problemas reapareceram na visita de 17/08.</p>
+      <h4>O que trava</h4>
+      <ul>
+        <li><b>Assento de privada</b> — mas há despesa aprovada de 21/08 de "troca de tampa de vaso sanitário, quebrado e com manchas", R$ 70 <span class="tag b">conferir antes</span></li>
+        <li>Freezer cheio de gelo (já foi dado como resolvido em 08/06 e voltou)</li>
+        <li>Falta liquidificador · cafeteira sem filtro · faltam colheres de cozinhar</li>
+        <li>Da migração: 3 travesseiros, cabideiro, fechadura no quarto, facas, peneira, taças, panelas, panos, jarra, fogão e forno nunca testados</li>
+      </ul>
+      <div class="visita"><b>Antes da visita:</b> pedir a foto da despesa de 21/08. Se for o mesmo
+      assento, o card 937 fecha sem ninguém ir lá. A visita então é desgelo do freezer e teste de
+      fogão/forno.</div>
+    </div>
+
+    <div class="imovel b">
+      <div class="top">
+        <h3>VLE002</h3>
+        <span class="cnt">4 cards abertos</span>
+      </div>
+      <p class="diag">Nenhuma emergência, mas tem rachadura de parede parada desde maio e três
+      queixas de eletrodoméstico que o hóspede usa todo dia.</p>
+      <h4>O que trava</h4>
+      <ul>
+        <li><b>Rachadura na parede</b> — desde 29/05, sem orçamento <span class="tag b">estrutural</span></li>
+        <li>Fogão com coloração escura, tipo queimado · borrachas da geladeira muito sujas</li>
+        <li>Controle da TV: botão de liga/desliga não funciona</li>
+        <li>Porta sem chave · porta sem puxador · escova sanitária quebrada</li>
+        <li>Da migração: 2 travesseiros, 4 cabides, ventilador, liquidificador, ferro, 2 panelas sem tampa, taça, jarra, fogão e forno nunca testados</li>
+      </ul>
+      <div class="visita"><b>A visita única:</b> higienização de fogão e geladeira (é limpeza
+      pesada, não conserto), controle, puxador, chave. A rachadura precisa de foto e orçamento
+      antes de virar serviço.</div>
+    </div>
+
+    <div class="imovel c">
+      <div class="top">
+        <h3>VLE001</h3>
+        <span class="cnt">3 cards abertos</span>
+      </div>
+      <p class="diag">Poucos cards, mas um deles é o único sinal de infiltração do condomínio —
+      e infiltração parada é a que fica cara.</p>
+      <h4>O que trava</h4>
+      <ul>
+        <li><b>Parede com sinal de infiltração</b> — desde 29/05 <span class="tag b">estrutural</span></li>
+        <li><b>2 portas de correr sem fechadura e sem trinco</b> <span class="tag a">segurança</span></li>
+        <li>Assento de privada muito acabado · escova sanitária quebrada</li>
+        <li>Sanduicheira quebrada · cafeteira sem filtro · grelha amassada · falta colher de cozinhar</li>
+        <li>Da migração: 2 travesseiros, 4 cabides, higienização do AC, chuveirinho sem suporte, ventilador, liquidificador, ferro, taças, fogão e forno nunca testados</li>
+      </ul>
+      <div class="visita"><b>A visita única:</b> as duas fechaduras, assento, chuveirinho,
+      teste de fogão/forno, higienização do AC. A infiltração sai em foto e orçamento na mesma ida.</div>
+    </div>
+
+    <div class="imovel c">
+      <div class="top">
+        <h3>VLE008</h3>
+        <span class="cnt">2 cards abertos · queixa de hóspede</span>
+      </div>
+      <p class="diag">Poucos cards e o único com reclamação escrita de hóspede. A avaliação de
+      02/09 descreve exatamente o que o consultor já tinha apontado no condomínio inteiro.</p>
+      <h4>O que trava</h4>
+      <ul>
+        <li><b>Lençóis, toalhas e sofá manchados</b>; utensílios de cozinha sujos; taças a substituir — avaliação de 02/09 <span class="tag a">nota</span></li>
+        <li>O card dessa avaliação (5838) <b>está sem prazo e nunca foi cobrado</b> <span class="tag a">furo de processo</span></li>
+        <li>Da migração: 2 travesseiros, higienização da cortina, portas do banheiro, escova sanitária, colheres, faca, taças, panela, jarra, liquidificador, ferro, repetidor de Wi-Fi</li>
+      </ul>
+      <div class="visita"><b>Antes de tudo:</b> carimbar prazo no card 5838 e mandar para a
+      cobrança. Enxoval e sofá são troca, não conserto — entram na lista de compras com prioridade,
+      porque já custaram nota.</div>
+    </div>
+
+    <div class="imovel c">
+      <div class="top">
+        <h3>VLE007</h3>
+        <span class="cnt">2 cards abertos</span>
+      </div>
+      <p class="diag">O mais leve da carteira. Tem um item que pode não ter solução barata e
+      precisa de decisão, não de cobrança.</p>
+      <h4>O que trava</h4>
+      <ul>
+        <li><b>Banheiro sem janela, exaustor ou saída de ar</b> — é projeto, não manutenção <span class="tag b">decidir</span></li>
+        <li>Falta liquidificador · falta ferro · cafeteira sem filtro</li>
+        <li>Lâmpada perto da cozinha queimada</li>
+        <li>Da migração: 1 travesseiro, arara, 5 cabides, pegador, peneira, tábua, panela, pá de lixo</li>
+      </ul>
+      <div class="visita"><b>A visita única:</b> lâmpada e filtro da cafeteira, 15 minutos.
+      O banheiro sem exaustor precisa de uma decisão entre Seazone e proprietário — enquanto
+      estiver como card de manutenção, vai envelhecer para sempre.</div>
+    </div>
+
+  </div>
+</section>
+
+<section>
+  <h2>Passada 2 — por tipo de manutenção</h2>
+  <p class="lede">O mesmo backlog cortado pelo outro eixo. A coluna "unidades" mostra em quantos
+  dos oito imóveis o item aparece — é ela que diz o que vira compra única e o que vira serviço
+  pontual.</p>
+
+  <div class="tablebox">
+    <table>
+      <thead>
+        <tr>
+          <th>Tipo</th>
+          <th style="text-align:center;">Un.</th>
+          <th>Volume</th>
+          <th>Como resolve</th>
+          <th>Onda</th>
+        </tr>
+      </thead>
+      <tbody>
+
+        <tr class="sep"><td colspan="5">Risco e habitabilidade</td></tr>
+        <tr>
+          <td class="tipo">Cupim</td>
+          <td class="un">2</td>
+          <td class="vol">5 pontos de madeira</td>
+          <td class="como">VLE005: porta do quarto, porta da sala, janela da sala, armário da TV.
+          VLE006: armário do banheiro. Uma dedetizadora para os dois imóveis, no mesmo orçamento.
+          É o único dano que cresce sozinho — adiar aumenta o valor da conta.</td>
+          <td class="onda"><span class="tag a">Orçar agora</span></td>
+        </tr>
+        <tr>
+          <td class="tipo">Fogão e forno nunca testados</td>
+          <td class="un">6</td>
+          <td class="vol">6 fogões, 6 fornos</td>
+          <td class="como">VLE001 a VLE006. Os cards de 29/05 dizem "não foi possível testar" e
+          nunca foram retestados — 115 dias. Aparelho a gás sem teste em casa que recebe hóspede
+          em 8 dias é o item mais barato de resolver e o mais caro de ignorar.</td>
+          <td class="onda"><span class="tag a">Onda 1</span></td>
+        </tr>
+        <tr>
+          <td class="tipo">Portas, fechaduras e chaves</td>
+          <td class="un">7</td>
+          <td class="vol">9 portas, 6 chaves</td>
+          <td class="como">VLE001 tem duas portas de correr sem fechadura e sem trinco. VLE002,
+          003, 005 (duas), 006 e 008 com portas sem chave; VLE004 sem fechadura no quarto.
+          Um chaveiro resolve o condomínio inteiro numa passada.</td>
+          <td class="onda"><span class="tag a">Onda 1</span></td>
+        </tr>
+        <tr>
+          <td class="tipo">Ar-condicionado</td>
+          <td class="un">8</td>
+          <td class="vol">2 reparos + 8 higienizações</td>
+          <td class="como">Reparo só no VLE005 (um não liga, outro não ventila). Higienização
+          recorrente vencida nas oito unidades: a última registrada foi em <b>agosto de 2025</b>,
+          há 13 meses. Contratar o ciclo das oito de uma vez, com as casas vazias.</td>
+          <td class="onda"><span class="tag a">Onda 1</span></td>
+        </tr>
+        <tr>
+          <td class="tipo">Infiltração e rachadura</td>
+          <td class="un">2</td>
+          <td class="vol">2 pontos</td>
+          <td class="como">Infiltração no VLE001, rachadura no VLE002, ambas paradas desde 29/05.
+          Não dá para cobrar prazo sem orçamento — o que se cobra agora é foto e valor.</td>
+          <td class="onda"><span class="tag b">Onda 3</span></td>
+        </tr>
+        <tr>
+          <td class="tipo">Banheiro sem ventilação</td>
+          <td class="un">1</td>
+          <td class="vol">VLE007</td>
+          <td class="como">Sem janela, exaustor ou saída de ar. É obra, não manutenção. Precisa
+          de decisão entre Seazone e proprietário — ou sai do board.</td>
+          <td class="onda"><span class="tag b">Decidir</span></td>
+        </tr>
+
+        <tr class="sep"><td colspan="5">Experiência do hóspede</td></tr>
+        <tr>
+          <td class="tipo">Assento de privada</td>
+          <td class="un">5</td>
+          <td class="vol">6 assentos</td>
+          <td class="como">VLE001, 003 (dois, marcados como <b>grave</b>), 004, 005, 006. O consultor
+          escreveu "prioridade em todos os VLE" em quatro cards diferentes. Referência de custo
+          medida: R$ 70 por troca (despesa aprovada de 21/08). Conferir o VLE004 antes — pode já
+          estar feito.</td>
+          <td class="onda"><span class="tag a">Onda 1</span></td>
+        </tr>
+        <tr>
+          <td class="tipo">Enxoval e estofado</td>
+          <td class="un">6</td>
+          <td class="vol">5 a validar + 1 com queixa</td>
+          <td class="como">VLE008 tem avaliação de 02/09 com lençóis, toalhas e sofá manchados.
+          VLE001, 003, 004, 007 e 008 têm "enxoval — validar" pendente desde a migração. Já virou
+          nota; troca, não lavagem.</td>
+          <td class="onda"><span class="tag a">Onda 1</span></td>
+        </tr>
+        <tr>
+          <td class="tipo">Lâmpadas e elétrica</td>
+          <td class="un">3</td>
+          <td class="vol">6 pontos de luz</td>
+          <td class="como">VLE005 (plafon da cozinha, tomada sem acabamento), VLE006 (cozinha,
+          corredor, ventilador da sala, luz da geladeira), VLE007 (perto da cozinha). Item de
+          minutos que está parado há 28 dias.</td>
+          <td class="onda"><span class="tag a">Onda 1</span></td>
+        </tr>
+        <tr>
+          <td class="tipo">Geladeira e freezer</td>
+          <td class="un">4</td>
+          <td class="vol">4 serviços</td>
+          <td class="como">VLE002 borrachas sujas, VLE004 desgelo, VLE005 tampa do freezer,
+          VLE006 luz interna. O desgelo do VLE004 já foi dado como resolvido uma vez em junho e
+          voltou em agosto.</td>
+          <td class="onda"><span class="tag a">Onda 1</span></td>
+        </tr>
+        <tr>
+          <td class="tipo">TV e controle</td>
+          <td class="un">4</td>
+          <td class="vol">3 controles + 1 config</td>
+          <td class="como">VLE002, VLE003 e VLE005 com controle sem funcionar; VLE005 com TV a
+          configurar; VLE002 com tampa do controle solta. Controle universal resolve os três.</td>
+          <td class="onda"><span class="tag a">Onda 1</span></td>
+        </tr>
+        <tr>
+          <td class="tipo">Higienização pesada</td>
+          <td class="un">2</td>
+          <td class="vol">fogão VLE002, cortina VLE008</td>
+          <td class="como">Fogão com coloração queimada e cortina da sala. É limpeza profunda,
+          cabe na equipe de limpeza e não precisa de técnico.</td>
+          <td class="onda"><span class="tag b">Onda 2</span></td>
+        </tr>
+        <tr>
+          <td class="tipo">Hidráulica leve</td>
+          <td class="un">2</td>
+          <td class="vol">3 serviços</td>
+          <td class="como">Chuveirinho sem suporte no VLE001 e no VLE006, torneira da área de
+          serviço no VLE006.</td>
+          <td class="onda"><span class="tag b">Onda 2</span></td>
+        </tr>
+
+        <tr class="sep"><td colspan="5">Reposição de item — vira lista de compras única</td></tr>
+        <tr>
+          <td class="tipo">Liquidificador</td>
+          <td class="un">8</td>
+          <td class="vol">8 unidades</td>
+          <td class="como">Falta nas oito casas. Aparece nos cards de migração de 29/05 e foi
+          reapontado pelo consultor em 17/08 em seis delas. Uma compra encerra o item no condomínio.</td>
+          <td class="onda"><span class="tag b">Onda 2</span></td>
+        </tr>
+        <tr>
+          <td class="tipo">Ferro de passar</td>
+          <td class="un">7</td>
+          <td class="vol">7 unidades</td>
+          <td class="como">Falta em sete. O oitavo (VLE004) tem card fechado em 08/06 sem evidência
+          — e o consultor não achou o ferro na visita de agosto. Comprar oito e encerrar a dúvida.</td>
+          <td class="onda"><span class="tag b">Onda 2</span></td>
+        </tr>
+        <tr>
+          <td class="tipo">Travesseiros</td>
+          <td class="un">8</td>
+          <td class="vol">21 travesseiros</td>
+          <td class="como">Todas as oito unidades, desde 29/05. VLE003 é o pior, com 7 faltando.</td>
+          <td class="onda"><span class="tag b">Onda 2</span></td>
+        </tr>
+        <tr>
+          <td class="tipo">Cabides, araras e cabideiros</td>
+          <td class="un">7</td>
+          <td class="vol">21 cabides, 2 araras, 2 cabideiros</td>
+          <td class="como">Todas menos o VLE008. Item de centavos parado há 108 dias.</td>
+          <td class="onda"><span class="tag b">Onda 2</span></td>
+        </tr>
+        <tr>
+          <td class="tipo">Utensílios de cozinha</td>
+          <td class="un">8</td>
+          <td class="vol">~60 itens</td>
+          <td class="como">Taças de vinho, panelas, facas de corte, colheres de cozinhar, panos de
+          prato, jarras, peneiras, pegadores, tábuas, formas, abridores. Espalhado pelos oito cards
+          de migração e reapontado pelo consultor. Uma lista, um fornecedor.</td>
+          <td class="onda"><span class="tag b">Onda 2</span></td>
+        </tr>
+        <tr>
+          <td class="tipo">Escova sanitária</td>
+          <td class="un">5</td>
+          <td class="vol">5 unidades</td>
+          <td class="como">VLE001 (quebrada, apontada duas vezes), VLE002, VLE003, VLE005, VLE008.
+          Vai junto com os assentos de privada, é o mesmo fornecedor e a mesma ida.</td>
+          <td class="onda"><span class="tag b">Onda 2</span></td>
+        </tr>
+        <tr>
+          <td class="tipo">Cafeteira e sanduicheira</td>
+          <td class="un">5</td>
+          <td class="vol">4 filtros, 2 sanduicheiras, 1 garrafa térmica</td>
+          <td class="como">Filtro de cafeteira em VLE001, 003, 004 e 007. Sanduicheira quebrada no
+          VLE001 e remendada com fita isolante no VLE003 — essa é troca, não conserto.</td>
+          <td class="onda"><span class="tag b">Onda 2</span></td>
+        </tr>
+        <tr>
+          <td class="tipo">Ventiladores</td>
+          <td class="un">3</td>
+          <td class="vol">3 unidades</td>
+          <td class="como">VLE001, VLE002, VLE003, todos do card de migração.</td>
+          <td class="onda"><span class="tag b">Onda 2</span></td>
+        </tr>
+        <tr>
+          <td class="tipo">Wi-Fi</td>
+          <td class="un">1</td>
+          <td class="vol">1 repetidor</td>
+          <td class="como">VLE008. Item barato que aparece em avaliação quando falta.</td>
+          <td class="onda"><span class="tag b">Onda 2</span></td>
+        </tr>
+
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section>
+  <h2>As três ondas</h2>
+  <p class="lede">A Onda 1 é datada pela reserva, não pela nossa agenda. As outras duas só fazem
+  sentido depois que a primeira estiver fechada com evidência.</p>
+
+  <div class="ondas">
+    <div class="onda-c a">
+      <p class="when">Até 29/09 · 8 dias</p>
+      <h3>Onda 1 — antes do hóspede entrar</h3>
+      <p class="why">O corte é simples: o que um hóspede vê, usa ou corre risco com, no primeiro
+      dia. Com as oito casas vazias, é a única janela em que dá para entrar em todas.</p>
+      <ul>
+        <li><b>Testar os 6 fogões e fornos</b> que nunca foram testados</li>
+        <li><b>6 assentos de privada</b> em 5 imóveis (conferir VLE004 antes)</li>
+        <li><b>9 portas sem fechadura ou chave</b> — chaveiro numa passada</li>
+        <li><b>Ar-condicionado do VLE005</b> + as 8 higienizações vencidas há 13 meses</li>
+        <li><b>6 pontos de luz</b> queimados em 3 imóveis</li>
+        <li><b>Enxoval e sofá do VLE008</b> — já virou avaliação</li>
+        <li>Desgelo, borrachas e luz de geladeira · 3 controles de TV</li>
+        <li><b>Orçar o cupim</b> de VLE005 e VLE006 (a execução pode ser na Onda 2, o orçamento não)</li>
+      </ul>
+    </div>
+
+    <div class="onda-c b">
+      <p class="when">30 dias · até 21/10</p>
+      <h3>Onda 2 — a compra única</h3>
+      <p class="why">Tudo que é reposição vira uma lista só para o condomínio. Disparar a compra
+      antes de agendar a segunda rodada de visitas, senão o técnico volta de mãos vazias.</p>
+      <ul>
+        <li>8 liquidificadores · 8 ferros de passar · 21 travesseiros</li>
+        <li>21 cabides, 2 araras, 2 cabideiros · 5 escovas sanitárias</li>
+        <li>~60 utensílios de cozinha em lista única</li>
+        <li>4 filtros de cafeteira · 2 sanduicheiras · 3 ventiladores · 1 repetidor Wi-Fi</li>
+        <li><b>Execução do tratamento de cupim</b> nos 5 pontos</li>
+        <li>Higienização pesada de fogão (VLE002) e cortina (VLE008)</li>
+        <li>Hidráulica leve: 2 chuveirinhos, 1 torneira</li>
+      </ul>
+    </div>
+
+    <div class="onda-c c">
+      <p class="when">Com orçamento na mão</p>
+      <h3>Onda 3 — o que precisa de decisão</h3>
+      <p class="why">Três itens que não são "a franquia não fez" — são "ninguém decidiu ainda".
+      Cobrar prazo sem valor aprovado só aumenta o número de cards vencidos.</p>
+      <ul>
+        <li><b>Infiltração</b> na parede do VLE001</li>
+        <li><b>Rachadura</b> na parede do VLE002</li>
+        <li><b>Banheiro sem ventilação</b> no VLE007 — decisão Seazone × proprietário</li>
+        <li>Definir se estes três continuam contando como atraso da franquia ou saem da régua</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>O que o agente faz — e onde ele para</h2>
+  <p class="lede">A estratégia acima é executável por gente hoje. O que muda quando o agente
+  liga é que ela deixa de ser um documento e passa a ser o comportamento padrão do board,
+  para as 12 franquias, não só para esta.</p>
+
+  <div class="agente">
+    <div class="ag faz">
+      <h3><span class="dot"></span>O que o agente resolve sozinho</h3>
+      <ol>
+        <li><b>Dá nota a tudo em meia hora.</b> 396 cards abertos, lotes de 200 a cada 15 minutos.
+        Severidade de 0 a 80 pelo texto, mais reincidência de 90 dias por SQL; corte de urgente em 70.</li>
+        <li><b>Acha a reincidência sozinho.</b> O desgelo do VLE004 fechado em junho e reaberto em
+        agosto é exatamente o caso que a parcela de reincidência pontua — o card volta com nota
+        maior por ter voltado.</li>
+        <li><b>Agrupa por tipo.</b> A multi-categoria é o que permite a Passada 2: o mesmo item em
+        oito imóveis vira uma lista, sem ninguém ler 32 descrições.</li>
+        <li><b>Marca o que some do radar.</b> Card enviado à franquia sem prazo não entra na régua
+        de cobrança — hoje são 77 na base inteira, e um deles é o VLE008.</li>
+      </ol>
+    </div>
+    <div class="ag nao">
+      <h3><span class="dot"></span>O que ele não faz, e não deve fazer</h3>
+      <ul>
+        <li><b>Não sabe que dia entra hóspede.</b> A parcela de ocupação foi tirada da nota de
+        propósito: nota gravada envelhece. Ocupação é filtro vivo do board — "abertos com entrada
+        em ≤48h" — e <b>esse filtro ainda não foi construído</b>. Sem ele, a data de 29/09 continua
+        sendo trabalho manual.</li>
+        <li><b>Não valida evidência.</b> Não existe agente que olhe foto. Os quatro cards fechados
+        no mesmo dia em que foram abertos passariam igual. A matriz de evidência é a especificação
+        de um agente que ainda não foi feito.</li>
+        <li><b>Não decide orçamento.</b> Infiltração, rachadura e ventilação são conversa de gente.</li>
+        <li><b>Não está ligado.</b> Falta a flag <code>ff_sapron_backend_enable_maintenance_card_classifier</code>
+        no PostHog e a chave do AI Hub no SSM de produção. Enquanto isso, zero dos 5.927 cards da
+        base têm classificação.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="callout crit">
+    <h3>A trava que vale mais que a estratégia inteira</h3>
+    <p>Os 32 cards já foram enviados à franquia e 31 foram recobrados em 16/09. <b>Nenhum tem
+    evidência recebida.</b> Sem régua de evidência, qualquer plano acima produz o mesmo resultado
+    de junho: card fechado, problema no lugar.</p>
+    <p>A regra mínima para esta rodada: <b>nenhum card do VLE fecha sem foto</b>, e os quatro
+    fechados sem evidência (dois no VLE004 em 08/06, um no VLE007 em 31/08 e o do assento de
+    21/08) são recobrados com pedido de comprovante antes de qualquer visita nova.</p>
+  </div>
+</section>
+
+<div class="foot">
+  <p>Levantado em 21/09/2026 a partir do banco do Sapron: <code>maintenance_maintenancecard</code>
+  (32 cards abertos, host 293, status fora de <code>concluido</code> e <code>cancelada</code>),
+  <code>reservation_reservation</code> (ocupação e entradas de 29/09),
+  <code>financial_expenses</code> (R$ 140 em manutenção desde 29/05 e a multa de R$ 250 de 16/09),
+  <code>property_property</code> (ativação em 29/09/2021).</p>
+  <p>A criticidade e o agrupamento por tipo foram atribuídos na leitura item a item das descrições
+  dos cards — não são campo do sistema. O Sapron não vincula despesa a card, então não existe custo
+  por pendência; a única referência de valor medida é R$ 70 pela troca de assento de privada
+  (despesa aprovada em 21/08, VLE004 e VLE007).</p>
+  <p>Cada card carrega o link do Pipefy de origem e a marca "Importado do Pipefy em 24/08/2026" —
+  a reconciliação card a card com o pipe 306383925 é possível assim que houver acesso à ferramenta.
+  Nomes de hóspedes das avaliações foram omitidos.</p>
+</div>
+
+</div>
+</body>
+</html>

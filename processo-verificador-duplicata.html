@@ -1,0 +1,279 @@
+<title>Verificador de Duplicata</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&amp;family=Newsreader:opsz,wght@6..72,500;6..72,600&amp;family=Source+Sans+3:wght@400;600&amp;display=swap">
+<style>
+:root{
+  --ground:#F6F6F3; --surface:#FFFFFF; --line:#DEDFD8; --line-soft:#EAEBE4;
+  --ink:#17201C; --ink-2:#4A574F; --ink-3:#7D8981;
+  --accent:#0B6B62; --accent-soft:rgba(11,107,98,.09);
+  --ok-fg:#15803D; --ok-bg:rgba(22,163,74,.12);
+  --wait-fg:#B45309; --wait-bg:rgba(217,119,6,.13);
+  --stop-fg:#B91C1C; --stop-bg:rgba(220,38,38,.11);
+  --code-bg:#EDEEE8;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --ground:#0E1311; --surface:#161D1A; --line:#2A3531; --line-soft:#1F2825;
+    --ink:#E9EEEA; --ink-2:#A9B6AF; --ink-3:#74837B;
+    --accent:#4FB3A6; --accent-soft:rgba(79,179,166,.13);
+    --ok-fg:#5FD68A; --ok-bg:rgba(22,163,74,.17);
+    --wait-fg:#F0B429; --wait-bg:rgba(217,119,6,.17);
+    --stop-fg:#FCA5A5; --stop-bg:rgba(220,38,38,.17);
+    --code-bg:#1E2622;
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#0E1311; --surface:#161D1A; --line:#2A3531; --line-soft:#1F2825;
+  --ink:#E9EEEA; --ink-2:#A9B6AF; --ink-3:#74837B;
+  --accent:#4FB3A6; --accent-soft:rgba(79,179,166,.13);
+  --ok-fg:#5FD68A; --ok-bg:rgba(22,163,74,.17);
+  --wait-fg:#F0B429; --wait-bg:rgba(217,119,6,.17);
+  --stop-fg:#FCA5A5; --stop-bg:rgba(220,38,38,.17);
+  --code-bg:#1E2622;
+}
+body{background:var(--ground);color:var(--ink);font-family:'Source Sans 3',system-ui,-apple-system,sans-serif;font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased;}
+.wrap{max-width:760px;margin:0 auto;padding:0 16px;padding-block:40px 72px;}
+.eyebrow{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);font-weight:600;margin:0 0 10px;}
+h1{font-family:'Newsreader',Georgia,serif;font-weight:600;font-size:clamp(30px,6vw,42px);line-height:1.12;margin:0 0 14px;text-wrap:balance;letter-spacing:-.01em;}
+.lede{font-size:18px;color:var(--ink-2);margin:0 0 28px;max-width:62ch;}
+h2{font-family:'Newsreader',Georgia,serif;font-weight:600;font-size:24px;line-height:1.25;margin:0 0 14px;text-wrap:balance;}
+h3{font-size:15px;font-weight:600;margin:22px 0 8px;letter-spacing:-.005em;}
+p{margin:0 0 14px;max-width:66ch;}
+section{margin-top:38px;}
+.rule{height:1px;background:var(--line);border:0;margin:0 0 26px;}
+.sec-head{display:flex;align-items:baseline;gap:12px;margin-bottom:14px;}
+.sec-head h2{margin:0;}
+.sec-n{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--ink-3);padding-top:4px;}
+code,.mono{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:.88em;background:var(--code-bg);padding:.12em .38em;border-radius:3px;}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:18px 20px;}
+.meta{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:6px;overflow:hidden;margin-bottom:34px;}
+.meta div{background:var(--surface);padding:12px 14px;}
+.meta dt{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3);margin:0 0 4px;}
+.meta dd{margin:0;font-size:14px;font-weight:600;}
+.tag{display:inline-block;font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;padding:3px 8px;border-radius:3px;vertical-align:1px;}
+.t-ok{color:var(--ok-fg);background:var(--ok-bg);}
+.t-wait{color:var(--wait-fg);background:var(--wait-bg);}
+.t-stop{color:var(--stop-fg);background:var(--stop-bg);}
+.tbl-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:6px;background:var(--surface);}
+table{width:100%;border-collapse:collapse;font-size:14.5px;}
+th{text-align:left;font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-3);font-weight:600;padding:11px 14px;border-bottom:1px solid var(--line);white-space:nowrap;}
+td{padding:11px 14px;border-bottom:1px solid var(--line-soft);vertical-align:top;}
+tr:last-child td{border-bottom:0;}
+td.num{font-variant-numeric:tabular-nums;white-space:nowrap;}
+.flow{list-style:none;counter-reset:s;margin:0;padding:0;}
+.flow li{counter-increment:s;position:relative;padding:0 0 20px 44px;border-left:1px solid var(--line);margin-left:13px;}
+.flow li:last-child{border-left-color:transparent;padding-bottom:0;}
+.flow li::before{content:counter(s);position:absolute;left:-13px;top:-2px;width:26px;height:26px;border-radius:50%;background:var(--accent-soft);color:var(--accent);border:1px solid var(--accent);display:grid;place-items:center;font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:500;}
+.flow b{display:block;font-size:15px;margin-bottom:3px;}
+.flow p{margin:0;color:var(--ink-2);font-size:14.5px;}
+.callout{border-left:3px solid var(--accent);background:var(--accent-soft);padding:14px 16px;border-radius:0 5px 5px 0;margin:20px 0;}
+.callout.warn{border-left-color:var(--wait-fg);background:var(--wait-bg);}
+.callout.stop{border-left-color:var(--stop-fg);background:var(--stop-bg);}
+.callout p:last-child{margin-bottom:0;}
+.callout b{font-weight:600;}
+ul.plain{margin:0 0 14px;padding-left:20px;}
+ul.plain li{margin-bottom:7px;max-width:64ch;}
+pre{background:var(--code-bg);border:1px solid var(--line);border-radius:5px;padding:13px 15px;overflow-x:auto;font-family:'IBM Plex Mono',monospace;font-size:13px;line-height:1.55;margin:0 0 16px;}
+pre code{background:none;padding:0;font-size:inherit;}
+.foot{margin-top:48px;padding-top:18px;border-top:1px solid var(--line);font-size:13px;color:var(--ink-3);}
+.foot p{max-width:none;margin-bottom:6px;}
+@media (max-width:520px){.flow li{padding-left:36px;}}
+</style>
+<div class="wrap">
+
+<p class="eyebrow">Central de Manutenção · Processo do agente</p>
+<h1>Verificador de Duplicata</h1>
+<p class="lede">Antes de a triagem mover o card, ele olha se o imóvel já tem card aberto para o mesmo problema. Achando, marca a suspeita e <b>segura</b> o card na coluna. É o terceiro agente da esteira, o mais novo, e o único que trava alguma coisa.</p>
+
+<dl class="meta">
+  <div><dt>Linha do quadro</dt><dd>Verificação de card duplicado</dd></div>
+  <div><dt>Código</dt><dd><span class="mono">maintenance/actions/duplicate_check.py</span></dd></div>
+  <div><dt>No ar em</dt><dd>staging <span class="tag t-wait">flag não existe</span></dd></div>
+  <div><dt>Depende de</dt><dd>classificador ligado</dd></div>
+</dl>
+
+<hr class="rule">
+
+<div class="callout stop">
+  <p><b>Ele existe por causa de um ato que não se desfaz.</b> Quando a triagem move um card, o sistema abre o chamado individual com a franquia — e em card urgente, com o aviso de manutenção URGENTE. Se o card era repetido, a franquia recebe a segunda conversa sobre o mesmo defeito, e não há como fechá-la de volta como se não tivesse acontecido. Por isso a conferência cabe <b>entre</b> a nota e o movimento, e não depois: depois, o custo já foi pago.</p>
+</div>
+
+<section>
+  <div class="sec-head"><span class="sec-n">01</span><h2>O caminho do card</h2></div>
+
+  <ol class="flow">
+    <li>
+      <b>O card ganha nota</b>
+      <p>O classificador roda em <span class="mono">:00 :15 :30 :45</span> e escreve a nota de urgência e as categorias. Só card com nota interessa a este agente: sem categoria não há por onde começar a comparação.</p>
+    </li>
+    <li>
+      <b>Dois minutos depois, ele entra</b>
+      <p>Em <span class="mono">:02 :17 :32 :47</span>. Pega os cards na coluna <b>Solicitação recebida</b> que já têm nota e ainda não foram conferidos, do mais antigo para o mais novo.</p>
+    </li>
+    <li>
+      <b>Monta a lista de quem perguntar</b>
+      <p>Cards abertos do mesmo imóvel que sobrevivem a três peneiras — no máximo quatro, do mais recente para o mais antigo.</p>
+    </li>
+    <li>
+      <b>Pergunta à IA, par a par</b>
+      <p>Um booleano por par: é o mesmo problema? Achou, para de perguntar. Não achou, segue para o próximo.</p>
+    </li>
+    <li>
+      <b>Marca, ou libera</b>
+      <p>Achando, grava de quem ele desconfia e por quê, e o card <b>não sai</b> da coluna. Não achando, carimba o card como conferido e ele segue seu caminho.</p>
+    </li>
+    <li>
+      <b>Três minutos depois, a triagem passa</b>
+      <p>Em <span class="mono">:05 :20 :35 :50</span>. Card com suspeita fica. Card conferido e limpo vai para Urgente ou Corretiva.</p>
+    </li>
+  </ol>
+
+  <p>Do fim da nota ao movimento do card são cinco minutos, e a conferência ocupa o meio deles.</p>
+</section>
+
+<section>
+  <div class="sec-head"><span class="sec-n">02</span><h2>Quem ele compara, e quem ele deixa de fora</h2></div>
+
+  <p>A IA é o filtro de verdade. As peneiras antes dela existem só para limitar custo — cada par é uma chamada paga.</p>
+
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>Peneira</th><th>Fica de fora</th><th>Por quê</th></tr></thead>
+      <tbody>
+        <tr><td>Mesmo imóvel</td><td>card de qualquer outro imóvel</td><td>a chave da duplicata é o imóvel; dois imóveis com o mesmo defeito são dois consertos</td></tr>
+        <tr><td>Coluna viva</td><td>concluído e cancelado</td><td>defeito que volta depois de consertado é pedido <b>novo</b>, não repetição</td></tr>
+        <tr><td>Janela de 90 dias</td><td>card mais antigo que isso</td><td>não é sobre relevância — card aberto é pedido vivo em qualquer idade —, é sobre não pagar IA contra card de um ano atrás que ninguém confundiria</td></tr>
+        <tr><td>Origem</td><td>card de regra de recorrência</td><td>preventiva e corretiva são serviços diferentes: "higienização anual do ar" não é duplicata de "o ar não gela"</td></tr>
+        <tr><td>Já suspeito</td><td>card que já é suspeito de outro</td><td>o terceiro card compara com o <b>original</b>, não com a cópia dele</td></tr>
+        <tr><td>Categoria</td><td>sem categoria em comum</td><td>quando os dois lados têm categoria da IA, sem interseção não se gasta chamada</td></tr>
+        <tr><td>Texto</td><td>sem duas palavras de objeto em comum</td><td>vale quando falta categoria em algum dos lados; palavras vazias como "não", "funcionando" e "problema" não contam</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>O teto de quatro</h3>
+  <p>No máximo quatro pares por card, e sempre do mais recente para o mais antigo. Duplicata quase sempre é com o pedido de poucos dias atrás, não com o de dois meses — e sem teto o custo do lote cresceria junto com o histórico do imóvel.</p>
+</section>
+
+<section>
+  <div class="sec-head"><span class="sec-n">03</span><h2>O que é duplicata, e o que só parece</h2></div>
+
+  <p>É duplicata quando os dois textos descrevem o mesmo defeito, no mesmo lugar, ainda em aberto — mesmo escritos com palavras diferentes, por pessoas diferentes, ou com um deles bem mais curto.</p>
+
+  <p><b>Não é duplicata</b>, e este é o erro caro, porque segura um conserto real:</p>
+
+  <ul class="plain">
+    <li><b>Mesmo tipo de defeito em lugares diferentes.</b> A torneira da cozinha e a torneira do banheiro. O ar da suíte e o ar da sala. São dois consertos.</li>
+    <li><b>Defeito que voltou depois do conserto.</b> O mesmo ar-condicionado que quebra de novo três meses depois merece card próprio.</li>
+    <li><b>Um pedido que é consequência do outro, mas exige outro serviço.</b> A infiltração e a pintura que ela estragou.</li>
+    <li><b>Dois pedidos vagos que só parecem iguais por serem vagos.</b> "Não funciona", "está com problema". Sem sinal do mesmo objeto, não é duplicata.</li>
+  </ul>
+
+  <div class="callout">
+    <p><b>Na dúvida, não é duplicata.</b> Segurar um conserto real é pior do que deixar passar um pedido repetido: o repetido a franquia resolve numa conversa, e o segurado ninguém vê.</p>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head"><span class="sec-n">04</span><h2>O que ele escreve, e o que ele nunca faz</h2></div>
+
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>Campo</th><th>O que guarda</th></tr></thead>
+      <tbody>
+        <tr><td class="mono">ai_duplicate_checked_at</td><td>quando ele olhou este card. É o carimbo que a triagem espera.</td></tr>
+        <tr><td class="mono">ai_duplicate_of</td><td>qual card aberto ele acha que é o mesmo problema</td></tr>
+        <tr><td class="mono">ai_duplicate_reason</td><td>por que ele acha isso, em uma frase — para a pessoa decidir sem reler os dois cards inteiros</td></tr>
+        <tr><td class="mono">duplicate_dismissed_at</td><td>quando uma pessoa disse que <b>não</b> é duplicata</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>O que ele nunca faz</h3>
+  <p>Não cancela, não conclui, não move card e não posta nada em canal nenhum. Ele marca e sai. Quem decide é gente — cancelando o card, ou dispensando a suspeita.</p>
+
+  <h3>Dispensar não apaga</h3>
+  <p>Quando alguém diz que não é duplicata, a suspeita e o motivo <b>continuam gravados</b>; só entra a data da dispensa. Isso é de propósito: suspeitas ÷ dispensas é a taxa de erro do agente, medida sem ninguém rotular nada à mão. Apagar deixaria ele com acerto aparente de 100%, porque só os acertos sobreviveriam.</p>
+
+  <p>A porta é <span class="mono">POST /maintenance/cards/{id}/dismiss-duplicate/</span>. Card já concluído ou cancelado não aceita a dispensa — dispensar é dizer "solta para a triagem", e card morto não vai a triagem nenhuma. Card vivo que alguém arrastou à mão continua aceitando: é uma recusa legítima do palpite do agente.</p>
+</section>
+
+<section>
+  <div class="sec-head"><span class="sec-n">05</span><h2>Quando a IA não responde</h2></div>
+
+  <p>Este agente trata a falha de IA em <b>duas direções opostas</b>, e a distinção é o coração dele. As duas coisas pareciam uma só na primeira versão, e era um buraco.</p>
+
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>O quê</th><th>Como se comporta</th><th>Por quê</th></tr></thead>
+      <tbody>
+        <tr><td>O veredito</td><td><b>solta</b> — IA fora nunca inventa suspeita</td><td>falha de modelo não pode segurar conserto</td></tr>
+        <tr><td>O carimbo</td><td><b>fecha</b> — IA fora não diz que conferiu</td><td>o carimbo é a porteira; carimbar sem ter olhado libera card sem conferência</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p>Na prática: se o card tinha candidatos e <b>nenhuma</b> pergunta foi respondida, ele não é carimbado e volta na próxima passada. Uma resposta entre falhas já conta como conferido. Card <b>sem</b> candidato é conferido e limpo — a pergunta foi respondida, e a resposta é não.</p>
+
+  <div class="callout warn">
+    <p><b>Se o AI Hub ficar fora, a fila cresce à vista.</b> Com a flag ligada, a esteira para junto — e é o que tem de acontecer. O número aparece na linha do verificador no monitor de agentes, que é o lugar certo para uma indisponibilidade aparecer. O contrário — carimbar tudo e seguir — passaria lotes inteiros sem conferência, em silêncio, e sem voltar a olhá-los quando o Hub voltasse.</p>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head"><span class="sec-n">06</span><h2>Ligar e desligar</h2></div>
+
+  <p>A chave é <span class="mono">ff_sapron_backend_enable_maintenance_duplicate_check</span>, no PostHog. Sem ela o agente é inerte, e a triagem segue movendo direto, como antes dele existir.</p>
+
+  <p>A condição precisa ser <b>100% de todos os usuários, sem nenhum filtro de propriedade</b>. O backend se identifica ao PostHog com o nome do ambiente — a palavra <span class="mono">STAGING</span> ou <span class="mono">PRODUCTION</span> —, não com uma pessoa. Qualquer filtro por e-mail ou propriedade nunca casa, a resposta vem "não", e o agente fica parado parecendo defeito.</p>
+
+  <h3>Ligar muda o comportamento da triagem</h3>
+  <p>Com esta flag ligada, a triagem passa a exigir o carimbo de conferido antes de mover. Verificador entupido segura a fila em vez de deixar passar card não conferido. É deliberado: card parado é recuperável, segunda conversa com a franquia não é.</p>
+
+  <div class="callout warn">
+    <p><b>Desligar não solta o que já está marcado.</b> Desligar a flag para de levantar suspeita nova, mas card com suspeita viva continua fora da triagem. Quem solta é gente — dispensando a suspeita ou cancelando o card. As duas regras são diferentes de propósito: a retenção é decisão pendente de uma pessoa, e não se desfaz desligando um agente.</p>
+  </div>
+
+  <h3>Ordem sugerida</h3>
+  <p>Ligue a triagem primeiro e deixe o verificador para depois de vê-la funcionando. Ligando os dois no mesmo minuto, um card que não se mover deixa de ter autoria: pode ser a triagem errada ou o verificador segurando.</p>
+</section>
+
+<section>
+  <div class="sec-head"><span class="sec-n">07</span><h2>Como conferir se está funcionando</h2></div>
+
+  <p>Na aba <b>Agentes de IA</b> da Central, ele é a linha do meio — entre o classificador e a triagem, como na esteira.</p>
+
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>Número</th><th>O que quer dizer</th><th>Quando incomoda</th></tr></thead>
+      <tbody>
+        <tr><td>Na fila</td><td>cards com nota esperando conferência</td><td>crescendo sem parar = AI Hub fora ou agente morto</td></tr>
+        <tr><td>Presos</td><td>na fila há mais de uma hora</td><td>uma hora são quatro passadas perdidas</td></tr>
+        <tr><td>Suspeitas</td><td>quantas vezes ele desconfiou, no total</td><td>—</td></tr>
+        <tr><td><b>Retidos</b></td><td>cards parados esperando decisão de <b>gente</b></td><td>cada unidade é um conserto que não chegou à franquia</td></tr>
+        <tr><td>Dispensadas</td><td>quantas vezes uma pessoa discordou dele</td><td>dispensas ÷ suspeitas é a taxa de erro</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p><b>Retidos é o número a olhar todo dia.</b> Não é fila do agente — ele já fez o trabalho dele. É fila de gente, e ela não anda sozinha.</p>
+</section>
+
+<section>
+  <div class="sec-head"><span class="sec-n">08</span><h2>O que ele ainda não faz</h2></div>
+
+  <ul class="plain">
+    <li><b>Não junta os dois cards.</b> Marcada a duplicata, alguém cancela um dos dois à mão. Não existe "mesclar", e o Sapron não tem esse objeto.</li>
+    <li><b>Não avisa ninguém.</b> A suspeita aparece no card e no monitor, e só. Quem não abrir a Central não fica sabendo.</li>
+    <li><b>Não olha fotos.</b> A comparação é por texto e categoria. Duas fotos do mesmo vazamento, com textos diferentes, podem passar.</li>
+    <li><b>Não compara entre imóveis.</b> Por desenho — a chave da duplicata é o imóvel.</li>
+    <li><b>Não aprende com as dispensas.</b> A taxa de erro é medida, mas nada realimenta o prompt ainda.</li>
+  </ul>
+</section>
+
+<div class="foot">
+  <p>Código: <span class="mono">maintenance/actions/duplicate_check.py</span> · prompt em <span class="mono">services/duplicate_ai.py</span> · task <span class="mono">maintenance.duplicate_check_cards</span> em <span class="mono">2,17,32,47</span> · modelo <span class="mono">gemini-3-flash</span></p>
+  <p>56 testes: 36 do agente, 15 da linha dele no monitor, 5 da porteira na triagem. Prompt medido contra o AI Hub em 21/09/2026 — 6 de 6 pares certos, 1,1 a 1,3 s por par, incluindo torneira da cozinha × torneira do banheiro, defeito que voltou e dois pedidos vagos.</p>
+  <p>Entrega: #4880, em <span class="mono">staging</span> desde 21/09/2026 pela promoção #4879 · Vinicius Satores</p>
+</div>
+
+</div>

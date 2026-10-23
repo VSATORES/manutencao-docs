@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Quiz Taxa de Limpeza</title>
+<style>
+:root{
+  --bg:#f6f5f2; --card:#ffffff; --ink:#1d1d1b; --muted:#6b6a66; --line:#e3e1dc;
+  --accent:#0b6e6e; --accent-soft:#e3f1f0; --warn:#9a5b00; --warn-soft:#fdf1dc;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#151615; --card:#1f201f; --ink:#ecebe7; --muted:#a3a29d; --line:#333432;
+    --accent:#5fc4c0; --accent-soft:#1d3433; --warn:#f0b354; --warn-soft:#3a2c14;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#151615; --card:#1f201f; --ink:#ecebe7; --muted:#a3a29d; --line:#333432;
+  --accent:#5fc4c0; --accent-soft:#1d3433; --warn:#f0b354; --warn-soft:#3a2c14;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+.wrap{max-width:860px;margin:0 auto;padding:32px 16px 64px}
+h1{font-size:1.7rem;margin:0 0 4px}
+.sub{color:var(--muted);margin:0 0 20px}
+.bar{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 24px}
+button{font:inherit;border:1px solid var(--line);background:var(--card);color:var(--ink);padding:8px 14px;border-radius:8px;cursor:pointer}
+button:hover{border-color:var(--accent)}
+button.primary{background:var(--accent);border-color:var(--accent);color:var(--bg)}
+h2{font-size:.85rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin:28px 0 10px}
+.q{background:var(--card);border:1px solid var(--line);border-radius:12px;margin:0 0 12px;overflow:hidden}
+.q summary{list-style:none;cursor:pointer;padding:16px 18px;display:flex;gap:14px;align-items:flex-start}
+.q summary::-webkit-details-marker{display:none}
+.n{flex:none;width:30px;height:30px;border-radius:50%;background:var(--accent-soft);color:var(--accent);font-weight:700;display:grid;place-items:center;font-size:.9rem}
+.qt{font-weight:600}
+.hint{display:block;font-weight:400;color:var(--muted);font-size:.85rem;margin-top:2px}
+.q[open] .hint{display:none}
+.a{padding:0 18px 16px 62px}
+.a p{margin:0 0 8px}
+.a ul{margin:0 0 8px;padding-left:18px}
+.src{font-size:.82rem;color:var(--muted)}
+.tag{display:inline-block;font-size:.75rem;font-weight:700;padding:2px 8px;border-radius:99px;background:var(--warn-soft);color:var(--warn);margin-left:6px;vertical-align:2px}
+.note{background:var(--warn-soft);color:var(--ink);border-radius:10px;padding:12px 16px;margin:28px 0 0;font-size:.92rem}
+footer{color:var(--muted);font-size:.82rem;margin-top:24px}
+@media (max-width:520px){.a{padding-left:18px}}
+@media print{.bar{display:none}.q{break-inside:avoid}.hint{display:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Quiz da Taxa de Limpeza</h1>
+  <p class="sub">A franquia pergunta, o consultor responde. Clique na pergunta para ver a resposta.</p>
+
+  <div class="bar">
+    <button class="primary" onclick="toggleAll(false)">Esconder respostas</button>
+    <button onclick="toggleAll(true)">Mostrar todas</button>
+    <button onclick="window.print()">Imprimir</button>
+  </div>
+
+  <h2>Básicas</h2>
+
+  <details class="q"><summary><span class="n">1</span><span class="qt">"Quem define o valor da taxa de limpeza do meu imóvel? Eu posso mudar sozinho?"<span class="hint">Clique para ver a resposta</span></span></summary>
+  <div class="a">
+    <p>Quem define é a Seazone, pela <b>Calculadora de Taxa de Limpeza 2026</b>. A conta é o custo da virada mais a comissão da plataforma, com um teto que depende da capacidade: <b>R$ 200 para 2 hóspedes e mais R$ 45 por hóspede acima disso</b>.</p>
+    <p>A franquia não muda sozinha. O pedido vai pelo suporte, e valor acima do teto só passa com aprovação da coordenação.</p>
+    <p class="src">Fonte: #temp-taxa-limpeza, 17/08 e 14/09/2026 · #liderança-franquias-ray, 18/08/2026</p>
+  </div></details>
+
+  <details class="q"><summary><span class="n">2</span><span class="qt">"A taxa de limpeza vai inteira pra franquia ou a Seazone fica com uma parte?"<span class="hint">Clique para ver a resposta</span></span></summary>
+  <div class="a">
+    <p><b>Vai inteira para a franquia.</b> A Seazone e o proprietário não ficam com nada da taxa, e por isso a nota fiscal da limpeza é emitida para o hóspede.</p>
+    <p>A plataforma desconta a comissão dela (cerca de 18%), e a calculadora já soma isso ao valor: divide o líquido por 0,82.</p>
+    <p class="src">Fonte: retorno da contabilidade em #suporte-operação, 17/08/2026 · #temp-taxa-limpeza, 02/09/2026</p>
+  </div></details>
+
+  <details class="q"><summary><span class="n">3</span><span class="qt">"Quando eu recebo a taxa de limpeza?"<span class="hint">Clique para ver a resposta</span></span></summary>
+  <div class="a">
+    <p>No repasse, depois do check-out, e depende do prazo de pagamento da plataforma.</p>
+    <ul>
+      <li>A <b>Booking</b> paga em até 45 dias, então a taxa de uma reserva de julho pode cair só no repasse seguinte.</li>
+      <li>Numa <b>reserva longa</b>, a taxa só é paga no fim da estadia.</li>
+    </ul>
+    <p class="src">Fonte: #suporte-operação, 03/08 e 30/06/2026</p>
+  </div></details>
+
+  <details class="q"><summary><span class="n">4</span><span class="qt">"A taxa é a mesma no Airbnb, no Booking e no site da Seazone?"<span class="tag">confirmar</span><span class="hint">Clique para ver a resposta</span></span></summary>
+  <div class="a">
+    <p>Não achei regra escrita. O que achei é que existe <b>um valor por imóvel no Sapron</b>, calculado pela régua, e que a comissão considerada é a da plataforma (cerca de 18%).</p>
+    <p class="src">Validar com a área de Franquias antes do quiz.</p>
+  </div></details>
+
+  <h2>Situações do dia a dia</h2>
+
+  <details class="q"><summary><span class="n">5</span><span class="qt">"O hóspede saiu antes da hora porque o imóvel estava com problema e pediu a taxa de volta. Quem devolve, eu ou a Seazone?"<span class="hint">Clique para ver a resposta</span></span></summary>
+  <div class="a">
+    <p>Depende de quem causou o problema.</p>
+    <ul>
+      <li><b>Se o problema é da franquia</b> (limpeza, manutenção): a Seazone devolve ao hóspede e lança um B.O. com a taxa de limpeza e a comissão da plataforma para descontar da franquia.</li>
+      <li><b>Se o hóspede usou o imóvel e saiu antes por conta própria:</b> a Seazone recebe 1 diária mais a taxa de limpeza inteira, e a franquia recebe a taxa.</li>
+    </ul>
+    <p class="src">Fonte: #suporte-atendimento, 25/03/2025 e 03/02/2026 · #bos-operação, 08/01/2026</p>
+  </div></details>
+
+  <details class="q"><summary><span class="n">6</span><span class="qt">"A reserva foi cancelada antes do check-in. A taxa volta pro hóspede? Eu recebo alguma coisa?"<span class="tag">confirmar</span><span class="hint">Clique para ver a resposta</span></span></summary>
+  <div class="a">
+    <p>No <b>cancelamento integral</b>, a plataforma devolve a taxa ao hóspede.</p>
+    <p>Quando a reserva ficou bloqueando o calendário, a Seazone já <b>recriou a reserva</b> com as diárias bloqueadas mais a taxa de limpeza, para não ter prejuízo.</p>
+    <p class="src">Fonte: #bos-operação, 14/07/2025 · #suporte-atendimento, 03/03/2026. Validar a regra geral com a área de Franquias.</p>
+  </div></details>
+
+  <details class="q"><summary><span class="n">7</span><span class="qt">"O proprietário usou o próprio imóvel no fim de semana. Quem paga a limpeza dele?"<span class="hint">Clique para ver a resposta</span></span></summary>
+  <div class="a">
+    <p><b>O proprietário.</b> A franquia lança no Sapron a despesa de "limpeza de proprietário":</p>
+    <ul>
+      <li>com recibo ou nota fiscal;</li>
+      <li>com a <b>data de uso no descritivo</b>;</li>
+      <li>despesa que fica pendente por mais de 60 dias é cancelada.</li>
+    </ul>
+    <p>A comissão de R$ 80 só vale quando a franquia atende um <b>hóspede do proprietário</b>, nunca no uso próprio dele.</p>
+    <p class="src">Fonte: #validação-comunicados-franquias, 20/08/2025 · #suporte-operação, 20/05/2026</p>
+  </div></details>
+
+  <details class="q"><summary><span class="n">8</span><span class="qt">"O hóspede deixou o imóvel muito sujo e eu precisei de limpeza pesada. Posso cobrar a mais?"<span class="hint">Clique para ver a resposta</span></span></summary>
+  <div class="a">
+    <p>Pode, como <b>dano de "limpeza extra"</b> cobrado do hóspede e <b>com prova</b> (vídeo ou fotos).</p>
+    <ul>
+      <li>Não pode cobrar como multa.</li>
+      <li>Não pode cobrar uma taxa de limpeza inteira de novo, porque a taxa já inclui lavanderia, deslocamento e amenities.</li>
+      <li>Sem evidência, a cobrança não sai.</li>
+    </ul>
+    <p class="src">Fonte: #suporte-operação, 19 e 21/05/2026 · #operação, 08/12/2023</p>
+  </div></details>
+
+  <h2>Difíceis</h2>
+
+  <details class="q"><summary><span class="n">9</span><span class="qt">"Reserva de 30 dias. Recebo uma taxa só ou posso cobrar as limpezas do meio?"<span class="hint">Clique para ver a resposta</span></span></summary>
+  <div class="a">
+    <p><b>Uma taxa só</b>, paga no fim da reserva. Não existe cobrança automática de uma segunda limpeza.</p>
+    <p>Limpeza a cada 7 dias é exceção, cobrada por fora e com risco de atrito com o hóspede.</p>
+    <p class="src">Fonte: #suporte-anuncios, 24/06/2025 · #suporte-operação, 30/06/2026</p>
+  </div></details>
+
+  <details class="q"><summary><span class="n">10</span><span class="qt">"Meu imóvel tem 3 quartos e o vizinho tem 1, mas a taxa é quase igual. Dá pra rever?"<span class="hint">Clique para ver a resposta</span></span></summary>
+  <div class="a">
+    <p>A taxa vem do <b>cadastro no Sapron</b> (quartos, banheiros, camas e capacidade) e do preço da lavanderia homologada.</p>
+    <ul>
+      <li>Se o cadastro estiver errado: a franquia abre um suporte em <b>Anúncios</b> para corrigir, e depois a taxa é atualizada.</li>
+      <li>Se estiver dentro da régua, a taxa não sobe.</li>
+    </ul>
+    <p class="src">Fonte: #suporte-operação, 23/09/2026 · #temp-taxa-limpeza, 14/09/2026</p>
+  </div></details>
+
+  <details class="q"><summary><span class="n">11</span><span class="qt">"A taxa não cobre o meu custo (lavanderia, enxoval, diarista). O que eu faço?"<span class="hint">Clique para ver a resposta</span></span></summary>
+  <div class="a">
+    <p>A régua cobre o custo real usando a <b>lavanderia homologada</b>.</p>
+    <ul>
+      <li>Se a franquia usa uma lavanderia mais cara, a orientação é trocar para a homologada.</li>
+      <li>Estacionamento não entra na conta.</li>
+      <li>Se mesmo assim estiver dentro da régua, a resposta é otimizar os custos da franquia.</li>
+      <li>Distorção de cadastro ou de custo vai para o suporte.</li>
+    </ul>
+    <p class="src">Fonte: #suporte-operação, 12/08 e 23/09/2026</p>
+  </div></details>
+
+  <details class="q"><summary><span class="n">12</span><span class="qt">"O hóspede reclamou da limpeza na avaliação. Isso mexe no que eu recebo da taxa?"<span class="tag">confirmar</span><span class="hint">Clique para ver a resposta</span></span></summary>
+  <div class="a">
+    <p>Não achei desconto automático por avaliação.</p>
+    <p>Mas, se o hóspede reclama da limpeza e ganha o <b>reembolso da taxa</b>, esse valor volta para a franquia por B.O.</p>
+    <p class="src">Fonte: #suporte-atendimento, 26/11/2025 e 25/03/2025. Validar com a área de Franquias.</p>
+  </div></details>
+
+  <div class="note"><b>Antes do quiz:</b> as perguntas marcadas como "confirmar" (4, 6 e 12) não têm regra escrita. Valide com a área de Franquias.</div>
+
+  <footer>Respostas montadas a partir de mensagens do Slack da Seazone, buscadas em 02/10/2026.</footer>
+</div>
+<script>
+function toggleAll(open){document.querySelectorAll('details.q').forEach(d=>d.open=open)}
+</script>
+</body>
+</html>

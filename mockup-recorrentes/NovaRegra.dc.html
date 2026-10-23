@@ -1,0 +1,142 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap">
+  <style>
+    body { margin: 0; font-family: Quicksand, 'Segoe UI', sans-serif; background: #F3F6F9; }
+    a { color: #0055FF; } a:hover { color: #0044cc; }
+  </style>
+</helmet>
+
+<div style="padding: 24px;">
+  <div style="background: #fff; border: 1px solid #e0e0e0; border-radius: 10px; box-shadow: 0 8px 28px rgba(21, 27, 38, 0.12); overflow: hidden;">
+
+    <div style="padding: 18px 22px 12px; border-bottom: 1px solid #eff2f6;">
+      <h2 style="font-size: 17px; font-weight: 700; margin: 0; color: #151B26;">Editar regra</h2>
+      <p style="font-size: 12.5px; color: #64748b; margin: 4px 0 0;">Ar-condicionado + Split · manutenção preventiva</p>
+    </div>
+
+    <div style="padding: 18px 22px; display: flex; flex-direction: column; gap: 16px;">
+
+      <div style="display: flex; flex-direction: column; gap: 6px;">
+        <label style="font-size: 11.5px; font-weight: 700; color: #64748b;">Item</label>
+        <div style="border: 1px solid #C0CDDD; border-radius: 6px; padding: 10px 12px; font-size: 13.5px; color: #151B26;">Ar-condicionado + Split</div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px;">
+        <div style="display: flex; flex-direction: column; gap: 6px;">
+          <label style="font-size: 11.5px; font-weight: 700; color: #64748b;">Tipo</label>
+          <div style="border: 1px solid #C0CDDD; border-radius: 6px; padding: 10px 12px; font-size: 13.5px; color: #151B26;">Manutenção preventiva</div>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 6px;">
+          <label style="font-size: 11.5px; font-weight: 700; color: #64748b;">Categoria</label>
+          <div style="border: 1px solid #C0CDDD; border-radius: 6px; padding: 10px 12px; font-size: 13.5px; color: #151B26;">Ar-condicionado</div>
+        </div>
+      </div>
+
+      <div style="border: 1px solid rgba(0, 85, 255, 0.25); background: rgba(0, 85, 255, 0.03); border-radius: 8px; padding: 14px; display: flex; flex-direction: column; gap: 14px;">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span style="font-size: 12px; font-weight: 700; color: #151B26;">Quando cobrar</span>
+          <span style="font-size: 9.5px; font-weight: 700; border-radius: 999px; padding: 1px 7px; background: rgba(0, 85, 255, 0.1); color: #0055FF;">NOVO</span>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px;">
+          <div style="display: flex; flex-direction: column; gap: 6px;">
+            <label style="font-size: 11.5px; font-weight: 700; color: #64748b;">Mês do ciclo</label>
+            <div style="border: 1px solid #0055FF; border-radius: 6px; padding: 10px 12px; font-size: 13.5px; color: #151B26; display: flex; align-items: center; justify-content: space-between; background: #fff;">
+              <span>Setembro</span>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+            </div>
+            <span style="font-size: 11.5px; color: #64748b; line-height: 1.45;">Mês fixo, igual para toda a carteira. Substitui a data que nascia da ativação de cada imóvel. Primeira execução: o primeiro mês do calendário depois de 12 meses de ativação.</span>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 6px;">
+            <label style="font-size: 11.5px; font-weight: 700; color: #64748b;">Periodicidade (meses)</label>
+            <div style="border: 1px solid #C0CDDD; border-radius: 6px; padding: 10px 12px; font-size: 13.5px; color: #151B26; background: #fff;">12</div>
+            <span style="font-size: 11.5px; color: #64748b;">Anual.</span>
+          </div>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+          <label style="font-size: 11.5px; font-weight: 700; color: #64748b;">Cobrança</label>
+          <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+            <span style="font-size: 12px; font-weight: 700; border-radius: 999px; padding: 6px 14px; background: #0055FF; color: #fff;">Cobrado</span>
+            <span style="font-size: 12px; font-weight: 600; border-radius: 999px; padding: 6px 14px; background: #fff; border: 1px solid #C0CDDD; color: #51626F;">Lembrete</span>
+            <span style="font-size: 12px; font-weight: 600; border-radius: 999px; padding: 6px 14px; background: #fff; border: 1px solid #C0CDDD; color: #51626F;">Fora do processo</span>
+            <span style="font-size: 12px; font-weight: 600; border-radius: 999px; padding: 6px 14px; background: #fff; border: 1px solid #C0CDDD; color: #51626F;">Pendente</span>
+          </div>
+          <span style="font-size: 11.5px; color: #64748b; line-height: 1.45;">Cobrado abre card com prazo. Lembrete não abre card e não conta no indicador. Pendente ainda não foi revisto na retro e não gera card.</span>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px;">
+          <div style="display: flex; flex-direction: column; gap: 6px;">
+            <label style="font-size: 11.5px; font-weight: 700; color: #64748b;">Prazo à franquia</label>
+            <div style="border: 1px solid #C0CDDD; border-radius: 6px; padding: 10px 12px; font-size: 13.5px; color: #151B26; background: #fff;">15 dias úteis</div>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 6px;">
+            <label style="font-size: 11.5px; font-weight: 700; color: #64748b;">A foto precisa mostrar</label>
+            <div style="border: 1px solid #C0CDDD; border-radius: 6px; padding: 10px 12px; font-size: 13.5px; color: #151B26; display: flex; align-items: center; justify-content: space-between; background: #fff;">
+              <span>O aparelho aberto com o filtro removido e o filtro já limpo</span>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+            </div>
+            <span style="font-size: 11.5px; color: #64748b; line-height: 1.45;">Texto da matriz de evidência, roteiro de quem valida. Documento regulado só para dedetização e caixa d'água: CNPJ ativo, responsável técnico, data no ciclo e imóvel identificado.</span>
+          </div>
+        </div>
+
+        <div style="display: flex; align-items: flex-start; gap: 10px; border-top: 1px solid rgba(0, 85, 255, 0.15); padding-top: 12px;">
+          <div style="width: 34px; height: 20px; border-radius: 999px; background: #0055FF; position: relative; flex-shrink: 0; margin-top: 1px;">
+            <span style="position: absolute; top: 2px; right: 2px; width: 16px; height: 16px; border-radius: 999px; background: #fff;"></span>
+          </div>
+          <div>
+            <div style="font-size: 12.5px; font-weight: 700; color: #151B26;">Respeitar a janela de bloqueio (01/12 a 31/03)</div>
+            <div style="font-size: 11.5px; color: #64748b; line-height: 1.45; margin-top: 2px;">Nada entra nem vence na alta temporada. Imóvel ativado dentro da janela entra no primeiro ciclo válido de abril em diante.</div>
+          </div>
+        </div>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 6px;">
+        <label style="font-size: 11.5px; font-weight: 700; color: #64748b;">Elegibilidade</label>
+        <div style="border: 1px solid #C0CDDD; border-radius: 6px; padding: 10px 12px; font-size: 13.5px; color: #151B26;">Pelo anúncio do Airbnb</div>
+        <div style="border: 1px solid #C0CDDD; border-radius: 6px; padding: 10px 12px; font-size: 13.5px; color: #151B26; margin-top: 4px;">ar-condicionado no anúncio (data lake)</div>
+        <span style="font-size: 11.5px; color: #64748b; line-height: 1.45;">A ficha de amenities do Sapron não serve: 78% das fichas nascem com tudo falso. Imóvel sem anúncio para conferir fica indefinido, não gera card e entra na fila de correção (73 no ciclo de setembro).</span>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 6px;">
+        <label style="font-size: 11.5px; font-weight: 700; color: #64748b;">Palavras-chave de identificação (dedup)</label>
+        <div style="border: 1px solid #C0CDDD; border-radius: 6px; padding: 8px 10px; display: flex; gap: 6px; flex-wrap: wrap; align-items: center;">
+          <span style="font-size: 12px; font-weight: 600; border-radius: 6px; padding: 4px 10px; background: #EBF0F5; color: #151B26;">ar condicionado</span>
+          <span style="font-size: 12px; font-weight: 600; border-radius: 6px; padding: 4px 10px; background: #EBF0F5; color: #151B26;">split</span>
+          <span style="font-size: 12px; font-weight: 600; border-radius: 6px; padding: 4px 10px; background: #EBF0F5; color: #151B26;">higienização</span>
+          <span style="font-size: 12.5px; color: #9AA5B0;">Adicionar…</span>
+        </div>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 6px;">
+        <label style="font-size: 11.5px; font-weight: 700; color: #64748b;">Itens de dedup</label>
+        <div style="border: 1px solid #C0CDDD; border-radius: 6px; padding: 8px 10px; display: flex; gap: 6px; flex-wrap: wrap;">
+          <span style="font-size: 12px; font-weight: 600; border-radius: 6px; padding: 4px 10px; background: #EBF0F5; color: #151B26;">Manutenção de ar-condicionado</span>
+        </div>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 6px;">
+        <label style="font-size: 11.5px; font-weight: 700; color: #64748b;">Status</label>
+        <div style="border: 1px solid #C0CDDD; border-radius: 6px; padding: 10px 12px; font-size: 13.5px; color: #151B26;">Rascunho</div>
+      </div>
+
+    </div>
+
+    <div style="padding: 14px 22px 18px; display: flex; justify-content: flex-end; gap: 10px; border-top: 1px solid #eff2f6;">
+      <button style="font-size: 13.5px; font-weight: 600; cursor: pointer; border-radius: 8px; padding: 10px 18px; border: 1px solid #e0e0e0; background: #fff; color: #151B26;">Cancelar</button>
+      <button style="font-size: 13.5px; font-weight: 600; border: none; cursor: pointer; border-radius: 8px; padding: 10px 18px; background: #0055FF; color: #fff; box-shadow: 0 1px 2px rgba(0, 85, 255, 0.3);">Salvar</button>
+    </div>
+
+  </div>
+</div>
+</x-dc>
+</body>
+</html>

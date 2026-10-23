@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Estratégia Dreicom e Evelyn</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ground:#F2F5F3; --surface:#FFFFFF; --surface-2:#E9EFEC;
+  --line:#D6E0DB; --line-soft:#E6ECE9;
+  --ink:#151B26; --ink-2:#44524D; --ink-3:#6B7A74;
+  --accent:#2C8F73; --accent-soft:#E2F1EB;
+  --crit:#C0341F; --crit-bg:#FAE7E3;
+  --med:#C2810E; --med-bg:#FBF0DC;
+  --low:#2D8E71; --low-bg:#E2F1EB;
+  --blue:#2E62C4; --blue-bg:#E4EBF9;
+  --display:'Quicksand','Trebuchet MS',sans-serif;
+  --body:'IBM Plex Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --ground:#12161A; --surface:#1A1F23; --surface-2:#232A2E;
+    --line:#303A3E; --line-soft:#262E32;
+    --ink:#EDF2F0; --ink-2:#B3C0BB; --ink-3:#8A9994;
+    --accent:#4FC3A1; --accent-soft:#1E332C;
+    --crit:#F0705C; --crit-bg:#3A201B;
+    --med:#E8B33C; --med-bg:#362C16;
+    --low:#4FC3A1; --low-bg:#1E332C;
+    --blue:#7BA3F0; --blue-bg:#1C2740;
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#12161A; --surface:#1A1F23; --surface-2:#232A2E;
+  --line:#303A3E; --line-soft:#262E32;
+  --ink:#EDF2F0; --ink-2:#B3C0BB; --ink-3:#8A9994;
+  --accent:#4FC3A1; --accent-soft:#1E332C;
+  --crit:#F0705C; --crit-bg:#3A201B;
+  --med:#E8B33C; --med-bg:#362C16;
+  --low:#4FC3A1; --low-bg:#1E332C;
+  --blue:#7BA3F0; --blue-bg:#1C2740;
+}
+*{box-sizing:border-box;}
+body{margin:0; background:var(--ground); color:var(--ink); font-family:var(--body); line-height:1.55;}
+.wrap{max-width:1060px; margin:0 auto; padding-inline:16px; padding-block:40px 64px;}
+h1,h2,h3,h4{font-family:var(--display); text-wrap:balance; margin:0;}
+p{margin:0;}
+.eyebrow{font-family:var(--display); font-size:12px; font-weight:700; letter-spacing:.14em;
+  text-transform:uppercase; color:var(--accent);}
+header h1{font-size:clamp(28px,5vw,40px); font-weight:700; letter-spacing:-.01em; margin-top:10px;}
+.sub{color:var(--ink-2); font-size:15px; margin-top:12px; max-width:64ch;}
+.meta{display:flex; flex-wrap:wrap; gap:8px 22px; margin-top:20px; font-size:13px; color:var(--ink-3);}
+.meta b{font-weight:600; color:var(--ink-2);}
+
+.kpis{display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-top:34px;}
+@media (max-width:760px){ .kpis{grid-template-columns:repeat(2,1fr);} }
+.kpi{background:var(--surface); border:1px solid var(--line); border-radius:10px; padding:16px 18px;}
+.kpi .v{font-family:var(--display); font-size:clamp(26px,5vw,34px); font-weight:700; line-height:1.1;
+  letter-spacing:-.02em; font-variant-numeric:tabular-nums;}
+.kpi .v small{font-size:15px; font-weight:600; color:var(--ink-3); margin-left:3px;}
+.kpi .k{font-size:12.5px; color:var(--ink-3); margin-top:6px;}
+.kpi.hot{border-color:var(--crit);} .kpi.hot .v{color:var(--crit);}
+.kpi.blue{border-color:var(--blue);} .kpi.blue .v{color:var(--blue);}
+
+section{margin-top:52px;}
+section > h2{font-size:21px; font-weight:700; letter-spacing:-.01em;}
+section > .lede{color:var(--ink-2); font-size:14.5px; margin-top:8px; max-width:72ch;}
+
+.callout{background:var(--surface); border:1px solid var(--line); border-left:3px solid var(--accent);
+  border-radius:0 10px 10px 0; padding:18px 20px; margin-top:20px;}
+.callout.crit{border-left-color:var(--crit);}
+.callout.blue{border-left-color:var(--blue);}
+.callout h3{font-size:15px; font-weight:700;}
+.callout p{font-size:14px; color:var(--ink-2); margin-top:8px;}
+.callout p + p{margin-top:10px;}
+.callout ul{margin:10px 0 0; padding-left:18px;}
+.callout li{font-size:13.5px; color:var(--ink-2); margin-top:6px;}
+.callout li b{color:var(--ink); font-weight:600;}
+
+.franq{margin-top:26px; background:var(--surface); border:1px solid var(--line);
+  border-radius:12px; padding:22px 24px;}
+.franq.d{border-top:4px solid var(--med);}
+.franq.e{border-top:4px solid var(--accent);}
+.franq .fh{display:flex; align-items:baseline; justify-content:space-between; gap:12px; flex-wrap:wrap;}
+.franq h3{font-size:20px; font-weight:700;}
+.franq .code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:12px;
+  color:var(--ink-3); background:var(--surface-2); padding:3px 8px; border-radius:5px;}
+.franq .resumo{font-size:14px; color:var(--ink-2); margin-top:12px; max-width:72ch;}
+.fstats{display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-top:18px;}
+@media (max-width:760px){ .fstats{grid-template-columns:repeat(2,1fr);} }
+.fstat{background:var(--surface-2); border-radius:8px; padding:12px 14px;}
+.fstat .v{font-family:var(--display); font-size:22px; font-weight:700; line-height:1.15;
+  font-variant-numeric:tabular-nums;}
+.fstat .k{font-size:11.5px; color:var(--ink-3); margin-top:4px;}
+
+.imoveis{display:grid; grid-template-columns:repeat(2,1fr); gap:14px; margin-top:20px;}
+@media (max-width:860px){ .imoveis{grid-template-columns:1fr;} }
+.imovel{background:var(--surface); border:1px solid var(--line); border-radius:10px; padding:18px 20px;}
+.imovel.a{border-top:3px solid var(--crit);}
+.imovel.b{border-top:3px solid var(--med);}
+.imovel.c{border-top:3px solid var(--low);}
+.imovel.n{border-top:3px solid var(--blue);}
+.imovel .top{display:flex; align-items:baseline; justify-content:space-between; gap:10px; flex-wrap:wrap;}
+.imovel h4{font-size:16px; font-weight:700; letter-spacing:.02em; font-family:var(--display);}
+.imovel .cnt{font-size:11.5px; color:var(--ink-3); font-variant-numeric:tabular-nums; white-space:nowrap;}
+.imovel .prob{font-size:13.5px; color:var(--ink); margin-top:10px; font-weight:500;}
+.imovel .det{font-size:12.8px; color:var(--ink-2); margin-top:8px;}
+.imovel .janela{margin-top:14px; padding:11px 13px; background:var(--surface-2); border-radius:8px;
+  font-size:12.5px; color:var(--ink-2);}
+.imovel .janela b{color:var(--ink); font-weight:600;}
+.imovel .janela.urg{background:var(--crit-bg); color:var(--crit);}
+.imovel .janela.urg b{color:var(--crit);}
+.imovel .acao{margin-top:12px; font-size:12.8px; color:var(--ink-2);
+  padding-top:11px; border-top:1px solid var(--line-soft);}
+.imovel .acao b{color:var(--ink); font-weight:600;}
+
+.tag{display:inline-flex; align-items:center; gap:5px; font-size:10.5px; font-weight:700;
+  padding:3px 8px; border-radius:999px; white-space:nowrap; letter-spacing:.02em;}
+.tag.a{background:var(--crit-bg); color:var(--crit);}
+.tag.b{background:var(--med-bg); color:var(--med);}
+.tag.c{background:var(--low-bg); color:var(--low);}
+.tag.n{background:var(--blue-bg); color:var(--blue);}
+
+.tablebox{overflow-x:auto; margin-top:20px; border:1px solid var(--line); border-radius:10px;
+  background:var(--surface);}
+table{border-collapse:collapse; width:100%; min-width:720px; font-size:13.2px;}
+th{font-family:var(--display); font-size:11px; font-weight:700; letter-spacing:.1em;
+  text-transform:uppercase; color:var(--ink-3); text-align:left; padding:13px 14px;
+  border-bottom:1px solid var(--line); background:var(--surface-2); white-space:nowrap;}
+td{padding:12px 14px; border-bottom:1px solid var(--line-soft); vertical-align:top; color:var(--ink-2);}
+tr:last-child td{border-bottom:0;}
+td.tipo{font-weight:600; color:var(--ink); min-width:140px;}
+td.un{font-variant-numeric:tabular-nums; text-align:center; font-weight:600; color:var(--ink); white-space:nowrap;}
+td.onde{min-width:190px; font-variant-numeric:tabular-nums;}
+td.como{min-width:230px;}
+
+.foot{margin-top:56px; padding-top:22px; border-top:1px solid var(--line);
+  font-size:12.5px; color:var(--ink-3);}
+.foot p + p{margin-top:8px;}
+.foot code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:11.8px;
+  background:var(--surface-2); padding:1px 5px; border-radius:4px; color:var(--ink-2);}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <p class="eyebrow">Central de Manutenção · Franquias 148 e 53</p>
+  <h1>Dreicom e Evelyn — manutenção imóvel a imóvel</h1>
+  <p class="sub">Os 15 cards abertos das duas franquias, organizados por imóvel e separados por
+  franquia. Aqui a régua não é a mesma do caso VLE: quase toda casa tem hóspede dentro agora, e
+  em boa parte dos cards quem está devendo resposta somos nós.</p>
+  <div class="meta">
+    <span><b>Data de corte</b> 21/09/2026</span>
+    <span><b>Franquias</b> 148 · Dreicom Adolfo Neckel Wolter &nbsp;|&nbsp; 53 · Evelyn Gabriela dos Santos</span>
+    <span><b>Fonte</b> Sapron · maintenance_maintenancecard</span>
+  </div>
+</header>
+
+<div class="kpis">
+  <div class="kpi">
+    <p class="v">15</p>
+    <p class="k">cards abertos · 12 imóveis · 0 marcados como urgentes</p>
+  </div>
+  <div class="kpi hot">
+    <p class="v">9 <small>/12</small></p>
+    <p class="k">imóveis com hóspede dentro <b>hoje</b> — a janela é o que manda</p>
+  </div>
+  <div class="kpi blue">
+    <p class="v">6</p>
+    <p class="k">cards já com evidência entregue, parados esperando <b>nossa</b> aprovação</p>
+  </div>
+  <div class="kpi hot">
+    <p class="v">122 <small>d</small></p>
+    <p class="k">de atraso no card mais antigo (SPT0303, vencido em 22/05)</p>
+  </div>
+</div>
+
+<section>
+  <h2>Por que este caso não se ataca como o VLE</h2>
+  <p class="lede">Três diferenças mudam completamente a ordem das coisas. Se copiar a estratégia
+  do condomínio VLE aqui, a maior parte do esforço bate em porta fechada.</p>
+
+  <div class="callout crit">
+    <h3>1. Não existe janela larga — existe janela de dois dias</h3>
+    <p>No VLE as oito casas estavam vazias ao mesmo tempo. Aqui <b>nove dos doze imóveis têm
+    hóspede dentro neste momento</b>, e um deles (SPT0110) está com locação até
+    <b>15/08/2027</b> — não tem janela nenhuma sem negociar com o hóspede.</p>
+    <p>Por isso cada ficha abaixo traz a <b>janela real</b>: o intervalo entre o próximo check-out
+    e o check-in seguinte. É ela que define quando o serviço pode acontecer, não o prazo do card.</p>
+  </div>
+
+  <div class="callout blue">
+    <h3>2. Em 6 dos 15 cards a bola está do nosso lado</h3>
+    <p>Seis cards estão em <b>aguardando aprovação com evidência recebida entre 14 e 19/09</b> —
+    a franquia fez, mandou a foto e está esperando a gente fechar. Três são da Evelyn, três do
+    Dreicom.</p>
+    <p>Cobrar uma franquia que já entregou é o jeito mais rápido de perder o canal. <b>Aprovar
+    esses seis é a primeira ação do plano</b>, antes de qualquer mensagem de cobrança.</p>
+  </div>
+
+  <div class="callout">
+    <h3>3. O problema do Dreicom é velocidade, não volume</h3>
+    <p>São 11 cards abertos em 10 imóveis de uma carteira de 46 ativos — 22%, nada alarmante.
+    Mas o histórico mostra que quando ele fecha, fecha devagar: <b>média de 150 dias</b> entre
+    abrir e concluir, contra 40 dias da Evelyn. Dez dos onze cards já estão vencidos, o mais
+    antigo há 122 dias.</p>
+    <p>A Evelyn tem o retrato oposto: só 4 cards, em 2 imóveis de 15 ativos, e entrega em 40 dias.
+    O problema dela é <b>prazo</b>: 9 dos 10 cards com prazo registrado foram entregues atrasados.</p>
+  </div>
+</section>
+
+<section>
+  <h2>Franquia 148 — Dreicom Adolfo Neckel Wolter</h2>
+  <p class="lede">Onze cards em dez imóveis. Um caso grave de umidade, dois de dano de hóspede
+  com valor cobrável alto, e o resto é serviço de meia hora parado há três meses.</p>
+
+  <div class="franq d">
+    <div class="fh">
+      <h3>Panorama</h3>
+      <span class="code">BLU-001-CEN · host 148</span>
+    </div>
+    <p class="resumo">68 imóveis na carteira, 46 ativos. Gastou <b>R$ 1.323,89</b> em manutenção
+    desde maio — mas os cinco lançamentos são <b>reembolso de dano de hóspede</b>
+    (<code>MAINTENANCE_(GUEST_DAMAGE)</code>), todos pagos pelo proprietário. Em manutenção
+    preventiva ou corretiva própria: <b>zero</b> desde 24/05. Levou multa de R$ 250 em 16/09.</p>
+    <div class="fstats">
+      <div class="fstat"><p class="v">11</p><p class="k">cards abertos em 10 imóveis</p></div>
+      <div class="fstat"><p class="v">10</p><p class="k">já vencidos · 1 sem prazo</p></div>
+      <div class="fstat"><p class="v">150 d</p><p class="k">média histórica para concluir (36 cards)</p></div>
+      <div class="fstat"><p class="v">7 /10</p><p class="k">imóveis com hóspede dentro hoje</p></div>
+    </div>
+  </div>
+
+  <div class="imoveis">
+
+    <div class="imovel a">
+      <div class="top">
+        <h4>NCS0003</h4>
+        <span class="cnt">card 842 · 55 d de atraso</span>
+      </div>
+      <p class="prob">Infiltração no quarto do térreo <span class="tag a">grave</span></p>
+      <p class="det">Veio de avaliação de hóspede em 08/07: "quarto do térreo cheio de infiltração".
+      É o único card das duas franquias que é dano estrutural e que piora sozinho. Está parado há
+      quase dois meses e o imóvel não parou de receber hóspede nesse tempo.</p>
+      <div class="janela"><b>Janela:</b> sai 22/09, entra 23/09 e 25/09 — só buracos de 1 dia.
+      A janela boa é <b>27/09 a 10/10, 13 dias</b>.</div>
+      <p class="acao"><b>Ação:</b> orçamento agora, execução na janela de 27/09. Infiltração não
+      se resolve em virada de hóspede — é o único item aqui que precisa de bloqueio de agenda.</p>
+    </div>
+
+    <div class="imovel a">
+      <div class="top">
+        <h4>SPT0303</h4>
+        <span class="cnt">card 691 · 122 d de atraso</span>
+      </div>
+      <p class="prob">Lençol queen manchado de sangue, sem possibilidade de limpeza</p>
+      <p class="det">Dano de hóspede de 15/05, valor de reposição <b>R$ 208,99</b>. É o card mais
+      antigo das duas franquias e a peça continua fora de circulação. Só foi recobrado em 16/09,
+      quatro meses depois.</p>
+      <div class="janela urg"><b>Janela: hoje.</b> O imóvel está vazio e o próximo hóspede entra
+      <b>22/09</b>. Depois disso só 29/09.</div>
+      <p class="acao"><b>Ação:</b> é reposição de item, não visita técnica. Resolve com entrega —
+      e é o card que melhor justifica a multa se não sair nesta semana.</p>
+    </div>
+
+    <div class="imovel b">
+      <div class="top">
+        <h4>SPT0110</h4>
+        <span class="cnt">card 740 · 88 d de atraso</span>
+      </div>
+      <p class="prob">Controle da TV danificado, lençol e toalha manchados, cortina a fixar
+      <span class="tag b">sem janela</span></p>
+      <p class="det">Dano de hóspede somando <b>R$ 588,92</b> (lençol R$ 139,49 · toalha R$ 40,84 ·
+      fixação de cortina R$ 250,00 · controle R$ 158,59). O imóvel entrou em locação longa em
+      20/08 e só desocupa em <b>15/08/2027</b>.</p>
+      <div class="janela"><b>Janela: não existe.</b> Hóspede dentro por mais 11 meses.</div>
+      <p class="acao"><b>Ação:</b> nada aqui se resolve por agendamento. Ou se combina acesso com
+      o hóspede de longa permanência, ou o card sai da régua de atraso e vira cobrança financeira
+      do dano. Do jeito que está, envelhece para sempre.</p>
+    </div>
+
+    <div class="imovel b">
+      <div class="top">
+        <h4>SPT0301</h4>
+        <span class="cnt">cards 732 e 735 · 96 e 94 d</span>
+      </div>
+      <p class="prob">Assento do vaso velho, vazamento na torneira do banheiro, teto do banheiro
+      com manchas</p>
+      <p class="det">O card 732 veio de avaliação de 09/06 — o hóspede escreveu que o assento é
+      "muito desconfortável e velho" e que a torneira vaza. O 735 é a vistoria: 2 travesseiros,
+      pegador de macarrão, peneira, jarra de água, balde e o teto manchado. Mancha de teto em
+      banheiro costuma ser o mesmo problema do vazamento.</p>
+      <div class="janela"><b>Janela:</b> hóspede até <b>07/10</b>, próximo entra 09/10 — <b>2 dias</b>.</div>
+      <p class="acao"><b>Ação:</b> uma visita só resolve os dois cards. Mandar o material antes,
+      porque a janela é curta demais para segunda ida. Tratar torneira e teto como o mesmo serviço.</p>
+    </div>
+
+    <div class="imovel b">
+      <div class="top">
+        <h4>SPT0505</h4>
+        <span class="cnt">card 734 · 94 d de atraso</span>
+      </div>
+      <p class="prob">Lâmpada queimada, sanduicheira suja, itens faltando — e banheiro sem
+      nenhuma saída de ar <span class="tag b">decidir</span></p>
+      <p class="det">Vistoria de 11/06: 2 travesseiros, 1 cabide, pegador de macarrão, peneira,
+      jarra de água, balde, lâmpada queimada perto da janela e sanduicheira precisando de limpeza.
+      O banheiro sem saída de ar é projeto, não manutenção — mesmo caso do VLE007.</p>
+      <div class="janela"><b>Janela:</b> vazio agora, entra <b>25/09</b> — <b>4 dias</b>.</div>
+      <p class="acao"><b>Ação:</b> é o imóvel mais fácil da carteira e está vazio. Uma ida de 40
+      minutos encerra o card inteiro, menos a ventilação — essa precisa de decisão Seazone ×
+      proprietário ou sai do board.</p>
+    </div>
+
+    <div class="imovel b">
+      <div class="top">
+        <h4>RUP1005</h4>
+        <span class="cnt">card 742 · 87 d de atraso</span>
+      </div>
+      <p class="prob">Cadeira com assento frouxo, sanduicheira com presilha quebrada, suporte do
+      desviador do chuveiro quebrado</p>
+      <p class="det">Veio de avaliação de 12/06, de um hóspede a trabalho que deu nota 6 e disse
+      que "pensaria duas vezes antes de locar novamente". Os três itens são pequenos; o que pesou
+      na nota foi colchão e travesseiro, que não viraram card.</p>
+      <div class="janela"><b>Janela:</b> hóspede até 22/09, entra no mesmo dia, sai <b>26/09</b> —
+      janela de <b>26/09 a 09/10, 13 dias</b>.</div>
+      <p class="acao"><b>Ação:</b> visita única em 26/09. Vale registrar à parte a queixa de
+      colchão e travesseiro — ela reaparece em avaliação e hoje não existe card para ela.</p>
+    </div>
+
+    <div class="imovel n">
+      <div class="top">
+        <h4>PIN1901</h4>
+        <span class="cnt">card 699 · evidência em 19/09</span>
+      </div>
+      <p class="prob">Porta da geladeira amassada, substituição necessária — <b>R$ 1.300,00</b>
+      <span class="tag n">com a gente</span></p>
+      <p class="det">Dano da primeira hóspede da unidade. A franquia tentou martelinho de ouro,
+      não deu, e documentou. <b>Mandou a evidência em 19/09 e o card está em aguardando
+      aprovação.</b> É o maior valor unitário das duas franquias.</p>
+      <div class="janela"><b>Janela:</b> sai 24/09, entra 08/10 — <b>14 dias</b>, a melhor da carteira.</div>
+      <p class="acao"><b>Ação:</b> aprovar ou reprovar a evidência <b>esta semana</b>. Se for
+      aprovado, a troca cabe com folga na janela de 24/09. O que não pode é a peça de R$ 1.300
+      esperar nossa resposta e perder a única janela larga do imóvel.</p>
+    </div>
+
+    <div class="imovel n">
+      <div class="top">
+        <h4>OLA0006</h4>
+        <span class="cnt">card 664 · evidência em 18/09</span>
+      </div>
+      <p class="prob">1 lâmpada queimada no quarto <span class="tag n">com a gente</span></p>
+      <p class="det">Apontado pela consultoria em 24/08, entregue e documentado em 18/09.
+      Aguardando aprovação.</p>
+      <div class="janela"><b>Janela:</b> sai 22/09, entra 26/09 — 4 dias.</div>
+      <p class="acao"><b>Ação:</b> aprovar e fechar. Não precisa de visita nenhuma.</p>
+    </div>
+
+    <div class="imovel n">
+      <div class="top">
+        <h4>ELN0905</h4>
+        <span class="cnt">card 967 · evidência em 18/09</span>
+      </div>
+      <p class="prob">Repor 1 taça <span class="tag n">com a gente</span></p>
+      <p class="det">Menor item da carteira inteira. Entregue e documentado em 18/09, aguardando
+      aprovação desde então.</p>
+      <div class="janela"><b>Janela:</b> sai 25/09, entra 09/10 — 14 dias.</div>
+      <p class="acao"><b>Ação:</b> aprovar e fechar hoje. Card de uma taça em aberto por 26 dias
+      polui a régua de atraso e não mede nada.</p>
+    </div>
+
+    <div class="imovel c">
+      <div class="top">
+        <h4>PIN1904</h4>
+        <span class="cnt">card 5913 · sem prazo</span>
+      </div>
+      <p class="prob">Micro-ondas sem funcionar <span class="tag a">sem prazo</span></p>
+      <p class="det">Avaliação de 11/09: loft com micro-ondas quebrado, sem papel higiênico e sem
+      detergente. O card entrou em 18/09 e <b>nasceu sem prazo e sem cobrança</b> — nunca foi
+      carimbado, nunca entrou na régua. É o único card das duas franquias que já veio com
+      categoria preenchida (<code>eletrodomesticos</code>).</p>
+      <div class="janela"><b>Janela:</b> hóspede até <b>30/09</b>, entra 09/10 — 9 dias.</div>
+      <p class="acao"><b>Ação:</b> carimbar prazo hoje e mandar para cobrança. Micro-ondas
+      quebrado com hóspede dentro por mais 9 dias é reclamação certa na próxima avaliação.</p>
+    </div>
+
+  </div>
+</section>
+
+<section>
+  <h2>Franquia 53 — Evelyn Gabriela dos Santos</h2>
+  <p class="lede">Quatro cards em dois imóveis. Três já foram entregues e estão esperando a gente.
+  O quarto é o único problema de verdade — e é o mais malformado dos dois lados.</p>
+
+  <div class="franq e">
+    <div class="fh">
+      <h3>Panorama</h3>
+      <span class="code">FLN-003-CAN · host 53</span>
+    </div>
+    <p class="resumo">28 imóveis na carteira, 15 ativos. Gastou <b>R$ 459,80</b> em manutenção
+    corretiva desde maio — guarda-roupa, chuveiro, vazamento de vaso e torneira de cozinha, tudo
+    aprovado e pago pelo proprietário. É a única das três franquias analisadas com gasto real de
+    manutenção, e não de reembolso de dano. Levou multa de R$ 250 em 16/09.</p>
+    <div class="fstats">
+      <div class="fstat"><p class="v">4</p><p class="k">cards abertos em 2 imóveis</p></div>
+      <div class="fstat"><p class="v">3</p><p class="k">já com evidência entregue</p></div>
+      <div class="fstat"><p class="v">40 d</p><p class="k">média histórica para concluir (24 cards)</p></div>
+      <div class="fstat"><p class="v">9 /10</p><p class="k">entregas anteriores fora do prazo</p></div>
+    </div>
+  </div>
+
+  <div class="imoveis">
+
+    <div class="imovel a">
+      <div class="top">
+        <h4>EMP2201</h4>
+        <span class="cnt">3 cards · 915, 917 e 5796</span>
+      </div>
+      <p class="prob">"Ar-condicionado: não tem ar" — e o card não diz mais nada
+      <span class="tag a">card malformado</span></p>
+      <p class="det">O card 5796 entrou em 14/09 pela limpeza, com <b>uma linha de descrição, sem
+      prazo, sem cobrança e sem imóvel descrito</b>. Não dá para saber se o aparelho quebrou, se
+      nunca existiu ou se é reclamação de hóspede. Os outros dois cards deste imóvel já estão
+      resolvidos: pilhas do controle (evidência 18/09) e cabeceira da cama solta + tampa da
+      privada solta (evidência 14/09), ambos aguardando nossa aprovação.</p>
+      <div class="janela urg"><b>Janela: agora.</b> O imóvel está vazio e entra hóspede em
+      <b>23/09</b>. Depois disso a agenda fecha: entradas em 23, 29/09, 02, 06, 09 e 12/10, com
+      buracos de um dia.</div>
+      <p class="acao"><b>Ação:</b> dois passos hoje. (1) Aprovar os cards 915 e 917 — a franquia
+      já entregou. (2) Ligar para descobrir o que é o 5796 antes de cobrar: card com uma linha não
+      se cobra, se investiga. Se for aparelho parado, é o item mais grave das duas franquias e a
+      janela fecha em 2 dias.</p>
+    </div>
+
+    <div class="imovel n">
+      <div class="top">
+        <h4>ATC0301</h4>
+        <span class="cnt">card 914 · evidência em 14/09</span>
+      </div>
+      <p class="prob">LED do banheiro da suíte piscando <span class="tag n">com a gente</span></p>
+      <p class="det">Apontado pela consultoria em 12/08, prazo até <b>30/09</b> — é o único card
+      das duas franquias que <b>ainda está dentro do prazo</b>. A franquia entregou a evidência em
+      14/09, bem antes do vencimento, e o card segue em aguardando aprovação há uma semana.</p>
+      <div class="janela"><b>Janela:</b> hóspede até 22/09, entra 23/09 — 1 dia.</div>
+      <p class="acao"><b>Ação:</b> aprovar e fechar. É o exemplo de franquia que fez certo e está
+      parada na nossa fila — vale citar isso na conversa com ela.</p>
+    </div>
+
+  </div>
+</section>
+
+<section>
+  <h2>O que dá para resolver junto</h2>
+  <p class="lede">O volume aqui é pequeno demais para compra em lote como no VLE, mas alguns itens
+  se repetem entre as duas franquias e cabem no mesmo pedido ou no mesmo tipo de prestador.</p>
+
+  <div class="tablebox">
+    <table>
+      <thead>
+        <tr><th>Tipo</th><th style="text-align:center;">Imóveis</th><th>Onde</th><th>Como resolve</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="tipo">Umidade e infiltração</td>
+          <td class="un">2</td>
+          <td class="onde">NCS0003 · SPT0301</td>
+          <td class="como">Infiltração no quarto e mancha no teto do banheiro. Único grupo que
+          exige orçamento antes de prazo, e o único que piora sozinho.</td>
+        </tr>
+        <tr>
+          <td class="tipo">Enxoval (dano de hóspede)</td>
+          <td class="un">2</td>
+          <td class="onde">SPT0303 · SPT0110</td>
+          <td class="como">2 lençóis queen e 1 toalha de banho, R$ 389,32 em reposição. É entrega
+          de item, não visita — o mais rápido de destravar.</td>
+        </tr>
+        <tr>
+          <td class="tipo">Eletrodoméstico parado</td>
+          <td class="un">3</td>
+          <td class="onde">PIN1901 · PIN1904 · EMP2201</td>
+          <td class="como">Porta de geladeira (R$ 1.300, evidência entregue), micro-ondas quebrado
+          e o ar-condicionado do card de uma linha. Os três com hóspede dentro agora.</td>
+        </tr>
+        <tr>
+          <td class="tipo">Hidráulica</td>
+          <td class="un">2</td>
+          <td class="onde">SPT0301 · RUP1005</td>
+          <td class="como">Vazamento na torneira do banheiro e suporte do desviador do chuveiro.
+          Mesmo tipo de prestador, janelas diferentes (07/10 e 26/09).</td>
+        </tr>
+        <tr>
+          <td class="tipo">Louça sanitária</td>
+          <td class="un">2</td>
+          <td class="onde">SPT0301 · EMP2201</td>
+          <td class="como">Assento de vaso velho e tampa de privada solta. Referência de custo
+          medida em outra franquia: R$ 70 por troca.</td>
+        </tr>
+        <tr>
+          <td class="tipo">Lâmpadas</td>
+          <td class="un">3</td>
+          <td class="onde">SPT0505 · OLA0006 · ATC0301</td>
+          <td class="como">Duas já entregues e esperando aprovação; só a do SPT0505 ainda é
+          trabalho de verdade.</td>
+        </tr>
+        <tr>
+          <td class="tipo">Móveis e estofado</td>
+          <td class="un">2</td>
+          <td class="onde">EMP2201 · RUP1005</td>
+          <td class="como">Cabeceira de cama descolada (já entregue) e cadeira com assento frouxo.</td>
+        </tr>
+        <tr>
+          <td class="tipo">Reposição de vistoria</td>
+          <td class="un">3</td>
+          <td class="onde">SPT0505 · SPT0301 · ELN0905</td>
+          <td class="como">4 travesseiros, 1 cabide, 2 pegadores, 2 peneiras, 2 jarras, 2 baldes,
+          1 taça. Uma compra só, entregue nas duas janelas de setembro.</td>
+        </tr>
+        <tr>
+          <td class="tipo">Ventilação de banheiro</td>
+          <td class="un">1</td>
+          <td class="onde">SPT0505</td>
+          <td class="como">Sem nenhuma saída de ar. É obra — precisa de decisão, não de cobrança.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section>
+  <h2>A ordem de execução</h2>
+  <p class="lede">Nesta sequência, porque cada passo destrava o seguinte.</p>
+
+  <div class="callout blue">
+    <h3>Passo 1 — hoje, do nosso lado: aprovar os 6 cards com evidência</h3>
+    <p>PIN1901 (R$ 1.300 de geladeira), OLA0006, ELN0905 no Dreicom; EMP2201 (dois cards) e
+    ATC0301 na Evelyn. Todos com foto entregue entre 14 e 19/09. Enquanto não forem aprovados,
+    <b>40% do backlog das duas franquias é dívida nossa, não delas</b> — e qualquer cobrança sai
+    errada.</p>
+  </div>
+
+  <div class="callout crit">
+    <h3>Passo 2 — hoje: consertar os dois cards que não entram na régua</h3>
+    <ul>
+      <li><b>PIN1904</b> (micro-ondas) e <b>EMP2201 / 5796</b> (ar-condicionado) estão <b>sem
+      prazo e nunca foram cobrados</b>. Card sem <code>due_at</code> não entra na escada de
+      lembrete nem no relatório de cobrança — some.</li>
+      <li>O 5796 tem <b>uma linha de descrição</b>. Antes de carimbar prazo, descobrir o que é:
+      pode ser o item mais grave das duas franquias ou pode ser nada.</li>
+    </ul>
+  </div>
+
+  <div class="callout">
+    <h3>Passo 3 — esta semana: as duas janelas que fecham antes de sexta</h3>
+    <ul>
+      <li><b>SPT0303</b> — vazio hoje, hóspede entra <b>22/09</b>. Lençol de R$ 208,99 parado há 122 dias.</li>
+      <li><b>EMP2201</b> — vazio hoje, hóspede entra <b>23/09</b>. Última chance larga antes de uma
+      sequência de seis reservas coladas até 18/10.</li>
+      <li><b>SPT0505</b> — vazio até <b>25/09</b>. Uma ida encerra o card inteiro.</li>
+    </ul>
+  </div>
+
+  <div class="callout">
+    <h3>Passo 4 — até 10/10: as janelas largas</h3>
+    <p>PIN1901 (24/09 a 08/10), ELN0905 (25/09 a 09/10), RUP1005 (26/09 a 09/10), NCS0003 (27/09 a
+    10/10) e PIN1904 (30/09 a 09/10) abrem janelas de 9 a 14 dias. É onde cabe o serviço que
+    precisa de prestador: a geladeira, a infiltração, a hidráulica.</p>
+    <p><b>SPT0301</b> tem só 2 dias (07 a 09/10) e dois cards — material tem que estar no local
+    antes. <b>SPT0110</b> não tem janela até agosto de 2027 e precisa de decisão à parte.</p>
+  </div>
+</section>
+
+<section>
+  <h2>O que o agente muda quando ligar</h2>
+  <p class="lede">O mesmo diagnóstico do caso VLE vale aqui, com uma diferença importante.</p>
+
+  <div class="callout">
+    <h3>Nenhum destes 15 cards tem classificação</h3>
+    <p>Todos com <code>urgent = false</code> e sem campo de IA preenchido — em toda a base de
+    <b>5.927 cards, zero têm <code>ai_classified_at</code></b>. O classificador está mergeado na
+    <code>main</code> e inerte: falta a flag no PostHog e a chave do AI Hub no SSM de produção.</p>
+    <p>Quando ligar, os 396 cards abertos ganham nota em cerca de 30 minutos. A infiltração do
+    NCS0003 e o card de uma linha do EMP2201 sobem; a taça do ELN0905 desce. Hoje os três estão
+    no mesmo lugar do quadro.</p>
+  </div>
+
+  <div class="callout crit">
+    <h3>Mas o que decide este caso o agente ainda não sabe</h3>
+    <p>A régua aqui é <b>ocupação</b>, e a parcela de ocupação foi retirada da nota de propósito:
+    nota gravada envelhece, e o produto é ordenar fila. A decisão foi que ocupação vira <b>filtro
+    vivo do board</b> — "abertos com hóspede na casa ou entrada em ≤48h", calculado a cada
+    leitura. <b>Esse filtro ainda não foi construído.</b></p>
+    <p>Enquanto ele não existir, a coluna "janela" de cada ficha acima continua sendo trabalho
+    manual — e é justamente ela que diferencia este caso do VLE. É o próximo pedaço a fazer, e
+    vale mais aqui do que no condomínio vazio.</p>
+  </div>
+</section>
+
+<div class="foot">
+  <p>Levantado em 21/09/2026 a partir do banco do Sapron:
+  <code>maintenance_maintenancecard</code> (15 cards abertos dos hosts 148 e 53, status fora de
+  <code>concluido</code> e <code>cancelada</code>), <code>reservation_reservation</code> (ocupação
+  atual e janelas entre check-out e check-in, status Concluded),
+  <code>financial_expenses</code> (gastos de manutenção desde 01/05/2026 e as multas de 16/09),
+  <code>property_property</code> e <code>account_host</code> (carteira e código de franquia).</p>
+  <p>As janelas foram calculadas sobre as reservas confirmadas até 21/10/2026 e mudam a cada nova
+  reserva — reconferir antes de agendar. A criticidade e o agrupamento por tipo foram atribuídos
+  na leitura item a item das descrições dos cards, não são campo do sistema. O Sapron não vincula
+  despesa a card, então não existe custo por pendência; os valores citados vêm do próprio texto
+  dos cards de dano.</p>
+  <p>Cada card importado carrega o link do Pipefy de origem e a marca "Importado do Pipefy em
+  24/08/2026"; os cards 5796 e 5913 nasceram direto no Sapron e não têm essa referência.
+  Nomes de hóspedes das avaliações foram omitidos.</p>
+</div>
+
+</div>
+</body>
+</html>

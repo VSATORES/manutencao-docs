@@ -1,0 +1,514 @@
+<title>Plano de Manutenção Recorrente v3</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+:root{
+  --ground:#fbfaf8; --surface:#ffffff; --surface-2:#f3f1ec; --surface-3:#eceae3;
+  --ink:#1c2321; --ink-2:#4a5350; --ink-3:#7b8582;
+  --rule:#ddd9d1; --rule-2:#c9c4b9;
+  --accent:#0f5c54; --accent-soft:#e2efec; --accent-line:#8fc2b9;
+  --block:#9c5c12; --block-soft:#f7eee1; --block-line:#dcb27e;
+  --alert:#9c3f2f; --alert-soft:#f7e9e5; --alert-line:#d9a495;
+  --shadow:0 1px 2px rgba(28,35,33,.05), 0 8px 24px -16px rgba(28,35,33,.22);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --ground:#14181a; --surface:#1b2022; --surface-2:#222a2c; --surface-3:#283134;
+    --ink:#e9ebe9; --ink-2:#a8b2b0; --ink-3:#7b8785;
+    --rule:#2e3639; --rule-2:#3c4649;
+    --accent:#63c3b4; --accent-soft:#12312d; --accent-line:#2f6a62;
+    --block:#dda05a; --block-soft:#33271a; --block-line:#7a5a2e;
+    --alert:#e2917c; --alert-soft:#35211d; --alert-line:#7d4638;
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px -16px rgba(0,0,0,.8);
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#14181a; --surface:#1b2022; --surface-2:#222a2c; --surface-3:#283134;
+  --ink:#e9ebe9; --ink-2:#a8b2b0; --ink-3:#7b8785;
+  --rule:#2e3639; --rule-2:#3c4649;
+  --accent:#63c3b4; --accent-soft:#12312d; --accent-line:#2f6a62;
+  --block:#dda05a; --block-soft:#33271a; --block-line:#7a5a2e;
+  --alert:#e2917c; --alert-soft:#35211d; --alert-line:#7d4638;
+  --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px -16px rgba(0,0,0,.8);
+}
+*{box-sizing:border-box}
+body{
+  background:var(--ground); color:var(--ink);
+  font-family:"IBM Plex Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  font-size:15px; line-height:1.62; margin:0;
+  padding-inline:20px; padding-block:0 72px;
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:900px;margin:0 auto}
+h1,h2,h3,h4{font-family:Archivo,Arial,sans-serif;text-wrap:balance;margin:0;line-height:1.18}
+p{margin:0}
+a{color:var(--accent)}
+.mono{font-family:"IBM Plex Mono",ui-monospace,monospace}
+.num{font-variant-numeric:tabular-nums}
+
+/* ---- masthead ---- */
+.mast{border-bottom:2px solid var(--ink);padding-block:40px 20px;display:flex;flex-direction:column;gap:18px}
+.eyebrow{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3)}
+.mast h1{font-size:clamp(30px,6vw,46px);font-weight:700;letter-spacing:-.022em}
+.mast .deck{font-size:16.5px;color:var(--ink-2);max-width:62ch}
+.meta{display:grid;grid-template-columns:repeat(auto-fit,minmax(128px,1fr));gap:1px;background:var(--rule);border:1px solid var(--rule);margin-top:6px}
+.meta div{background:var(--ground);padding:10px 12px}
+.meta dt{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3);margin:0 0 3px}
+.meta dd{margin:0;font-size:13.5px;font-weight:500}
+.stamp{display:inline-flex;align-items:center;gap:7px;align-self:flex-start;background:var(--block-soft);border:1px solid var(--block-line);color:var(--block);
+  font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.07em;text-transform:uppercase;padding:5px 11px;font-weight:500}
+.stamp::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--block)}
+
+/* ---- sections ---- */
+section{padding-block:38px;border-bottom:1px solid var(--rule)}
+section:last-of-type{border-bottom:0}
+.shead{display:flex;gap:14px;align-items:baseline;margin-bottom:6px}
+.shead .sn{font-family:"IBM Plex Mono",monospace;font-size:12px;font-weight:600;color:var(--accent);letter-spacing:.04em;flex:none;padding-top:3px}
+h2{font-size:clamp(21px,3.4vw,26px);font-weight:600;letter-spacing:-.014em}
+.sub{color:var(--ink-2);margin-top:8px;max-width:68ch}
+h3{font-size:16px;font-weight:600;margin-top:26px;letter-spacing:-.008em}
+h4{font-size:13.5px;font-weight:600;margin-top:20px}
+.stack{display:flex;flex-direction:column;gap:14px;margin-top:18px}
+
+/* ---- tables ---- */
+.tw{overflow-x:auto;margin-top:18px;border:1px solid var(--rule);background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:13.5px;min-width:520px}
+th,td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--rule);vertical-align:top}
+thead th{background:var(--surface-2);font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-2);font-weight:600;white-space:nowrap;border-bottom:1px solid var(--rule-2)}
+tbody tr:last-child td{border-bottom:0}
+td.c,th.c{text-align:center;white-space:nowrap}
+.cat{background:var(--surface-3);font-family:Archivo,sans-serif;font-weight:600;font-size:12.5px;letter-spacing:.01em}
+.cat span{font-weight:400;color:var(--ink-2);font-family:"IBM Plex Sans",sans-serif;font-size:12px}
+
+/* ---- chips ---- */
+.chip{display:inline-block;font-family:"IBM Plex Mono",monospace;font-size:10.5px;font-weight:600;letter-spacing:.05em;padding:2px 6px;border:1px solid var(--rule-2);color:var(--ink-2);white-space:nowrap}
+.chip.c{background:var(--accent-soft);border-color:var(--accent-line);color:var(--accent)}
+.chip.l{background:var(--block-soft);border-color:var(--block-line);color:var(--block)}
+.p1{color:var(--alert);font-weight:600}
+.est{display:inline-block;width:0;height:0;border-left:5px solid transparent;border-right:5px solid transparent;border-bottom:8px solid var(--accent);margin-right:7px;vertical-align:baseline}
+tr.estr td{background:var(--accent-soft)}
+tr.estr td:first-child{box-shadow:inset 3px 0 0 var(--accent)}
+.tag{display:inline-block;font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.09em;text-transform:uppercase;padding:2px 7px;font-weight:600}
+.tag.new{background:var(--accent-soft);color:var(--accent);border:1px solid var(--accent-line)}
+.tag.out{background:var(--alert-soft);color:var(--alert);border:1px solid var(--alert-line)}
+.tag.chg{background:var(--block-soft);color:var(--block);border:1px solid var(--block-line)}
+
+/* ---- callouts ---- */
+.note{border-left:3px solid var(--accent);background:var(--accent-soft);padding:13px 16px;font-size:13.5px}
+.note.warn{border-left-color:var(--block);background:var(--block-soft)}
+.note.stop{border-left-color:var(--alert);background:var(--alert-soft)}
+.note b{font-weight:600}
+.note .lbl{display:block;font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;margin-bottom:5px;opacity:.85}
+
+/* ---- calendar band ---- */
+.cal{display:grid;grid-template-columns:repeat(12,1fr);gap:3px;margin-top:20px;min-width:520px}
+.calwrap{overflow-x:auto}
+.cal .m{background:var(--surface-2);border:1px solid var(--rule);padding:8px 4px 9px;text-align:center;display:flex;flex-direction:column;gap:6px;align-items:center}
+.cal .m.on{background:var(--surface);border-color:var(--accent-line)}
+.cal .m.off{background:var(--block-soft);border-color:var(--block-line);border-style:dashed}
+.cal .m .mn{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3)}
+.cal .m .mv{font-family:Archivo,sans-serif;font-size:19px;font-weight:700;line-height:1;font-variant-numeric:tabular-nums}
+.cal .m.on .mv{color:var(--accent)}
+.cal .m.off .mv{color:var(--block);font-size:13px;padding-block:3px}
+.cal .m .bar{width:100%;height:3px;background:var(--rule)}
+.cal .m.on .bar{background:var(--accent)}
+.callegend{display:flex;flex-wrap:wrap;gap:16px;margin-top:11px;font-size:12px;color:var(--ink-2)}
+.callegend i{display:inline-block;width:9px;height:9px;margin-right:6px;vertical-align:baseline}
+.callegend i.a{background:var(--accent)}
+.callegend i.b{background:var(--block-soft);border:1px dashed var(--block-line)}
+
+/* ---- week cadence ---- */
+.week{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:20px}
+.week .d{border:1px solid var(--rule);background:var(--surface);padding:13px 14px;display:flex;flex-direction:column;gap:6px;position:relative}
+.week .d.fire{border-color:var(--accent);background:var(--accent-soft)}
+.week .d .dd{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3)}
+.week .d.fire .dd{color:var(--accent)}
+.week .d .dt{font-family:Archivo,sans-serif;font-size:15px;font-weight:600}
+.week .d .db{font-size:12.5px;color:var(--ink-2);line-height:1.5}
+
+/* ---- steps ---- */
+.steps{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:1px;background:var(--rule);border:1px solid var(--rule);margin-top:18px}
+.step{background:var(--surface);padding:13px 15px;display:flex;flex-direction:column;gap:5px}
+.step .sh{display:flex;align-items:baseline;gap:9px}
+.step .si{font-family:"IBM Plex Mono",monospace;font-size:11px;font-weight:600;color:var(--accent)}
+.step .so{font-family:"IBM Plex Mono",monospace;font-size:9.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-3);margin-left:auto}
+.step .st{font-family:Archivo,sans-serif;font-size:14px;font-weight:600;letter-spacing:-.005em}
+.step .sd{font-size:12.5px;color:var(--ink-2);line-height:1.5}
+.step.phase-b .si{color:var(--block)}
+
+/* ---- pending ---- */
+.pend{display:grid;gap:1px;background:var(--rule);border:1px solid var(--rule);margin-top:18px}
+.prow{background:var(--surface);padding:13px 16px;display:grid;grid-template-columns:104px 1fr;gap:14px;align-items:start;font-size:13.5px}
+.prow .owner{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-2);background:var(--surface-2);border:1px solid var(--rule);padding:3px 7px;text-align:center}
+.prow b{font-weight:600;display:block;margin-bottom:2px}
+.prow span{color:var(--ink-2)}
+
+ul{margin:12px 0 0;padding-left:19px;display:flex;flex-direction:column;gap:7px}
+li::marker{color:var(--ink-3)}
+.foot{padding-block:30px 0;font-size:12.5px;color:var(--ink-3);line-height:1.6}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+@media (max-width:640px){
+  .delta{grid-template-columns:1fr;gap:8px}
+  .week{grid-template-columns:1fr 1fr}
+  .prow{grid-template-columns:1fr;gap:7px}
+  .prow .owner{justify-self:start}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+
+<div class="wrap">
+
+<header class="mast">
+  <div class="eyebrow">Seazone · Manutenção · Diretriz oficial</div>
+  <h1>Plano de Manutenção Recorrente</h1>
+  <p class="deck">Gestão proativa e preventiva da carteira: garantir segurança, funcionalidade, conforto e valorização patrimonial, reduzindo chamados de urgência e sustentando a nota nas OTAs.</p>
+  <span class="stamp">Aguardando validação — Carol</span>
+  <dl class="meta">
+    <div><dt>Versão</dt><dd>3.0</dd></div>
+    <div><dt>Vigência</dt><dd>Setembro 2026</dd></div>
+    <div><dt>Substitui</dt><dd>v2.0 · set/2026</dd></div>
+    <div><dt>Responsável</dt><dd>Coord. de Manutenção</dd></div>
+    <div><dt>Sistema</dt><dd>Central de Manutenção</dd></div>
+    <div><dt>Catálogo</dt><dd>14 itens · 12 cards</dd></div>
+  </dl>
+</header>
+
+<section>
+  <div class="shead"><span class="sn">01</span><div><h2>Objetivo e escopo</h2></div></div>
+  <p class="sub">Diretriz oficial para a gestão proativa e preventiva da carteira de imóveis da Seazone: garantir segurança, funcionalidade, conforto e valorização patrimonial dos ativos, reduzindo chamados de urgência e sustentando a nota de avaliação nas OTAs.</p>
+  <h4>Está no escopo</h4>
+  <p style="font-size:13.5px;color:var(--ink-2);margin-top:6px">Os 14 itens do catálogo da seção 03, em dois regimes de execução. Este é um plano de manutenção de baixa frequência: o item mais frequente entra três vezes por ano.</p>
+  <h4>Não está no escopo</h4>
+  <ul>
+    <li><b>Manutenção corretiva e de urgência.</b> Não é recorrente, não passa pela régua semanal e não é afetada pela janela de bloqueio.</li>
+    <li><b>Higienização de churrasqueira e de lareira.</b> Saíram do catálogo recorrente nesta versão: são serviços de baixo volume, abertos por chamado quando o imóvel precisa. Manter um card anual para cada consumia régua sem reduzir risco.</li>
+    <li><b>Tratamento de água da piscina e serviço de jardinagem.</b> São rotinas semanais e quinzenais de prestador contratado, não manutenção periódica. Correm pelo contrato do piscineiro e do jardineiro, com a franquia acompanhando a visita — não geram card, não entram na régua e não são acompanhados por este plano.</li>
+    <li><b>Renovação do enxoval.</b> Tem processo próprio de compras. Retirada para não disputar capacidade com a manutenção.</li>
+    <li><b>Obras e reformas</b> fora do item de pintura periódica.</li>
+  </ul>
+</section>
+
+<section>
+  <div class="shead"><span class="sn">02</span><div><h2>Os dois regimes</h2>
+  <p class="sub">O catálogo tem itens de naturezas muito diferentes. Tratar todos como card com SLA é o que trava o processo: uma senha que precisa girar a cada check-out nunca será cumprida por um card disparado uma vez por ano.</p></div></div>
+  <div class="tw"><table>
+    <thead><tr><th>Regime</th><th>Itens</th><th>Como funciona</th></tr></thead>
+    <tbody>
+      <tr><td><b>Card recorrente</b><br><span class="chip c">12 itens</span></td><td>Os 12 itens marcados <b>C</b> no catálogo</td><td>Tem nível de SLA, entra na régua semanal de segunda-feira, exige evidência anexada e validação antes de fechar. É o regime da manutenção propriamente dita.</td></tr>
+      <tr><td><b>Lembrete por evento</b><br><span class="chip l">2 itens</span></td><td>Senha de fechadura · Troca de pilhas</td><td>Sem SLA, sem card, sem cobrança semanal e sem evidência anexada ao card: o registro do próprio lembrete é a prova. Dispara por uso, não por calendário. Não consome capacidade da franquia e não é bloqueado pela janela de dezembro a março.</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>Os dois lembretes</h3>
+  <div class="tw"><table>
+    <thead><tr><th>Item</th><th>Gatilho</th><th>Cadência</th><th>O que registra o serviço</th></tr></thead>
+    <tbody>
+            <tr><td>Senha de fechadura</td><td>Evento: check-out</td><td>A cada saída, no máximo 30 dias</td><td>Rotação registrada pelo sistema</td></tr>
+      <tr><td>Troca de pilhas</td><td>Evento: bateria baixa</td><td>Por alerta, com rede trimestral e troca preventiva em novembro</td><td>Evento registrado pelo sistema</td></tr>
+    </tbody>
+  </table></div>
+  <div class="stack">
+    <div class="note warn"><span class="lbl">Por que os dois disparam por uso, e não por calendário</span><b>Senha de fechadura.</b> O risco é o ex-hóspede que ainda tem o código, e ele nasce no check-out, não na virada do mês. Onde a fechadura é integrada, a rotação é automática e não gera nem lembrete; onde não é, o lembrete acompanha a notificação de check-out que a franquia já recebe. O calendário fica só como rede: nenhuma unidade passa de 30 dias sem rotação.<br><br><b>Troca de pilhas.</b> Pilha não falha por calendário, falha por uso. O gatilho é o alerta de bateria baixa reportado pela fechadura, com o trimestre como rede onde não há telemetria, mais uma troca preventiva em novembro — na virada para a alta temporada, quando o custo de falhar é máximo.</div>
+  </div>
+  <p class="sub" style="margin-top:16px">Os dois regimes somam exatamente os 14 itens do catálogo: 12 cards e 2 lembretes. Nenhum item vive nos dois.</p>
+</section>
+
+<section>
+  <div class="shead"><span class="sn">03</span><div><h2>Catálogo — 14 itens</h2>
+  <p class="sub">Regime: <span class="chip c">C</span> card recorrente · <span class="chip l">L</span> lembrete por evento. A linha destacada com <span class="est"></span> é manutenção estruturante (seção 04). Prioridades na seção 04, níveis de SLA na seção 05.</p></div></div>
+  <div class="tw"><table>
+    <thead><tr><th>Item</th><th>Frequência</th><th class="c">Prior.</th><th class="c">Reg.</th><th class="c">SLA</th><th>Executa</th><th>Responde pelo prazo</th></tr></thead>
+    <tbody>
+      <tr class="cat"><td colspan="7">A — Sistemas de climatização e ventilação <span>· funcionamento e higienização de ar-condicionado e exaustores</span></td></tr>
+      <tr class="estr"><td><span class="est"></span>Higienização e preventiva de ar-condicionado</td><td>Anual</td><td class="c p1">1</td><td class="c"><span class="chip c">C</span></td><td class="c mono">N3</td><td>Técnico especializado</td><td>Franquia</td></tr>
+      <tr><td>Filtro do exaustor</td><td>Trimestral</td><td class="c">2</td><td class="c"><span class="chip c">C</span></td><td class="c mono">N2</td><td>Zelador ou técnico</td><td>Franquia</td></tr>
+      <tr class="cat"><td colspan="7">B — Sistemas hidráulicos e saneamento <span>· potabilidade, vazamentos e abastecimento</span></td></tr>
+      <tr class="estr"><td><span class="est"></span>Limpeza da caixa d'água</td><td>Semestral</td><td class="c p1">1</td><td class="c"><span class="chip c">C</span></td><td class="c mono">N3</td><td>Empresa especializada</td><td>Franquia</td></tr>
+      <tr><td>Filtro de água</td><td>Semestral</td><td class="c p1">1</td><td class="c"><span class="chip c">C</span></td><td class="c mono">N2</td><td>Zelador ou técnico</td><td>Franquia</td></tr>
+      <tr><td>Higienização da máquina de lavar</td><td>Anual</td><td class="c">2</td><td class="c"><span class="chip c">C</span></td><td class="c mono">N2</td><td>Técnico ou zelador</td><td>Franquia</td></tr>
+      <tr class="cat"><td colspan="7">C — Áreas externas e lazer <span>· segurança e valorização do imóvel</span></td></tr>
+      <tr><td>Piscina — estrutura</td><td>Anual</td><td class="c p1">1</td><td class="c"><span class="chip c">C</span></td><td class="c mono">N3</td><td>Piscineiro</td><td>Franquia</td></tr>
+      <tr class="cat"><td colspan="7">D — Controle de pragas e higienização <span>· saúde dos ocupantes e padrão operacional</span></td></tr>
+      <tr><td>Dedetização</td><td>Anual</td><td class="c p1">1</td><td class="c"><span class="chip c">C</span></td><td class="c mono">N3</td><td>Empresa licenciada</td><td>Franquia</td></tr>
+      <tr class="estr"><td><span class="est"></span>Higienização de sofá</td><td>Anual</td><td class="c">2</td><td class="c"><span class="chip c">C</span></td><td class="c mono">N2</td><td>Empresa especializada</td><td>Franquia</td></tr>
+      <tr class="estr"><td><span class="est"></span>Higienização de colchão</td><td>Anual</td><td class="c">2</td><td class="c"><span class="chip c">C</span></td><td class="c mono">N2</td><td>Empresa especializada</td><td>Franquia</td></tr>
+      <tr><td>Higienização das cortinas</td><td>Anual</td><td class="c">3</td><td class="c"><span class="chip c">C</span></td><td class="c mono">N2</td><td>Lavanderia ou especializada</td><td>Franquia</td></tr>
+      <tr class="cat"><td colspan="7">E — Tecnologia e segurança <span>· acesso ininterrupto</span></td></tr>
+      <tr><td>Senha de fechadura eletrônica</td><td>A cada check-out, máx. 30 dias</td><td class="c p1">1</td><td class="c"><span class="chip l">L</span></td><td class="c">—</td><td>Sistema ou franquia</td><td>Franquia (confirmação)</td></tr>
+      <tr><td>Troca de pilhas e baterias</td><td>Por alerta de bateria baixa</td><td class="c p1">1</td><td class="c"><span class="chip l">L</span></td><td class="c">—</td><td>Zelador</td><td>Franquia (confirmação)</td></tr>
+      <tr class="cat"><td colspan="7">F — Renovação e estética <span>· padrão de qualidade do anúncio</span></td></tr>
+      <tr><td>Troca de travesseiro</td><td>Anual</td><td class="c">2</td><td class="c"><span class="chip c">C</span></td><td class="c mono">N1</td><td>Franquia</td><td>Franquia</td></tr>
+      <tr><td>Pintura do imóvel</td><td>Bienal</td><td class="c">3</td><td class="c"><span class="chip c">C</span></td><td class="c mono">N4</td><td>Pintor profissional</td><td>Franquia</td></tr>
+    </tbody>
+  </table></div>
+  <div class="stack">
+    <div class="note"><span class="lbl">Elegibilidade — nem todo item existe em todo imóvel</span>Caixa d'água própria pega casa e apartamento com reservatório individual; exaustor e piscina não existem em boa parte da carteira. O card só nasce se o ativo estiver no cadastro do imóvel (etapa 02). Filtro de água é item mínimo e vale para praticamente toda a carteira.</div>
+    <div class="note warn"><span class="lbl">Caixa d'água · validar com o jurídico por município</span>Periodicidade semestral é o padrão praticado e aceito pela vigilância sanitária, e o escopo cobre casas e apartamentos com reservatório próprio. Para reservatório coletivo de condomínio a obrigação é do síndico — a franquia solicita e arquiva o comprovante do condomínio no dossiê. Base: Portaria de Consolidação nº 5/2017 (ANVISA), legislação própria em RS, RJ, SP e PR e lei específica em Florianópolis (Lei nº 4.783/1995). Seguradoras costumam exigir comprovante recente para honrar sinistro relacionado à água.</div>
+    <div class="note warn"><span class="lbl">Dedetização · exigência documental</span>A RDC 52/2009 (ANVISA) exige empresa licenciada, responsável técnico registrado em conselho e comprovante contendo pragas-alvo, produtos aplicados, prazo de assistência técnica e nome e registro do responsável técnico. O comprovante é condição de fechamento do card e é arquivado no dossiê do imóvel.</div>
+  </div>
+</section>
+
+<section>
+  <div class="shead"><span class="sn">04</span><div><h2>Prioridades</h2></div></div>
+  <div class="tw"><table>
+    <thead><tr><th class="c">Nível</th><th>Definição</th></tr></thead>
+    <tbody>
+      <tr><td class="c"><b class="p1">1</b> Crítica</td><td>Impacta diretamente segurança, integridade física, saúde dos ocupantes, legislação vigente ou o funcionamento básico e imediato do imóvel</td></tr>
+      <tr><td class="c"><b>2</b> Alta</td><td>Impacta a experiência direta do hóspede, a nota do imóvel nas OTAs e a preservação do patrimônio contra desgaste moderado</td></tr>
+      <tr><td class="c"><b>3</b> Média</td><td>Manutenção preventiva de médio e longo prazo e aspectos estéticos</td></tr>
+    </tbody>
+  </table></div>
+  <p class="sub" style="margin-top:16px"><b>Distribuição.</b> Na fila de cards há <b>5 itens de prioridade 1</b>: ar-condicionado, filtro de água, limpeza da caixa d'água, piscina (estrutura) e dedetização. Todos com fundamento sanitário ou legal. Senha e pilhas também são prioridade 1, mas vivem no regime de lembrete.</p>
+  <div class="note" style="margin-top:16px"><span class="lbl">Regra</span>Prioridade define a ordem dentro de uma janela, nunca o mês. O mês é definido pelo calendário da seção 08.</div>
+
+  <h3>Manutenção estruturante <span class="est"></span></h3>
+  <p class="sub">Quatro serviços concentram o maior custo unitário, o maior impacto na nota do imóvel e o maior risco quando deixam de acontecer. São eles que o plano existe para garantir — o resto do catálogo é o que os acompanha.</p>
+  <div class="tw"><table>
+    <thead><tr><th>Serviço</th><th>Por que é estruturante</th><th>Tratamento</th></tr></thead>
+    <tbody>
+      <tr><td><b>Higienização e preventiva de ar-condicionado</b></td><td>Maior custo unitário do catálogo e o que mais aparece em avaliação de hóspede. É também o item com execução já acontecendo sem despesa lançada</td><td rowspan="4">Entram nas melhores janelas do calendário, nunca na última do ciclo · Evidência conferida em <b>100% dos cards</b>, sem amostragem · Linha própria no painel de monitoramento · Não podem ser deslocados pelo teto de demanda</td></tr>
+      <tr><td><b>Limpeza da caixa d'água</b></td><td>Obrigação sanitária, com exigência de comprovante por seguradora e vigilância</td></tr>
+      <tr><td><b>Higienização de sofá</b></td><td>Serviço caro, visível na foto do anúncio e determinante na percepção de limpeza</td></tr>
+      <tr><td><b>Higienização de colchão</b></td><td>Saúde do ocupante e o item que mais gera reclamação direta quando falha</td></tr>
+    </tbody>
+  </table></div>
+  <div class="note warn" style="margin-top:16px"><span class="lbl">Por que não virou prioridade 1</span>Sofá e colchão seguem em prioridade 2 de propósito. A escala 1–2–3 existe para ordenar itens dentro de uma mesma semana, e inflá-la foi o erro da v1 — com metade do catálogo em prioridade 1, nada é prioritário. Estruturante é um eixo separado: não muda a ordem de desempate, muda a janela que o item recebe, o rigor da validação e a atenção no painel.</div>
+</section>
+
+<section>
+  <div class="shead"><span class="sn">05</span><div><h2>Níveis de SLA</h2>
+  <p class="sub">O prazo corre em dias úteis a partir da data de disparo do card.</p></div></div>
+  <div class="tw"><table>
+    <thead><tr><th class="c">Nível</th><th class="c">Prazo</th><th>Itens</th></tr></thead>
+    <tbody>
+      <tr><td class="c mono">N1</td><td class="c num">7 dias úteis</td><td>Troca de travesseiro</td></tr>
+      <tr><td class="c mono">N2</td><td class="c num">10 dias úteis</td><td>Filtro do exaustor · Filtro de água · Máquina de lavar · Sofá · Colchão · Cortinas</td></tr>
+      <tr><td class="c mono">N3</td><td class="c num">15 dias úteis</td><td>Ar-condicionado · Limpeza da caixa d'água · Piscina (estrutura) · Dedetização</td></tr>
+      <tr><td class="c mono">N4</td><td class="c num">25 dias úteis</td><td>Pintura do imóvel</td></tr>
+    </tbody>
+  </table></div>
+  <p class="sub" style="margin-top:14px">Os 12 itens do regime de card estão cobertos, sem lacuna. Os 4 itens de lembrete não têm SLA por definição — têm data-alvo e alerta.</p>
+
+  <h3>Relógio de SLA</h3>
+  <div class="tw"><table>
+    <thead><tr><th>Situação</th><th class="c">SLA</th><th>Por quê</th></tr></thead>
+    <tbody>
+      <tr><td>Card aberto, aguardando agendamento ou execução</td><td class="c"><b>Corre</b></td><td>É o prazo que a franquia assumiu</td></tr>
+      <tr><td>Devolvido por evidência inválida ou ausente</td><td class="c"><b>Corre</b></td><td>Devolver não pode comprar prazo, ou a devolução vira estratégia</td></tr>
+      <tr><td>Fornecedor sem agenda</td><td class="c"><b>Corre</b></td><td>É justificativa registrada, não pausa — e vira dado para renegociar fornecedor por região</td></tr>
+      <tr><td>Aguardando aprovação de custo acima do teto</td><td class="c"><b>Pausa</b></td><td>A decisão não é da franquia. Pausa limitada a <b>10 dias úteis</b>; passado o prazo, escala para a Coordenação de Manutenção e o relógio volta a correr</td></tr>
+      <tr><td>Item N3 ou N4 sem janela livre confirmada no calendário</td><td class="c">Não dispara</td><td>Cobrar prazo de um serviço que exige imóvel vazio num imóvel ocupado é cobrar o impossível. O card entra na fila da próxima janela livre e, se não houver nenhuma no ciclo, é deslocado para abril</td></tr>
+      <tr><td>Qualquer card recorrente entre 01/12 e 31/03</td><td class="c">Não dispara</td><td>Janela de bloqueio (seção 07)</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section>
+  <div class="shead"><span class="sn">06</span><div><h2>Cadência semanal de comunicação</h2>
+  <p class="sub">Novidade desta versão. A v2 disparava os cards sem preparar a franquia para o volume que chegaria. A régua passa para segunda-feira e a semana anterior tem três toques definidos.</p></div></div>
+  <div class="week">
+    <div class="d"><span class="dd">Terça</span><span class="dt">Comunicado</span><span class="db">Levantamento do que entra e envio da lista às franquias, com os fornecedores recomendados por região.</span></div>
+    <div class="d"><span class="dd">Quinta</span><span class="dt">Reforço</span><span class="db">Segundo comunicado, com a lista já ajustada pelas respostas de terça.</span></div>
+    <div class="d"><span class="dd">Sábado</span><span class="dt">Alerta</span><span class="db">Aviso de que na segunda-feira caem todas as manutenções recorrentes do ciclo.</span></div>
+    <div class="d fire"><span class="dd">Segunda</span><span class="dt">Disparo</span><span class="db">O sistema cria e envia os cards. A régua de cobrança semanal passa a acompanhar esta data.</span></div>
+  </div>
+  <div class="note" style="margin-top:18px"><span class="lbl">Por que segunda e não quarta</span>Quarta-feira deixava a franquia com dois dias úteis para reagir antes do fim de semana. Segunda dá a semana inteira, e a cadência de terça e quinta cai na semana anterior — quando ainda dá para corrigir a lista antes de virar card.</div>
+</section>
+
+<section>
+  <div class="shead"><span class="sn">07</span><div><h2>Janela de bloqueio — 01/12 a 31/03</h2></div></div>
+  <div class="note stop"><span class="lbl">Regra</span>A entrada de manutenções recorrentes está fechada de 1º de dezembro a 31 de março. Nenhum card do ciclo é disparado nem pode vencer nesse período.</div>
+  <h3>Como o disparo recua</h3>
+  <p class="sub">Como o vencimento também não pode cair na janela, a última data de entrada de cada nível recua pelo próprio SLA. Para o ciclo que fecha em 30/11:</p>
+  <div class="tw"><table>
+    <thead><tr><th class="c">Nível</th><th class="c">Prazo</th><th>Última entrada possível</th></tr></thead>
+    <tbody>
+      <tr><td class="c mono">N4</td><td class="c num">25 dias úteis</td><td>3ª semana de outubro</td></tr>
+      <tr><td class="c mono">N3</td><td class="c num">15 dias úteis</td><td>1ª semana de novembro</td></tr>
+      <tr><td class="c mono">N2</td><td class="c num">10 dias úteis</td><td>2ª semana de novembro</td></tr>
+      <tr><td class="c mono">N1</td><td class="c num">7 dias úteis</td><td>3ª semana de novembro</td></tr>
+    </tbody>
+  </table></div>
+  <div class="stack">
+    <div class="note"><span class="lbl">Ocorrência deslocada</span>Toda ocorrência que cairia na janela é deslocada para a <b>primeira segunda-feira de abril</b> — 05/04/2027 no próximo ciclo — com a data-alvo recalculada. Nada é acumulado nem perdido, e o histórico registra o deslocamento como regra, não como atraso.</div>
+    <div class="note warn"><span class="lbl">O que não é bloqueado</span>Os 4 lembretes automáticos, que seguem rodando o ano inteiro; a manutenção corretiva de urgência, que não é recorrente; e os chamados avulsos de churrasqueira e lareira.</div>
+  </div>
+</section>
+
+<section>
+  <div class="shead"><span class="sn">08</span><div><h2>Calendário anual de entrada</h2>
+  <p class="sub">O ciclo recorrente vive em 34 semanas, de abril a novembro. A janela define o mês; a prioridade define a ordem dentro do mês. São <b>16 entradas de card por ano</b> para 12 itens. As quatro manutenções estruturantes recebem as janelas de menor ocupação e nenhuma delas cai no fim do ciclo.</p></div></div>
+  <div class="calwrap"><div class="cal">
+    <div class="m on"><span class="mn">Abr</span><span class="mv">3</span><span class="bar"></span></div>
+    <div class="m on"><span class="mn">Mai</span><span class="mv">2</span><span class="bar"></span></div>
+    <div class="m on"><span class="mn">Jun</span><span class="mv">1</span><span class="bar"></span></div>
+    <div class="m on"><span class="mn">Jul</span><span class="mv">1</span><span class="bar"></span></div>
+    <div class="m on"><span class="mn">Ago</span><span class="mv">1</span><span class="bar"></span></div>
+    <div class="m on"><span class="mn">Set</span><span class="mv">3</span><span class="bar"></span></div>
+    <div class="m on"><span class="mn">Out</span><span class="mv">3</span><span class="bar"></span></div>
+    <div class="m on"><span class="mn">Nov</span><span class="mv">2</span><span class="bar"></span></div>
+    <div class="m off"><span class="mn">Dez</span><span class="mv">—</span><span class="bar"></span></div>
+    <div class="m off"><span class="mn">Jan</span><span class="mv">—</span><span class="bar"></span></div>
+    <div class="m off"><span class="mn">Fev</span><span class="mv">—</span><span class="bar"></span></div>
+    <div class="m off"><span class="mn">Mar</span><span class="mv">—</span><span class="bar"></span></div>
+  </div></div>
+  <div class="callegend"><span><i class="a"></i>entradas de card no mês</span><span><i class="b"></i>janela de bloqueio · alta temporada</span></div>
+
+  <div class="tw"><table>
+    <thead><tr><th>Mês</th><th>Itens que entram</th><th>Lógica</th></tr></thead>
+    <tbody>
+      <tr><td><b>Abril</b></td><td>Filtro de água · <span class="est"></span>Caixa d'água · Filtro do exaustor</td><td>Reabertura do ciclo. Absorve também tudo que foi deslocado da janela de bloqueio</td></tr>
+      <tr class="estr"><td><b>Maio</b></td><td><span class="est"></span>Higienização de sofá · <span class="est"></span>Higienização de colchão</td><td>As duas estruturantes que exigem imóvel vazio, no primeiro mês de baixa ocupação do ciclo. Saíram de novembro, onde disputavam a última janela livre do ano com todo o resto</td></tr>
+      <tr><td><b>Junho</b></td><td>Pintura do imóvel (bienal)</td><td>N4 na janela de menor ocupação do ano, com folga para orçamento, agenda e desocupação</td></tr>
+      <tr><td><b>Julho</b></td><td>Filtro do exaustor</td><td>Segunda rodada do trimestral</td></tr>
+      <tr><td><b>Agosto</b></td><td>Higienização da máquina de lavar</td><td>Serviço técnico em baixa ocupação</td></tr>
+      <tr class="estr"><td><b>Setembro</b></td><td><span class="est"></span>Ar-condicionado · Filtro de água · Piscina (estrutura)</td><td>Preparação de temporada: climatização, potabilidade e piscina concluídas antes de a ocupação subir</td></tr>
+      <tr><td><b>Outubro</b></td><td><span class="est"></span>Caixa d'água · Dedetização · Filtro do exaustor</td><td>Bloco sanitário pré-temporada e última rodada do trimestral</td></tr>
+      <tr><td><b>Novembro</b><br><span style="font-size:11px;color:var(--ink-3)">só nas 2 primeiras semanas</span></td><td>Cortinas · Troca de travesseiro</td><td>Os dois itens mais leves do catálogo na última janela antes do bloqueio. Entram cedo no mês para vencer antes de 30/11</td></tr>
+      <tr><td><b>Dez – Mar</b><br><span class="tag out">bloqueio</span></td><td>Nenhum card recorrente</td><td>Janela de bloqueio (seção 07). Lembretes por evento e corretiva de urgência seguem rodando</td></tr>
+    </tbody>
+  </table></div>
+  <div class="note warn" style="margin-top:18px"><span class="lbl">Decisão pendente — como a recorrência é agendada</span>Este calendário rege a <b>primeira ocorrência</b> de cada item no ano. As ocorrências seguintes dos itens trimestrais e semestrais podem ser geradas de duas formas, e só uma pode valer: <b>(a)</b> pelo calendário fixo acima, ou <b>(b)</b> pelo fechamento do card anterior, contando a frequência a partir da data real de execução (etapa 10). As duas regras se contradizem. Ver seção 13.</div>
+</section>
+
+<section>
+  <div class="shead"><span class="sn">09</span><div><h2>O processo em onze etapas</h2>
+  <p class="sub">A v1 descrevia sete etapas e terminava no envio do card. As quatro últimas são o que transforma um card emitido em serviço comprovado. Esta versão remove a validação técnica como etapa humana: ela passa a ser automática, dentro do fechamento.</p></div></div>
+  <h4 style="margin-top:22px">Preparação e disparo</h4>
+  <div class="steps">
+    <div class="step"><div class="sh"><span class="si">01</span><span class="so">Manutenção</span></div><span class="st">Decisão de recorrência</span><span class="sd">A Coordenação identifica a janela do calendário (seção 08) e os itens a entrar no período.</span></div>
+    <div class="step"><div class="sh"><span class="si">02</span><span class="so">Manutenção</span></div><span class="st">Consolidação de dados</span><span class="sd">Extração e validação da lista de imóveis elegíveis e respectivos franqueados. A elegibilidade vem do cadastro de ativos: tem piscina, tem exaustor, tem reservatório próprio. Item cujo ativo não existe no imóvel não gera card.</span></div>
+    <div class="step"><div class="sh"><span class="si">03</span><span class="so">Manutenção</span></div><span class="st">Auditoria de dados</span><span class="sd">Verificação da base contra erros de fórmula e inconsistência. Erro encontrado é corrigido e a base é reverificada.</span></div>
+    <div class="step"><div class="sh"><span class="si">04</span><span class="so">Manutenção</span></div><span class="st">Auditoria de anúncios</span><span class="sd">Conferência da lista contra os anúncios ativos. Divergência ajusta a lista.</span></div>
+    <div class="step"><div class="sh"><span class="si">05</span><span class="so">Manutenção</span></div><span class="st">Controle de demanda</span><span class="sd">Avaliação do volume contra o teto de cards por franquia por semana. O excedente vai automaticamente para a onda seguinte. As quatro manutenções estruturantes não são deslocadas pelo teto: havendo excesso na semana, o que sai é o item não estruturante. O ciclo não entra em espera: ele se divide.</span></div>
+    <div class="step"><div class="sh"><span class="si">06</span><span class="so">BackOffice</span></div><span class="st">Comunicação prévia</span><span class="sd">A cadência de terça, quinta e sábado da seção 06, com a lista de fornecedores recomendados por região.</span></div>
+    <div class="step"><div class="sh"><span class="si">07</span><span class="so">Sistema</span></div><span class="st">Disparo dos cards</span><span class="sd">Segunda-feira. Cada card nasce com item, categoria, prioridade, nível e prazo de SLA, janela permitida, evidência exigida, política de custo e fornecedor sugerido. Antes de disparar, o sistema confere se há período livre no calendário de ocupação dentro do prazo — para N3 e N4 isso é bloqueante.</span></div>
+  </div>
+  <h4 style="margin-top:26px">Execução e fechamento</h4>
+  <div class="steps">
+    <div class="step phase-b"><div class="sh"><span class="si">08</span><span class="so">Franquia</span></div><span class="st">Execução</span><span class="sd">A franquia agenda e o serviço é executado pelo fornecedor ou pelo zelador.</span></div>
+    <div class="step phase-b"><div class="sh"><span class="si">09</span><span class="so">Franquia</span></div><span class="st">Evidência anexada</span><span class="sd">A franquia anexa <b>ao card</b> a evidência exigida para aquele item, conforme a matriz da seção 10. Evidência enviada pelo suporte não conta.</span></div>
+    <div class="step phase-b"><div class="sh"><span class="si">10</span><span class="so">Sistema · Agente</span></div><span class="st">Fechamento</span><span class="sd">O agente de validação confere a evidência contra a matriz — se a foto corresponde ao item, se o documento tem os campos exigidos. Aprovada, o card fecha, o custo é registrado e a próxima ocorrência é agendada. Documento regulado é arquivado no dossiê do imóvel. Casos que o agente não resolve vão para fechamento manual da Manutenção.</span></div>
+    <div class="step phase-b"><div class="sh"><span class="si">11</span><span class="so">Sistema</span></div><span class="st">Reabertura</span><span class="sd">Se a evidência falta ou não confere, o card volta para o agendamento e o SLA continua correndo. Se a franquia marca “não se aplica”, o card não é descartado: abre uma correção no cadastro de ativos, para que o mesmo card errado não reapareça no ciclo seguinte.</span></div>
+  </div>
+
+  <h3>Quem age e quem responde, por estado</h3>
+  <div class="tw"><table>
+    <thead><tr><th>Estado</th><th>Quem age</th><th>Quem responde pelo prazo</th></tr></thead>
+    <tbody>
+      <tr><td>Base de elegibilidade</td><td>Manutenção (Seazone)</td><td>Manutenção</td></tr>
+      <tr><td>Card gerado</td><td>Sistema</td><td>Manutenção</td></tr>
+      <tr><td>Agendado</td><td>Franquia</td><td>Franquia</td></tr>
+      <tr><td>Executado</td><td>Fornecedor ou zelador</td><td>Franquia</td></tr>
+      <tr><td>Evidência anexada</td><td>Franquia</td><td>Franquia</td></tr>
+      <tr><td>Validado e arquivado</td><td>Agente de validação</td><td>Manutenção</td></tr>
+      <tr><td>Fechado e reagendado</td><td>Sistema</td><td>—</td></tr>
+    </tbody>
+  </table></div>
+  <p class="sub" style="margin-top:12px">Zelador e fornecedor executam; a franquia responde pelo prazo. São colunas diferentes, não sinônimos.</p>
+</section>
+
+<section>
+  <div class="shead"><span class="sn">10</span><div><h2>Matriz de evidência</h2>
+  <p class="sub">Nenhum card fecha sem a evidência do seu item. Exigir laudo de tudo trava o processo; aceitar “concluído” sem prova é o que a v1 fazia. Esta matriz é também a especificação do agente de validação: é ela que define o que ele confere em cada item.</p></div></div>
+  <div class="tw"><table>
+    <thead><tr><th>Evidência exigida</th><th>Itens</th><th>Validação</th></tr></thead>
+    <tbody>
+      <tr><td><b>Documento regulado</b><br><span style="font-size:12px;color:var(--ink-2)">certificado ou atestado com CNPJ, responsável técnico, produtos e data</span></td><td>Dedetização · <span class="est"></span><b>Limpeza da caixa d'água</b></td><td><b>100% dos cards</b><br><span style="font-size:12px;color:var(--ink-2)">arquivo obrigatório no dossiê</span></td></tr>
+      <tr class="estr"><td><span class="est"></span>Laudo ou OS técnica + nota fiscal</td><td><b>Ar-condicionado</b></td><td><b>100% dos cards</b><br><span style="font-size:12px;color:var(--ink-2)">manutenção estruturante</span></td></tr>
+      <tr><td>Laudo ou OS técnica + nota fiscal</td><td>Máquina de lavar · Filtro de água · Filtro do exaustor</td><td>Agente · amostragem manual</td></tr>
+      <tr class="estr"><td><span class="est"></span>Foto antes/depois + nota fiscal</td><td><b>Higienização de sofá · Higienização de colchão</b></td><td><b>100% dos cards</b><br><span style="font-size:12px;color:var(--ink-2)">manutenção estruturante</span></td></tr>
+      <tr><td>Foto antes/depois + nota fiscal</td><td>Cortinas · Piscina (estrutura) · Pintura do imóvel</td><td>Agente · amostragem manual</td></tr>
+      <tr><td>Foto do item instalado</td><td>Troca de travesseiro</td><td>Agente</td></tr>
+            <tr><td><b>Registro automático do sistema</b><br><span style="font-size:12px;color:var(--ink-2)">sem card e sem foto</span></td><td>Senha de fechadura · Troca de pilhas</td><td>Automática</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>Regra de evidência e despesa — ar-condicionado</h3>
+  <div class="note stop"><span class="lbl">Entra no texto do card, no primeiro ciclo</span>Parte das franquias já executa a manutenção do ar-condicionado e <b>não lança a despesa</b>. A partir deste ciclo o item passa a ser cobrado, então a evidência precisa ser guardada desde já — inclusive dos serviços já realizados.<br><br><b>A evidência vai anexada ao card.</b> Não abrir chamado no suporte da franquia para enviar comprovante: comprovante fora do card não fecha card e não entra no indicador.</div>
+</section>
+
+<section>
+  <div class="shead"><span class="sn">11</span><div><h2>Regras de exceção</h2></div></div>
+  <div class="tw"><table>
+    <thead><tr><th>Regra</th><th>Como funciona</th></tr></thead>
+    <tbody>
+      <tr><td><b>Feriado e fim de semana</b></td><td>Vencimento que cai em fim de semana ou feriado é prorrogado para o próximo dia útil</td></tr>
+      <tr><td><b>Janela de execução</b></td><td>Item N3 ou N4 não é disparado sem período livre confirmado no calendário de ocupação dentro do prazo. Para a pintura, o bloqueio de calendário é solicitado junto com o card</td></tr>
+      <tr><td><b>Janela de bloqueio</b></td><td>Entrada fechada de 01/12 a 31/03, com o recuo de disparo da seção 07. Ocorrência bloqueada é deslocada para a primeira segunda-feira de abril</td></tr>
+      <tr><td><b>Justificativa de atraso</b></td><td>Motivo em lista fechada: fornecedor sem agenda, item sem estoque, imóvel ocupado, custo não aprovado, não se aplica. Texto livre não fecha card, porque texto livre não vira indicador</td></tr>
+      <tr><td><b>Reincidência</b></td><td>Dois atrasos em qualquer item, na mesma franquia, dentro de 90 dias, escalam para a gerência. A regra vale por janela de tempo, e não por item — dois atrasos seguidos num item anual levariam dois anos para acionar o escalonamento</td></tr>
+      <tr><td><b>Empate de prioridade</b></td><td>Avaliado por semana de vencimento, não de disparo. Precedência: exigência legal → segurança → experiência do hóspede → estética</td></tr>
+      <tr><td><b>Controle de demanda</b></td><td>Teto explícito de cards por franquia por semana. O excedente vai para a onda seguinte, com dono da decisão na Coordenação de Manutenção</td></tr>
+      <tr><td><b>Custo</b></td><td>Cada item tem política de rateio publicada — proprietário, franquia ou Seazone. Custo acima do teto exige aprovação antes da execução, e o SLA pausa por no máximo 10 dias úteis enquanto a aprovação não vem</td></tr>
+      <tr><td><b>Não se aplica</b></td><td>Devolve o card e abre correção no cadastro de ativos do imóvel. A base de elegibilidade melhora a cada rodada em vez de degradar</td></tr>
+      <tr><td><b>Chamado avulso</b></td><td>Churrasqueira e lareira saem do ciclo e passam a ser abertas por chamado, quando o imóvel precisa. Não têm SLA de recorrência nem entram na régua semanal</td></tr>
+      <tr><td><b>Rotina de prestador</b></td><td>Tratamento de água da piscina e jardinagem correm pelo contrato do prestador, com acompanhamento da franquia na visita. Não geram card nem lembrete e não são medidos por este plano</td></tr>
+      <tr><td><b>Manutenção estruturante</b></td><td>Os quatro serviços da seção 04 não são deslocados pelo teto de demanda, têm evidência conferida em 100% dos cards e linha própria no painel</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section>
+  <div class="shead"><span class="sn">12</span><div><h2>Indicadores e monitoramento</h2>
+  <p class="sub">Sem eles, o processo mede quantos cards foram emitidos, não quantas manutenções aconteceram. Os seis primeiros avaliam o ciclo; o sétimo resume o plano numa linha só.</p></div></div>
+  <div class="tw"><table>
+    <thead><tr><th>Indicador</th><th>Mede</th><th>Meta</th></tr></thead>
+    <tbody>
+      <tr><td>Conclusão no prazo, por franquia e por item</td><td>Aderência ao SLA</td><td class="num">a definir</td></tr>
+      <tr><td>Cards com evidência válida anexada</td><td>Se a manutenção aconteceu, e não apenas se o card foi fechado</td><td class="num">a definir</td></tr>
+      <tr class="estr"><td><span class="est"></span><b>Cobertura das quatro estruturantes</b></td><td>Percentual da carteira elegível com ar-condicionado, caixa d'água, sofá e colchão executados no ciclo</td><td class="num">a definir</td></tr>
+      <tr><td>Reincidência em 90 dias, por franquia</td><td>Gatilho de escalonamento</td><td class="num">a definir</td></tr>
+      <tr><td>Chamados de urgência por imóvel/mês, antes e depois do ciclo</td><td>Primeiro objetivo declarado do plano</td><td class="num">a definir</td></tr>
+      <tr><td>Nota nas OTAs: ciclo completo vs. incompleto</td><td>Segundo objetivo declarado do plano</td><td class="num">a definir</td></tr>
+      <tr><td>Custo médio por item e por região</td><td>Base para renegociar fornecedor e calibrar prazo</td><td class="num">a definir</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>Painel de manutenção recorrente</h3>
+  <p class="sub">Monitoramento em tempo real, dentro da Central de Manutenção, com um histograma por item e por mês — quantas higienizações de ar-condicionado foram feitas em janeiro, quantas em fevereiro, e assim por diante. As quatro manutenções estruturantes têm linha própria, destacada das demais.</p>
+  <div class="stack">
+    <div class="note"><span class="lbl">O que ele precisa mostrar que hoje não existe</span><b>Manutenção espontânea:</b> serviço executado e lançado como despesa <b>sem que houvesse card</b> — a franquia que se antecipou ao preventivo. Hoje essa execução é invisível para o processo, e ela é justamente a que indica que o plano está funcionando.</div>
+    <div class="note warn"><span class="lbl">Para que serve na prática</span>Ver a curva de execução ao longo do ano permite avisar a franquia antes do acúmulo: <i>“não está subindo durante o ano, e no fim vai cair tudo junto em vocês.”</i> É gestão de carga, não só medição de aderência.</div>
+  </div>
+</section>
+
+<section>
+  <div class="shead"><span class="sn">13</span><div><h2>Pendências e decisões abertas</h2>
+  <p class="sub">Nenhuma delas impede publicar o catálogo e a matriz de SLA. Todas impedem que o ciclo rode inteiro sem intervenção manual.</p></div></div>
+  <div class="pend">
+    <div class="prow"><span class="owner">Manutenção</span><div><b>Calendário fixo ou data de execução?</b><span>Decidir se as ocorrências seguintes dos trimestrais e semestrais nascem do calendário da seção 08 ou do fechamento do card anterior. As duas regras se contradizem e o sistema só pode implementar uma.</span></div></div>
+    <div class="prow"><span class="owner">Operação</span><div><b>Teto de cards por franquia por semana</b><span>O calendário é por imóvel; a capacidade é por franquia. São 16 entradas por ano multiplicadas pela carteira — uma franquia de 40 imóveis recebe da ordem de 640 cards no ano. É esse número que o teto da etapa 05 precisa limitar, e ele ainda não existe.</span></div></div>
+    <div class="prow"><span class="owner">Manutenção</span><div><b>Piscina (estrutura) passou de trimestral para anual</b><span>Entrada única em setembro, na preparação de temporada. Confirmar se uma rodada por ano sustenta a estrutura da piscina ou se ela precisa de uma segunda passagem — e, nesse caso, em que mês.</span></div></div>
+    <div class="prow"><span class="owner">Manutenção</span><div><b>Frequência de filtro de água e filtro do exaustor</b><span>São os dois itens que sobraram acima de uma entrada por ano — exaustor três vezes, filtro de água duas. Frequências herdadas da v1, não revalidadas contra custo e taxa de falha real. Se caírem para anual, o ciclo inteiro fica com uma entrada por item por ano.</span></div></div>
+    <div class="prow"><span class="owner">Manutenção</span><div><b>Regra de coorte da pintura bienal</b><span>Um item bienal num calendário anual exige saber qual metade da carteira pinta em cada ano. A regra não existe.</span></div></div>
+    <div class="prow"><span class="owner">Operação</span><div><b>Canal dos chamados avulsos</b><span>Churrasqueira e lareira saíram do ciclo. Falta definir por onde a franquia abre o chamado e com que SLA ele corre.</span></div></div>
+    <div class="prow"><span class="owner">Operação</span><div><b>Acompanhamento de piscina e jardinagem</b><span>Saíram do plano como rotina de prestador. Falta definir onde a franquia registra que a visita aconteceu e o que dispara quando ela não acontece — hoje isso não vive em lugar nenhum.</span></div></div>
+    <div class="prow"><span class="owner">Tecnologia</span><div><b>Cadastro de ativos do imóvel</b><span>A etapa 02 depende de saber quais imóveis têm piscina, exaustor e reservatório próprio. Sem esses campos criados e populados, a primeira etapa do fluxo não roda.</span></div></div>
+    <div class="prow"><span class="owner">Tecnologia</span><div><b>Integração com o calendário de ocupação</b><span>Necessária para o bloqueio de janela de N3 e N4 na etapa 07.</span></div></div>
+    <div class="prow"><span class="owner">Tecnologia</span><div><b>Agente de validação de evidência</b><span>Confere se a foto corresponde ao item e se o documento traz os campos exigidos. Enquanto não existir, o fechamento é manual — o que a operação já assumiu como viável no primeiro ciclo.</span></div></div>
+    <div class="prow"><span class="owner">Manutenção</span><div><b>Responsável pelo prazo em senha e pilhas</b><span>Os dois são lembrete sem SLA, mas o escalonamento prevê alerta ao gestor regional quando a confirmação não vem. Esta versão atribui a confirmação à franquia; confirmar se é isso mesmo.</span></div></div>
+    <div class="prow"><span class="owner">Jurídico</span><div><b>Caixa d'água por município</b><span>Validação da periodicidade semestral e do escopo estendido a apartamentos com reservatório próprio, município a município da carteira.</span></div></div>
+    <div class="prow"><span class="owner">Financeiro</span><div><b>Política de rateio de custo por item</b><span>Proprietário, franquia ou Seazone — ainda não publicada.</span></div></div>
+    <div class="prow"><span class="owner">Financeiro</span><div><b>Teto de custo que dispara aprovação</b><span>Define quando o SLA pausa. Sem o valor, a regra de pausa da seção 05 não é aplicável.</span></div></div>
+    <div class="prow"><span class="owner">Manutenção</span><div><b>Metas dos sete indicadores</b><span>Os indicadores estão definidos, as metas não. Medir sem meta não vira gestão.</span></div></div>
+  </div>
+</section>
+
+<section>
+  <div class="shead"><span class="sn">14</span><div><h2>Histórico de versões</h2></div></div>
+  <h3>v3.0 — setembro/2026</h3>
+  <p class="sub">Revisão a partir da weekly de manutenção de 14/09/2026. Churrasqueira e lareira passam a chamado avulso; tratamento de água da piscina e jardinagem saem do plano como rotina de prestador; ar-condicionado e preventiva Split fundidos num item anual; piscina (estrutura) passa de trimestral a anual; sofá e colchão separados em cards independentes e movidos de novembro para maio; criado o eixo de manutenção estruturante — ar-condicionado, caixa d'água, sofá e colchão — com janela protegida, validação integral e linha própria no painel; régua movida de quarta-feira para segunda-feira, com cadência de comunicação em terça, quinta e sábado; validação técnica deixa de ser etapa humana e o fluxo passa a onze etapas; criadas a regra de evidência e despesa do ar-condicionado e o painel de monitoramento em tempo real. O catálogo passa de 17 para 14 itens.</p>
+  <h3>v2.0 — setembro/2026</h3>
+  <p class="sub">Revisão estrutural a partir da auditoria do ciclo 2026/2027. Fluxo estendido de 7 para 12 etapas; criado o regime de lembrete automático; instituída a janela de bloqueio de 01/12 a 31/03; cronograma reordenado pela janela sazonal; criadas a matriz de evidência e o relógio de SLA; enxoval retirado do catálogo; travesseiro reclassificado para prioridade 2; caixa d'água elevada a semestral; definidos os seis indicadores.</p>
+  <h3>v1.0 — agosto/2026</h3>
+  <p class="sub">Migração do Pipefy para a Central de Manutenção no Seazone Host, com automação da régua de cobrança semanal e revisão da matriz de priorização por categorias.</p>
+</section>
+
+<footer class="foot">
+  <p><b>Documento de referência.</b> Esta é a diretriz oficial do processo. As decisões da v2 derivam da auditoria do Plano de Manutenção Recorrente de setembro de 2026; as da v3, da weekly de manutenção de 14/09/2026.</p>
+  <p style="margin-top:10px">Fundamentos normativos citados: Portaria de Consolidação nº 5/2017 (ANVISA) · Lei nº 4.783/1995 (Florianópolis) · RDC nº 52/2009 (ANVISA). As normas de saneamento e vigilância variam por município e estado — a aplicação na carteira exige validação jurídica local.</p>
+</footer>
+
+</div>

@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8">
+<title>Programar manutenção</title>
+<style>
+/* Maquete da tela de Manutenção do Portal da Franquia para o vídeo. Rótulos copiados do código de produção (14/10 e 20/10/2026). Dados de exemplo. */
+:root{--bg:#f5f6f4;--surface:#fff;--ink:#18211d;--muted:#5d6a63;--line:#dde3df;--accent:#0f6b5c;--accent-soft:#e2f0ec;
+  --warn:#a4530b;--warn-soft:#fbeedd;--bad:#b42318;--bad-soft:#fdecea;--info:#2f4f86;--info-soft:#e8eef8}
+*{box-sizing:border-box}
+html,body{margin:0;width:1280px;height:720px;overflow:hidden;background:#e9ecea;color:var(--ink);font:15px/1.5 "Segoe UI",Arial,sans-serif}
+.app{position:absolute;inset:0 0 92px 0;display:grid;grid-template-columns:200px 1fr}
+.side{background:#10302a;color:#cfe3dd;padding:18px 0;display:flex;flex-direction:column;gap:2px}
+.logo{font-weight:700;color:#fff;padding:0 20px 18px;font-size:17px}
+.nav{padding:10px 20px;font-size:14px;border-left:3px solid transparent}
+.nav.on{background:#1b4a40;color:#fff;border-left-color:#5cc2ad;font-weight:600}
+.main{background:var(--bg);display:flex;flex-direction:column;min-width:0}
+.bar{display:flex;align-items:center;gap:10px;padding:14px 22px;border-bottom:1px solid var(--line);background:var(--surface)}
+.bar b{font-size:18px}
+.tabs{margin-left:auto;display:flex;gap:4px}
+.tab{padding:5px 12px;border-radius:6px;font-size:13px;color:var(--muted)}
+.tab.on{background:var(--accent-soft);color:var(--accent);font-weight:600}
+.panes{flex:1;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);min-height:0}
+.list{padding:16px 18px;display:flex;flex-direction:column;gap:16px;border-right:1px solid var(--line);overflow:hidden}
+.group h3{font-size:13.5px;margin:0 0 8px;display:flex;gap:8px;align-items:center}
+.count{font-size:11px;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:1px 8px;color:var(--muted)}
+.row{display:flex;gap:10px;align-items:center;padding:9px;border:1px solid var(--line);border-radius:8px;background:var(--surface);font-size:13px;transition:all .4s}
+.row + .row{margin-top:6px}
+.row.sel{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+.thumb{width:34px;height:34px;border-radius:6px;background:repeating-linear-gradient(45deg,var(--line) 0 4px,transparent 4px 8px);flex:none}
+.row .t{flex:1;min-width:0}
+.row .t div:first-child{font-weight:600}
+.row .t div:last-child{color:var(--muted);font-size:12px}
+.code{font:600 11px Consolas,monospace;background:var(--bg);padding:1px 6px;border-radius:4px}
+.drawer{padding:18px 22px;display:flex;flex-direction:column;gap:14px;background:var(--surface);opacity:0;transform:translateX(30px);transition:all .45s}
+.drawer.open{opacity:1;transform:none}
+.dh{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.dh strong{font-size:17px;flex-basis:100%}
+.pill{font-size:11px;font-weight:600;padding:3px 9px;border-radius:999px}
+.p-org{background:var(--info-soft);color:var(--info)}
+.p-st{background:var(--warn-soft);color:var(--warn)}
+.p-prog{background:var(--accent-soft);color:var(--accent)}
+dl{display:grid;grid-template-columns:auto 1fr;gap:6px 16px;margin:0;font-size:13.5px}
+dt{color:var(--muted)} dd{margin:0}
+.desc{font-size:13px;background:var(--bg);border-radius:8px;padding:10px}
+.actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px}
+.btn{font:600 13px "Segoe UI",Arial,sans-serif;border-radius:8px;padding:9px 13px;border:1px solid var(--line);background:var(--surface);color:var(--ink);transition:all .2s}
+.btn.pri{background:var(--accent);border-color:var(--accent);color:#fff}
+.btn.dis{opacity:.45}
+/* modal */
+.shade{position:absolute;inset:0 0 92px 0;background:rgba(10,20,16,.45);display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .35s}
+.shade.open{opacity:1}
+.modal{width:470px;background:var(--surface);border-radius:12px;padding:20px 22px;display:flex;flex-direction:column;gap:13px;box-shadow:0 20px 50px rgba(0,0,0,.25);transform:scale(.96);transition:transform .35s}
+.shade.open .modal{transform:none}
+.modal h2{margin:0;font-size:18px}
+.lbl{font-size:13px;font-weight:600;margin-bottom:5px}
+.inp{border:1px solid var(--line);border-radius:8px;padding:8px 11px;font-size:14px;min-height:38px;transition:border-color .2s}
+.inp.focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+.inp.area{min-height:62px}
+.ph{color:#9aa5a0}
+.warnbox{display:none;gap:8px;background:#fdf3e2;border-radius:10px;padding:10px 12px;font-size:12px;line-height:1.4}
+.warnbox.show{display:flex}
+.radio{display:flex;gap:9px;align-items:flex-start;margin-top:6px}
+.dot{width:16px;height:16px;border-radius:50%;border:2px solid #9aa5a0;flex:none;margin-top:2px;position:relative}
+.dot.on{border-color:var(--accent)}
+.dot.on::after{content:"";position:absolute;inset:2px;border-radius:50%;background:var(--accent)}
+.radio .d{font-size:12px;color:var(--muted)}
+.foot{display:flex;justify-content:flex-end;gap:8px}
+.toast{position:absolute;top:18px;right:22px;background:#10302a;color:#fff;padding:11px 16px;border-radius:8px;font-size:13.5px;opacity:0;transform:translateY(-10px);transition:all .35s}
+.toast.show{opacity:1;transform:none}
+/* legenda */
+.cap{position:absolute;left:0;right:0;bottom:0;height:92px;background:#10302a;color:#fff;display:flex;align-items:center;gap:18px;padding:0 28px}
+.num{width:46px;height:46px;border-radius:50%;background:#5cc2ad;color:#10302a;font-weight:700;font-size:22px;display:flex;align-items:center;justify-content:center;flex:none}
+.num:empty{display:none}
+.ctext{font-size:22px;font-weight:600;line-height:1.3}
+.tag{margin-left:auto;font-size:11px;color:#9cc3b8;text-align:right;line-height:1.4}
+/* capa */
+.cover{position:absolute;inset:0;background:#10302a;color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;transition:opacity .6s;z-index:5}
+.cover.hide{opacity:0;pointer-events:none}
+.cover .k{font-size:15px;letter-spacing:.12em;text-transform:uppercase;color:#5cc2ad;font-weight:700}
+.cover h1{margin:0;font-size:46px;text-align:center;line-height:1.15}
+.cover p{margin:0;font-size:19px;color:#cfe3dd}
+/* cursor */
+#cur{position:absolute;left:640px;top:360px;width:26px;height:26px;z-index:9;transition:left .9s cubic-bezier(.4,0,.2,1),top .9s cubic-bezier(.4,0,.2,1);pointer-events:none}
+#cur svg{filter:drop-shadow(0 2px 3px rgba(0,0,0,.35))}
+.ring{position:absolute;width:40px;height:40px;margin:-20px 0 0 -20px;border-radius:50%;border:3px solid #5cc2ad;z-index:8;pointer-events:none;animation:ring .6s ease-out forwards}
+@keyframes ring{from{transform:scale(.3);opacity:1}to{transform:scale(1.4);opacity:0}}
+</style></head>
+<body>
+<div class="app">
+  <div class="side">
+    <div class="logo">Portal da Franquia</div>
+    <div class="nav">Início</div><div class="nav">Operação</div><div class="nav">Reservas</div>
+    <div class="nav on" id="navman">Manutenção</div><div class="nav">Financeiro</div>
+  </div>
+  <div class="main">
+    <div class="bar"><b>Manutenção</b><div class="tabs"><span class="tab on">Situação</span><span class="tab">Por imóvel</span></div></div>
+    <div class="panes">
+      <div class="list">
+        <div class="group"><h3>Aguardando você <span class="count" id="c1">2</span></h3>
+          <div class="row" id="alvo"><div class="thumb"></div><div class="t"><div>Reparo de dano: porta do guarda-roupa</div><div><span class="code">ABC0101</span> · prazo 24/10</div></div></div>
+          <div class="row" id="outro"><div class="thumb"></div><div class="t"><div>Higienização do ar-condicionado</div><div><span class="code">ABC0207</span> · prazo 27/10</div></div></div>
+        </div>
+        <div class="group" id="gprog"><h3>Programadas <span class="count" id="c2">0</span></h3></div>
+        <div class="group"><h3>Aguardando aprovação da Seazone <span class="count">0</span></h3></div>
+        <div class="group"><h3>Concluídas <span class="count">5</span></h3></div>
+      </div>
+      <div class="drawer" id="drawer">
+        <div class="dh"><strong>Reparo de dano: porta do guarda-roupa</strong><span class="pill p-org">Danos</span></div>
+        <dl>
+          <dt>Imóvel</dt><dd><span class="code">ABC0101</span></dd>
+          <dt>Status</dt><dd><span class="pill p-st" id="status">Aguardando sua resposta</span></dd>
+          <dt>Aberta em</dt><dd>17/10/2026</dd>
+          <dt id="prazoL">Prazo</dt><dd id="prazo">24/10/2026</dd>
+          <dt>Cobrada em</dt><dd>17/10/2026</dd>
+        </dl>
+        <div class="desc">Porta do guarda-roupa do quarto saiu do trilho e a dobradiça quebrou. Dano registrado no checkout. Exemplo fictício.</div>
+        <div class="actions">
+          <span class="btn" id="anexar"><svg viewBox="0 0 24 24" width="14" height="14" style="vertical-align:-2px;margin-right:4px"><path d="M21 11.5l-8.6 8.6a5 5 0 01-7.1-7.1l9.2-9.2a3.3 3.3 0 014.7 4.7l-9.2 9.2a1.7 1.7 0 01-2.4-2.4l8.5-8.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>Anexar evidência</span>
+          <span class="btn pri" id="enviarEv">✓ Enviar evidências para validação</span>
+          <span class="btn" id="naoConsigo">Não consigo agora</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="shade" id="shade"><div class="modal">
+  <h2>Não consigo resolver agora</h2>
+  <div><div class="lbl">Nova data</div><div class="inp" id="data"><span class="ph">dd/mm/aaaa</span></div></div>
+  <div class="warnbox" id="warn"><svg viewBox="0 0 24 24" width="16" height="16" style="flex:none;margin-top:1px"><path d="M12 3l10 18H2z" fill="none" stroke="#a4530b" stroke-width="2" stroke-linejoin="round"/><path d="M12 10v5M12 17.5v.5" stroke="#a4530b" stroke-width="2" stroke-linecap="round"/></svg><span>Essa data passa dos <b>7 dias</b> que você tem para executar. O tempo até a conclusão entra na média do seu score — a não ser que a espera dependa do proprietário e você anexe a evidência disso.</span></div>
+  <div><div class="lbl">Por que não dá no prazo?</div><div class="inp area" id="motivo"><span class="ph">Ex: a reforma do estofado leva 20 dias</span></div></div>
+  <div><div class="lbl">De quem depende essa espera?</div>
+    <div class="radio" id="rfr"><span class="dot" id="dfr"></span><div><div>Da franquia</div><div class="d">Eu vou executar nessa data. O tempo até concluir conta no meu score.</div></div></div>
+    <div class="radio"><span class="dot"></span><div><div>Do proprietário</div><div class="d">Depende de autorização ou decisão dele. Anexe a evidência abaixo.</div></div></div>
+  </div>
+  <div class="foot"><span class="btn">Cancelar</span><span class="btn pri dis" id="enviar">Enviar</span></div>
+</div></div>
+
+
+<div class="cap"><div class="num" id="num"></div><div class="ctext" id="ctext"></div>
+  <div class="tag">Portal da Franquia · Manutenção<br>Exemplo com dados fictícios</div></div>
+
+<div class="cover" id="cover"><div class="k">Portal da Franquia · Passo a passo</div>
+  <h1>Como programar<br>uma manutenção</h1><p>Para quando você não consegue fazer o serviço dentro do prazo</p></div>
+
+<div id="cur"><svg viewBox="0 0 24 24" width="26" height="26"><path d="M3 2l7.5 19 2.6-7.9L21 10.5z" fill="#fff" stroke="#111" stroke-width="1.6" stroke-linejoin="round"/></svg></div>
+
+<script>
+const $ = (s) => document.getElementById(s);
+const wait = (ms) => new Promise(r => setTimeout(r, ms));
+function cap(n, t){ $('num').textContent = n; $('ctext').textContent = t; }
+async function moveTo(id, dx = 0.5, dy = 0.5){
+  const r = $(id).getBoundingClientRect();
+  $('cur').style.left = (r.left + r.width*dx) + 'px'; $('cur').style.top = (r.top + r.height*dy) + 'px';
+  await wait(950);
+}
+async function click(id, dx, dy){
+  await moveTo(id, dx, dy);
+  const c = $('cur'); const ring = document.createElement('div'); ring.className = 'ring';
+  ring.style.left = c.style.left; ring.style.top = c.style.top; document.body.appendChild(ring);
+  setTimeout(() => ring.remove(), 700); await wait(300);
+}
+async function type(id, text){
+  const el = $(id); el.classList.add('focus'); el.textContent = '';
+  for (const ch of text){ el.textContent += ch; await wait(text.length > 20 ? 38 : 110); }
+}
+window.steps = {
+  async s0(){ cap('', ''); },
+  async s1(){ $('cover').classList.add('hide'); cap(1, 'Entre no Portal da Franquia e abra o menu Manutenção'); await click('navman', .45, .5); },
+  async s2(){ cap(2, 'Abra o card da manutenção, no grupo "Aguardando você"'); await click('alvo', .4, .5); $('alvo').classList.add('sel'); $('drawer').classList.add('open'); },
+  async s3(){ cap(3, 'Clique em "Não consigo agora"'); await click('naoConsigo'); $('shade').classList.add('open'); },
+  async s4(){ cap(4, 'Em "Nova data", escolha o dia em que vai fazer o serviço'); await click('data', .3); await type('data', '11/11/2026'); await wait(500); $('data').classList.remove('focus'); $('warn').classList.add('show'); },
+  async s5(){ cap('!', 'Data depois de 7 dias: o portal avisa que o tempo conta no score, mas deixa programar'); await moveTo('warn', .85, .6); },
+  async s6(){ cap(5, 'Em "Por que não dá no prazo?", escreva o motivo'); await click('motivo', .3); await type('motivo', 'Aguardando o repasse do valor do dano para executar o serviço.'); $('motivo').classList.remove('focus'); },
+  async s7(){ cap(6, 'Marque "Da franquia" e clique em Enviar'); await click('dfr'); $('dfr').classList.add('on'); $('enviar').classList.remove('dis'); await wait(600); await click('enviar');
+    $('shade').classList.remove('open');
+    const row = $('alvo'); row.classList.remove('sel'); row.querySelector('.t div:last-child').innerHTML = '<span class="code">ABC0101</span> · programada para 11/11/2026';
+    $('gprog').appendChild(row); $('c1').textContent = '1'; $('c2').textContent = '1';
+    $('status').textContent = 'Programada'; $('status').className = 'pill p-prog'; $('naoConsigo').textContent = 'Alterar data'; $('prazoL').textContent = 'Programada para'; $('prazo').textContent = '11/11/2026'; },
+  async s8(){ cap('✓', 'Pronto! O card vai para "Programadas". Para mudar a data, use "Alterar data"'); await wait(1200); $('alvo').classList.add('sel'); await moveTo('naoConsigo'); },
+  async s9(){ cap(7, 'Depois do serviço: anexe a foto e clique em "Enviar evidências para validação"'); await click('anexar'); await wait(700); await moveTo('enviarEv'); },
+  async s10(){ cap('', 'Dúvidas? Fale com a Central de Manutenção'); $('cur').style.opacity = 0; },
+};
+</script>
+</body></html>

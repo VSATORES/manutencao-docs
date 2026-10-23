@@ -1,0 +1,600 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Arquitetura Manutenção</title>
+<!--
+=====================================================================
+  TEMPLATE · ARQUITETURA DE PROCESSOS DE UM SETOR DO BACKOFFICE
+  Padrão replicado de "Qualidade (Vic)" e "Fornecedores (Henry)".
+  Preencher as áreas marcadas com {{...}} e os arrays TRAILS / LANES
+  / AUTOS no final do arquivo. Nada mais precisa mudar.
+  Autor do modelo: Rayanne Oliveira · BackOffice Franquias
+=====================================================================
+-->
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,600;1,7..72,400&display=swap" rel="stylesheet">
+<style>
+/* padrão institucional Seazone: hero navy, colunas por macroprocesso, popover em hover/click */
+*,*::before,*::after{box-sizing:border-box}
+:root{
+ color-scheme:light;
+ --bg:oklch(96.5% .012 260);--paper:oklch(99.4% .003 250);
+ --ink:oklch(24% .02 255);--ink2:oklch(42% .018 255);--ink3:oklch(58% .014 255);
+ --line:oklch(89% .01 255);--soft:oklch(95% .012 260);
+ --blue:oklch(48% .21 258);--bluebg:oklch(95% .03 258);
+ --teal:oklch(47% .1 200);--tealbg:oklch(95.5% .03 200);
+ --red:oklch(52% .17 27);--redbg:oklch(95.5% .03 27);
+ --amber:oklch(55% .12 70);--amberbg:oklch(95.5% .04 80);
+ --green:oklch(50% .11 155);--greenbg:oklch(95.5% .035 155);
+ --violet:oklch(48% .16 300);--violetbg:oklch(95.5% .03 300);
+ --navy:oklch(19% .05 260);--navybg:oklch(93% .02 260);--coral:oklch(70% .17 32);
+ --hero-fg:oklch(94% .01 260);--hero-muted:oklch(72% .02 260);--hero-line:oklch(35% .04 260);
+ --sans:"Bricolage Grotesque",system-ui,sans-serif;--serif:Literata,Georgia,serif;--mono:ui-monospace,"Cascadia Mono",Consolas,monospace;
+}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font:400 14px/1.5 var(--sans)}
+.code{font-family:var(--mono);font-size:11.5px;font-variant-numeric:tabular-nums}
+
+.hero{background:var(--navy);color:var(--hero-fg);padding-block:24px 36px;padding-inline:24px}
+.hero-inner{max-width:1500px;margin:0 auto}
+.masthead{display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:12px;border-bottom:1px solid var(--hero-line);margin-bottom:24px;padding-bottom:12px}
+.wordmark{font:700 14px/1 var(--sans);letter-spacing:.14em;color:var(--paper);display:flex;align-items:center;gap:12px;text-transform:uppercase;flex-wrap:wrap}
+.wordmark span:not(.sz-logo):not(.sz-house){color:var(--hero-muted);font-weight:500;letter-spacing:.12em}
+.sz-logo{display:inline-flex;align-items:center;gap:2px;font:700 30px/1 var(--sans);letter-spacing:-.04em;text-transform:none;color:currentColor}
+.sz-house{display:inline-block;width:.82em;height:.84em;flex-shrink:0;margin-inline:1px;vertical-align:-.04em}
+.sz-house svg{width:100%;height:100%;display:block}
+.mast-date{font:500 13px/1 var(--sans);color:var(--hero-muted);letter-spacing:.06em;text-transform:uppercase}
+.eyebrow{font:700 12px/1.3 var(--sans);letter-spacing:.08em;text-transform:uppercase;color:var(--coral);display:block}
+h1{font:700 clamp(28px,4vw,44px)/1.06 var(--sans);letter-spacing:-.01em;margin:10px 0 14px;color:var(--paper);text-wrap:balance;max-width:24ch}
+.lede{font:400 17px/1.55 var(--serif);max-width:70ch;color:var(--hero-fg);margin:0}
+.sub{font:700 13px/1.3 var(--sans);letter-spacing:.06em;text-transform:uppercase;color:var(--coral);margin:16px 0 0}
+
+.wrap{max-width:1500px;margin:0 auto;padding-block:24px 56px;padding-inline:24px;display:flex;flex-direction:column;gap:18px}
+.panel{background:var(--paper);border-radius:10px;padding:12px 16px;box-shadow:0 2px 12px oklch(20% .05 260 / .06),0 1px 3px oklch(20% .05 260 / .04)}
+.summary{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px 28px;font-size:13px;color:var(--ink2)}
+.summary .g{display:flex;flex-direction:column;gap:6px;min-width:0}
+.summary .gl{font:700 11px/1 var(--sans);letter-spacing:.09em;text-transform:uppercase;color:var(--ink3)}
+.summary .gv{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:center}
+.summary b{font-variant-numeric:tabular-nums;color:var(--ink);font-size:15px}
+.hint{font-size:12.5px;color:var(--ink3);margin:0}
+
+.tabs{display:flex;gap:2px;border-bottom:2px solid var(--line);padding-inline:4px;margin-top:4px}
+.tab{background:transparent;border:0;padding:10px 18px;font:700 13px/1 var(--sans);letter-spacing:.04em;text-transform:uppercase;color:var(--ink3);cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px;border-radius:0}
+.tab[aria-selected="true"]{color:var(--navy);border-bottom-color:var(--coral)}
+.tab:hover:not([aria-selected="true"]){color:var(--ink2)}
+.tab:focus-visible{outline:2px solid var(--coral);outline-offset:2px;border-radius:4px}
+.tabpanel{display:flex;flex-direction:column;gap:18px}
+.tabpanel[hidden]{display:none}
+
+.scroll{overflow-x:auto;padding-bottom:8px}
+.flow{min-width:1440px;display:flex;flex-direction:column;gap:18px}
+.trail{display:flex;flex-direction:column;gap:10px;border-radius:12px;padding:14px;background:oklch(98% .008 260);border:1px solid var(--line)}
+.trail-h{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+.trail-h .tn{font:700 16px/1.2 var(--sans);color:var(--c)}
+.trail-h .tk{font:700 11px/1 var(--sans);letter-spacing:.09em;text-transform:uppercase;color:var(--paper);background:var(--c);padding:4px 7px;border-radius:4px}
+.trail-h .to{font:400 13px/1.4 var(--serif);color:var(--ink2)}
+.main{display:grid;align-items:start}
+.col{display:flex;flex-direction:column;align-items:stretch}
+.fin{--c:var(--blue);--cs:var(--bluebg)} .fin2{--c:var(--teal);--cs:var(--tealbg)} .ges{--c:var(--navy);--cs:var(--navybg)} .sup{--c:var(--ink2);--cs:var(--soft)}
+.head{background:var(--c);color:var(--paper);border-radius:10px;padding:10px 12px;display:flex;flex-direction:column;gap:4px;text-align:left;border:0;font:inherit;cursor:pointer}
+.head .v{font:700 11px/1 var(--sans);letter-spacing:.09em;text-transform:uppercase;opacity:.8}
+.head .n{font:700 15px/1.2 var(--sans)}
+.head .o{font:400 12px/1.4 var(--serif);opacity:.92}
+.head .e{font-size:11.5px;line-height:1.35;background:oklch(100% 0 0 / .14);border-radius:6px;padding:5px 7px;margin-top:2px}
+.join{height:44px;display:flex;align-items:center;justify-content:center;color:var(--ink3);font:700 18px/1 var(--sans)}
+.join svg{width:100%;height:14px;overflow:visible}
+.join line{stroke:var(--ink3);stroke-width:1.6}
+.join path{fill:var(--ink3)}
+.down{height:16px;display:flex;justify-content:center}
+.down svg{width:10px;height:16px}
+.down line{stroke:var(--c);stroke-width:1.6}
+.down path{fill:var(--c)}
+
+.box{background:var(--paper);border:1.5px solid var(--c);border-radius:8px;padding:8px 10px;display:flex;flex-direction:column;gap:5px;text-align:left;font:inherit;color:inherit;cursor:pointer;width:100%}
+.box:hover,.box:focus-visible,.box[aria-expanded="true"],.head:focus-visible,.chip:hover,.chip:focus-visible,.chip[aria-expanded="true"]{outline:2px solid var(--coral);outline-offset:2px}
+.box .t{font-weight:700;line-height:1.3;display:flex;gap:6px;align-items:baseline}
+.box .t .code{color:var(--c);flex:0 0 auto}
+.box .o{font:400 12px/1.4 var(--serif);color:var(--ink2)}
+.tags{display:flex;flex-wrap:wrap;gap:4px}
+
+.mode,.ia,.ex,.imp,.chk{font:700 10px/1 var(--sans);letter-spacing:.05em;text-transform:uppercase;padding:4px 6px;border-radius:4px;white-space:nowrap}
+.mode.auto{color:var(--green);background:var(--greenbg)}
+.mode.misto{color:var(--amber);background:var(--amberbg)}
+.mode.manual{color:var(--red);background:var(--redbg)}
+.ia{color:var(--violet);background:var(--paper);border:1px solid var(--violet)}
+.ia.i0{color:var(--ink3);border-color:var(--line)}
+.ia.i2{color:var(--paper);background:var(--violet)}
+.ex{color:var(--ink2);background:var(--soft)}
+.imp{color:var(--coral);background:var(--paper);border:1px dashed var(--coral)}
+.chk{color:var(--amber);background:var(--paper);border:1px solid var(--amber)}
+
+.value{background:var(--navy);color:var(--hero-fg);border-radius:10px;padding:12px;font-size:12.5px;display:flex;flex-direction:column;gap:6px;text-align:center}
+.value b{font:700 13px/1.2 var(--sans);color:var(--coral)}
+.value span{color:var(--hero-fg)}
+.value .meta{font-weight:700;color:var(--paper);background:oklch(100% 0 0 / .12);border-radius:6px;padding:4px}
+
+.base{display:grid;grid-template-columns:3fr 1fr;gap:14px}
+.lane{border-radius:12px;background:var(--cs);padding:12px;display:flex;flex-direction:column;gap:10px}
+.lane .lab{font:700 11px/1 var(--sans);letter-spacing:.09em;text-transform:uppercase;color:var(--c)}
+.lane .row{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}
+.lane .grp{display:flex;flex-direction:column;gap:6px;min-width:0}
+.lane .gh{font-weight:700;font-size:13px}
+.lane .gh .code{color:var(--c);margin-right:6px}
+.lane .go{font:400 12px/1.4 var(--serif);color:var(--ink2)}
+.chips{display:flex;flex-direction:column;gap:6px}
+.chip{background:var(--paper);border:1.5px solid var(--c);border-radius:6px;padding:5px 8px;font:inherit;font-size:12.5px;text-align:left;cursor:pointer;color:inherit;display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.chip .code{color:var(--c)}
+.chip .nm{flex:1 1 120px;min-width:0}
+.new{font:700 10px/1 var(--sans);letter-spacing:.05em;text-transform:uppercase;color:var(--paper);background:var(--coral);padding:3px 5px;border-radius:4px}
+.upnote{font-size:12.5px;color:var(--ink3);text-align:center;margin:0}
+.legend{display:flex;flex-wrap:wrap;gap:8px 18px;font-size:12.5px;color:var(--ink2);align-items:center}
+.legend i{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:6px;vertical-align:-1px}
+
+#pop{position:fixed;z-index:20;width:min(380px,calc(100vw - 32px));max-height:min(70vh,560px);overflow:auto;background:var(--paper);border:1.5px solid var(--navy);border-radius:10px;box-shadow:0 12px 32px oklch(20% .05 260 / .22);padding:14px 16px;display:flex;flex-direction:column;gap:10px}
+#pop[hidden]{display:none}
+#pop .ph{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+#pop h3{margin:0;font:700 16px/1.25 var(--sans);text-wrap:balance}
+#pop h3 .code{color:var(--blue);margin-right:6px}
+#pop .x{border:0;background:var(--soft);border-radius:6px;font:700 14px/1 var(--sans);padding:6px 8px;cursor:pointer;color:var(--ink2)}
+#pop .sec{display:flex;flex-direction:column;gap:3px}
+#pop .sl{font:700 10.5px/1 var(--sans);letter-spacing:.09em;text-transform:uppercase;color:var(--ink3)}
+#pop p{margin:0;font:400 13px/1.5 var(--serif)}
+#pop ul{margin:0;padding-left:18px;font:400 13px/1.5 var(--serif)}
+#pop .aud{background:var(--amberbg);border-radius:6px;padding:7px 9px}
+#pop .aud .sl{color:var(--amber)}
+#pop .opp{background:var(--bluebg);border-radius:6px;padding:7px 9px}
+#pop .opp .sl{color:var(--blue)}
+#pop .impb{background:oklch(96% .03 32);border-radius:6px;padding:7px 9px}
+#pop .impb .sl{color:var(--coral)}
+#pop .chkb{border:1px dashed var(--amber);border-radius:6px;padding:7px 9px}
+#pop .chkb .sl{color:var(--amber)}
+#pop .tools{display:flex;flex-wrap:wrap;gap:4px}
+.tool{font-size:11px;line-height:1.2;padding:3px 8px;border-radius:999px;background:var(--soft);border:1px solid var(--line);color:var(--ink2);text-decoration:none}
+a.tool{color:var(--blue);border-color:var(--blue);background:var(--paper)}
+a.tool:hover,a.tool:focus-visible{background:var(--bluebg);outline:none}
+
+.instfoot{margin-top:32px;padding-top:20px;border-top:2px solid var(--ink);display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:16px}
+.instfoot .wm{font:700 14px/1.4 var(--sans);letter-spacing:.14em;color:var(--blue);text-transform:uppercase}
+.instfoot .wm .sz-logo{color:var(--navy);font-size:22px}
+.instfoot .wm>span:not(.sz-logo){display:block;color:var(--ink2);font-weight:500;letter-spacing:.08em;font-size:12px;margin-top:4px}
+.instfoot .who{font-size:13px;color:var(--ink3);text-align:right;line-height:1.6}
+.instfoot .who b{color:var(--ink);font-weight:700;font-size:14px;display:block}
+.autos{display:flex;flex-direction:column;gap:12px}
+.autos-h{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+.autos-h .tn{font:700 16px/1.2 var(--sans);color:var(--violet)}
+.autos-h .to{font:400 13px/1.4 var(--serif);color:var(--ink2)}
+.agrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px}
+.agrp{display:flex;flex-direction:column;gap:8px;min-width:0}
+.agrp .lab{font:700 11px/1 var(--sans);letter-spacing:.09em;text-transform:uppercase;color:var(--violet)}
+.acard{background:var(--paper);border:1.5px solid var(--violet);border-radius:8px;padding:8px 10px;display:flex;flex-direction:column;gap:5px}
+.acard .t{font-weight:700;line-height:1.3;display:flex;gap:6px;align-items:baseline;flex-wrap:wrap}
+.acard .t .code{color:var(--violet)}
+.acard .o{font:400 12px/1.4 var(--serif);color:var(--ink2)}
+.acard .f{font-size:11.5px;color:var(--ink3)}
+.st{font:700 10px/1 var(--sans);letter-spacing:.05em;text-transform:uppercase;padding:4px 6px;border-radius:4px;white-space:nowrap}
+.st.ar{color:var(--green);background:var(--greenbg)} .st.val{color:var(--amber);background:var(--amberbg)} .st.des{color:var(--ink2);background:var(--soft)} .st.dem{color:var(--blue);background:var(--bluebg)}
+.steps{display:flex;flex-wrap:wrap;gap:4px;align-items:center;font-size:11.5px;color:var(--ink3)}
+.stepb{font:700 11px/1 var(--mono);color:var(--blue);background:var(--paper);border:1px solid var(--blue);border-radius:4px;padding:3px 5px;cursor:pointer}
+.stepb:hover,.stepb:focus-visible,.stepb[aria-expanded="true"]{outline:2px solid var(--coral);outline-offset:1px}
+@media (max-width:640px){.wrap,.hero{padding-inline:16px} .instfoot .who{text-align:left} .base{grid-template-columns:1fr}}
+@media (prefers-reduced-motion:no-preference){#pop{animation:pin .12s ease-out}}
+@keyframes pin{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+
+/* ===== v7: aba geral + aba por processo (mesma identidade do template) ===== */
+.urg{--c:var(--red);--cs:var(--redbg)}
+.tabs{overflow-x:auto;scrollbar-width:thin}
+.tab{white-space:nowrap;padding:10px 14px}
+.tab .code{opacity:.75;margin-right:6px}
+.tabsep{flex:0 0 1px;background:var(--line);margin:8px 6px}
+.entry{display:grid;grid-template-columns:minmax(0,1.3fr) auto minmax(0,1fr) auto minmax(0,1.6fr);gap:10px;align-items:center}
+.entry .eb{background:var(--soft);border-radius:8px;padding:10px 12px;font:400 12.5px/1.45 var(--serif);color:var(--ink2)}
+.entry .eb b{display:block;font:700 11px/1 var(--sans);letter-spacing:.09em;text-transform:uppercase;color:var(--ink3);margin-bottom:6px}
+.entry .arr{color:var(--ink3);font:700 18px/1 var(--sans)}
+.entry .outs{display:flex;flex-direction:column;gap:6px}
+.entry .outs a{text-decoration:none}
+@media(max-width:900px){.entry{grid-template-columns:1fr}.entry .arr{transform:rotate(90deg);justify-self:center}}
+.cmp{width:100%;border-collapse:collapse;font-size:13px}
+.cmp th,.cmp td{border-bottom:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+.cmp th{font:700 11px/1.2 var(--sans);letter-spacing:.08em;text-transform:uppercase;color:var(--ink3)}
+.cmp td:first-child{font-weight:700;color:var(--ink2);white-space:nowrap}
+.cmp .h{color:var(--c);font:700 13px/1.2 var(--sans)}
+.ovgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px}
+a.head{text-decoration:none}
+.head .cnt{font:700 11px/1 var(--sans);letter-spacing:.05em;opacity:.85;margin-top:4px}
+.head .io{font:400 12px/1.4 var(--serif);opacity:.92}
+.head .io span{display:block}
+.pmeta{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px 24px;font:400 13px/1.45 var(--serif);color:var(--ink)}
+.pmeta .gl{display:block;font:700 11px/1 var(--sans);letter-spacing:.09em;text-transform:uppercase;color:var(--ink3);margin-bottom:5px}
+.pgrid{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:18px;align-items:start}
+@media(max-width:1000px){.pgrid{grid-template-columns:1fr}}
+.swim{display:grid;gap:0 10px}
+.swim .lh{font:700 11px/1.2 var(--sans);letter-spacing:.09em;text-transform:uppercase;color:var(--c);text-align:center;padding:8px 4px;border-bottom:2px solid var(--c);background:var(--cs);border-radius:6px 6px 0 0}
+.swim .cell{padding:0}
+.swim .cell.ln{border-left:1px dashed var(--line)}
+.swim .cell.first{border-left:none}
+.swim .dn{grid-column:1/-1}
+.stp{cursor:default}
+.stp .n{display:inline-flex;align-items:center;justify-content:center;min-width:20px;height:20px;border-radius:10px;background:var(--c);color:var(--paper);font:700 11px/1 var(--sans);flex:0 0 auto}
+.stp .out{font-size:12px;color:var(--ink2)}
+.stp .out b{color:var(--ink)}
+.stp.dec{border-color:var(--amber);background:var(--amberbg)}
+.stp.dec .n{background:var(--amber)}
+.stp .br{margin:0;padding:0;list-style:none;font:400 12.5px/1.45 var(--serif)}
+.stp .br li{padding-left:12px;text-indent:-12px}.stp .br li::before{content:"• ";color:var(--amber);font-weight:700}
+.stp .pd{font-size:11.5px;color:var(--amber);border-top:1px dashed var(--amber);padding-top:4px}
+.stp a,.side a{color:var(--blue);font-weight:700;text-decoration:none}
+.who{display:none;font:700 10px/1 var(--sans);letter-spacing:.08em;text-transform:uppercase;color:var(--ink3)}
+@media(max-width:760px){.swim{grid-template-columns:1fr!important}.swim .lh,.swim .cell.empty{display:none}.swim .cell.ln{border-left:none}.who{display:block}}
+.side{display:flex;flex-direction:column;gap:12px}
+.side .panel h3{margin:0 0 8px;font:700 11px/1 var(--sans);letter-spacing:.09em;text-transform:uppercase;color:var(--ink3)}
+.side ul{margin:0;padding-left:16px;font:400 13px/1.5 var(--serif)}
+.side li{margin:3px 0}
+.side .acard{margin-bottom:6px}
+.side .warnp{border:1px dashed var(--amber)}
+.side .warnp h3{color:var(--amber)}
+.ptop{display:flex;flex-direction:column;gap:4px}
+.ptop .head{cursor:default}
+</style>
+</head>
+<body>
+
+
+<section class="hero">
+ <div class="hero-inner">
+  <div class="masthead">
+   <div class="wordmark"><span class="sz-logo" role="img" aria-label="Seazone">sea<span class="sz-house"><svg viewBox="0 0 564 575" xmlns="http://www.w3.org/2000/svg" fill="none" aria-hidden="true"><path d="M543.226 178.172L442.93 119.392C443.194 117.952 443.72 116.643 443.72 115.203V26.5752C443.72 11.913 431.743 0 417.001 0H363.562C348.821 0 336.843 11.913 336.843 26.5752V57.6015L300.516 36.3936C285.774 27.6225 266.294 29.0626 252.605 39.1428C252.342 39.2737 252.079 39.2737 251.947 39.4046L20.951 172.543C1.73419 183.932 -6.29474 210.507 5.55122 230.406C17.9237 251.09 45.301 256.588 64.5178 245.199L78.3381 237.213C62.017 269.025 51.7505 305.026 51.7505 344.169C51.7505 406.221 75.7056 467.226 119.799 511.344C137.173 528.624 157.443 543.156 179.555 553.759C196.666 562.007 214.567 568.814 233.257 572.218C258.002 576.669 283.8 574.444 308.808 574.444C335.922 574.444 363.036 574.444 390.018 574.444C414.5 574.444 439.113 574.575 463.99 574.575C470.176 574.575 476.231 573.004 481.759 570.254C488.866 566.72 492.947 562.792 497.685 556.509C502.95 549.57 506.635 541.061 506.635 532.159V252.923C525.062 259.599 547.306 253.839 558.363 235.511C570.34 215.613 562.311 189.038 542.963 177.648L543.226 178.172ZM427.794 348.751C427.794 433.582 370.012 502.573 282.878 502.573C195.745 502.573 131.777 429.131 131.777 344.3C131.777 259.468 195.745 188.776 282.878 188.776C370.012 188.776 427.794 254.232 427.794 338.147V348.751Z" fill="#EB615E"/></svg></span>zone</span><span>· Franquias · Manutenção</span></div>
+   <span class="mast-date">Rascunho v7 · 22/10/2026</span>
+  </div>
+  <span class="eyebrow">Arquitetura de processos</span>
+  <h1>Manutenção</h1>
+  <p class="lede">A Manutenção garante que o imóvel esteja pronto para o hóspede: o urgente resolvido em 24 horas, o conserto do dia a dia feito no prazo, a preventiva feita no mês certo e a franquia com maturidade para cuidar do imóvel. O resultado é menos reserva cancelada, menos desconto e menos comentário negativo por manutenção.</p>
+  <p class="sub">Imóvel liberado, hóspede bem recebido.</p>
+ </div>
+</section>
+
+<div class="wrap">
+  <div class="panel summary" id="summary"></div>
+  <nav class="tabs" role="tablist" aria-label="Processos" id="tabs"></nav>
+  <section class="tabpanel" id="view"></section>
+
+  <div class="legend">
+    <span><span class="mode auto">Automático</span> roda sozinho</span>
+    <span><span class="mode misto">Misto</span> roda sozinho e passa por conferência</span>
+    <span><span class="mode manual">Manual</span> feito pela pessoa</span>
+  </div>
+  <div class="legend">
+    <span><span class="ia i0">Sem IA</span> regra fixa ou trabalho humano</span>
+    <span><span class="ia i1">IA assiste</span> a IA sugere, a pessoa decide</span>
+    <span><span class="ia i2">IA executa</span> a IA decide ou gera sozinha</span>
+  </div>
+  <div class="legend">
+    <span><span class="ex">Sistema</span> automação com regra fixa</span>
+    <span><span class="ex">Agente</span> agente de IA</span>
+    <span><span class="ex">Pessoa</span> franquia, analista, CS ou gerência</span>
+    <span><span class="chk">Validar</span> ponto a confirmar</span>
+    <span><span class="chk" style="color:var(--amber);background:var(--amberbg)">Decisão</span> o caminho muda conforme a resposta</span>
+  </div>
+  <div class="legend">
+    <span><i style="background:var(--red)"></i>Trilha 1 · Manutenção urgente</span>
+    <span><i style="background:var(--blue)"></i>Trilha 2 · Manutenção corretiva</span>
+    <span><i style="background:var(--teal)"></i>Trilha 3 · Manutenção recorrente</span>
+    <span><i style="background:var(--navy)"></i>Trilha 4 · Gestão e acompanhamento da rede</span>
+  </div>
+
+  <footer class="instfoot">
+    <div class="wm"><span class="sz-logo" role="img" aria-label="Seazone">sea<span class="sz-house"><svg viewBox="0 0 564 575" xmlns="http://www.w3.org/2000/svg" fill="none" aria-hidden="true"><path d="M543.226 178.172L442.93 119.392C443.194 117.952 443.72 116.643 443.72 115.203V26.5752C443.72 11.913 431.743 0 417.001 0H363.562C348.821 0 336.843 11.913 336.843 26.5752V57.6015L300.516 36.3936C285.774 27.6225 266.294 29.0626 252.605 39.1428C252.342 39.2737 252.079 39.2737 251.947 39.4046L20.951 172.543C1.73419 183.932 -6.29474 210.507 5.55122 230.406C17.9237 251.09 45.301 256.588 64.5178 245.199L78.3381 237.213C62.017 269.025 51.7505 305.026 51.7505 344.169C51.7505 406.221 75.7056 467.226 119.799 511.344C137.173 528.624 157.443 543.156 179.555 553.759C196.666 562.007 214.567 568.814 233.257 572.218C258.002 576.669 283.8 574.444 308.808 574.444C335.922 574.444 363.036 574.444 390.018 574.444C414.5 574.444 439.113 574.575 463.99 574.575C470.176 574.575 476.231 573.004 481.759 570.254C488.866 566.72 492.947 562.792 497.685 556.509C502.95 549.57 506.635 541.061 506.635 532.159V252.923C525.062 259.599 547.306 253.839 558.363 235.511C570.34 215.613 562.311 189.038 542.963 177.648L543.226 178.172ZM427.794 348.751C427.794 433.582 370.012 502.573 282.878 502.573C195.745 502.573 131.777 429.131 131.777 344.3C131.777 259.468 195.745 188.776 282.878 188.776C370.012 188.776 427.794 254.232 427.794 338.147V348.751Z" fill="#EB615E"/></svg></span>zone</span><span>Franquias · Manutenção</span></div>
+    <div class="who"><b>Vinicius Satores</b>vinicius.satores@seazone.com.br<br>Documento interno · 22/10/2026</div>
+  </footer>
+</div>
+
+<script>
+const ACT = {D:"Áreas que pedem", F:"Franquia", S:"Sistema (Sapron)", A:"Agentes de IA", M:"Analista de Manutenção", C:"CS de Proprietários", Q:"Qualidade", T:"Tecnologia", G:"Gerência (Ray)"};
+const ORDER = ["D","F","S","A","M","C","Q","T","G"];
+const MODE = {auto:"Automático", misto:"Misto", manual:"Manual"};
+const IA = ["Sem IA","IA assiste","IA executa"];
+const EX = {sistema:"Sistema", agente:"Agente", pessoa:"Pessoa"};
+const DEF = {A:{m:"auto",ia:2,ex:"agente"}, S:{m:"auto",ia:0,ex:"sistema"}};
+
+const TRILHAS = [
+ {k:"Trilha 1", cls:"urg",  n:"Manutenção urgente", o:"O que deixa o imóvel sem condição de uso ou põe o hóspede em risco: resolver em 24 horas, com o imóvel bloqueado."},
+ {k:"Trilha 2", cls:"fin",  n:"Manutenção corretiva", o:"O conserto que não impede o uso do imóvel: resolver no prazo de 7 dias, com prova."},
+ {k:"Trilha 3", cls:"fin2", n:"Manutenção recorrente", o:"A preventiva: o item certo, no mês certo, só onde ainda não foi feita."},
+ {k:"Trilha 4", cls:"ges",  n:"Gestão e acompanhamento da rede", o:"O radar da área e o acompanhamento de proprietário, qualidade e franquia."}
+];
+
+/* passo: a=ator · t=título · d=como · s=saída · f=ferramenta · dec=[caminhos] · pd=ponto a validar · m/ia/ex sobrescrevem o padrão */
+const P = [
+ {id:"MP1", tr:0, n:"Manutenção urgente",
+  o:"Resolver em 24 horas o problema que deixa o imóvel sem condição de uso ou põe o hóspede em risco.",
+  ini:"O classificador marca o card como urgente: nota 70 ou mais, ou gatilho duro (gás, choque, sem água, sem energia, hóspede sem acesso).",
+  fim:"Conserto feito, evidência aprovada e imóvel de volta à venda.",
+  dono:"Analista de Manutenção", cad:"24 horas a partir da abertura do card (MGO); recobra em 24h e vira ocorrência em 48h", val:"Menos reserva cancelada",
+  steps:[
+   {a:"A", t:"Marcar o card como urgente", d:"O classificador dá a nota pela lista de urgentes do MGO e a triagem move o card para a coluna Urgente. Duplicata fica marcada.", s:"Card na coluna Urgente.", f:"Classificador e triagem · a cada 15 min"},
+   {a:"S", t:"Abrir o chamado com a franquia", d:"Mensagem com 'Prazo: 24 horas, até dd/mm'. O card aparece na aba Urgente do portal da franquia.", s:"Chamado aberto.", f:"Central de Atividades", pd:"Destaque visual de urgente no portal (vermelho, sirene), pedido da Ray em 19/10."},
+   {a:"F", t:"Bloquear o imóvel", d:"O imóvel sai de venda até o conserto (regra do MGO).", s:"Calendário bloqueado.", f:"Suporte Unificado", m:"manual",ia:0,ex:"pessoa"},
+   {a:"F", t:"O conserto depende do proprietário?", dec:["Sim (acima de R$ 300 ou sem autorização) → sinaliza no card, vai para Programada e segue no MP9","Não → passo 5"], m:"manual",ia:0,ex:"pessoa"},
+   {a:"F", t:"Consertar e anexar a evidência", d:"Foto do serviço feito, nota ou recibo do prestador.", s:"Evidência no card.", f:"Portal da Franquia", m:"manual",ia:0,ex:"pessoa"},
+   {a:"S", t:"A evidência chegou em 24 horas?", dec:["Sim → passo 8","Não → passo 7"]},
+   {a:"S", t:"Recobrar e abrir ocorrência", d:"24 horas sem evidência: recobra a franquia. 48 horas sem resposta, evidência ou finalização: o agente abre a ocorrência (MP10). Depois volta ao passo 5.", s:"Franquia recobrada; ocorrência em 48h.", f:"Lembrete de atraso · agente de ocorrência", m:"auto",ia:1,ex:"sistema", pd:"O Sapron ainda mede o urgente em 1 dia útil (PR #5367); o MGO diz 24 horas."},
+   {a:"A", t:"Validar e auditar a evidência", d:"Validador lê a prova, antifraude confere se a foto é nova, auditor confere o parecer.", s:"Parecer da evidência.", f:"Validador · antifraude · auditor"},
+   {a:"A", t:"A evidência está completa?", dec:["Não → pede o que falta à franquia e volta ao passo 5","Sim → card concluído e passo 10"]},
+   {a:"F", t:"Liberar o imóvel", d:"Devolve o imóvel à venda no mesmo dia.", s:"Calendário liberado.", f:"Suporte Unificado", m:"manual",ia:0,ex:"pessoa", pd:"Quem desbloqueia depois da baixa ainda não está definido."}
+  ],
+  ag:[["Classificador de urgência","ar"],["Triagem automática","ar"],["Verificador de duplicata","ar"],["Validador, antifraude e auditor","ar"],["Lembrete de atraso","ar"],["Agente de ocorrência do urgente","val"]],
+  rot:["Rotina diária de urgentes, primeira coisa do dia (MP8)"],
+  ind:["% de urgentes resolvidos em 24 horas","Tempo médio do urgente","Urgentes que viraram ocorrência"],
+  pend:["Comunicado às franquias só depois de a Rose publicar a seção de urgente no MGO."]},
+
+ {id:"MP2", tr:1, n:"Manutenção corretiva",
+  o:"Consertar no prazo o que não impede o uso do imóvel, com prova de que foi feito.",
+  ini:"O classificador marca o card como não urgente (nota abaixo de 70).",
+  fim:"Card concluído por evidência ou pela despesa lançada.",
+  dono:"Analista de Manutenção", cad:"Prazo de 7 dias; cobrança semanal (quarta, 11h) e lembretes em D+7, D+14 e D+21", val:"Menos desconto por manutenção",
+  steps:[
+   {a:"A", t:"Marcar o card como não urgente", d:"Nota abaixo de 70; a triagem move o card para Não urgente e marca duplicata.", s:"Card na coluna Não urgente.", f:"Classificador e triagem"},
+   {a:"S", t:"Abrir o chamado com prazo de 7 dias", d:"A mensagem de abertura já diz a data.", s:"Chamado aberto.", f:"Central de Atividades"},
+   {a:"F", t:"Dá para fazer no prazo?", dec:["Depende do proprietário → sinaliza no card e segue no MP9","Precisa de mais tempo → passo 4","Sim → passo 5"], m:"manual",ia:0,ex:"pessoa"},
+   {a:"F", t:"Programar com data e motivo", d:"A data combinada vira o novo prazo.", s:"Card em Programada.", f:"Portal da Franquia", m:"manual",ia:0,ex:"pessoa", pd:"Evidência anexada em Programada fica parada."},
+   {a:"F", t:"Consertar e provar", d:"Evidência no card ou despesa lançada no Sapron.", s:"Evidência ou despesa.", f:"Portal · Financeiro do Sapron", m:"manual",ia:0,ex:"pessoa"},
+   {a:"S", t:"Cobrar quem atrasou", d:"Cobrança semanal e lembretes até chegar a prova.", s:"Franquia cobrada.", f:"Lembrete de atraso"},
+   {a:"A", t:"A despesa lançada prova o card?", dec:["Sim (mesmo imóvel e item, até cerca de 2 meses) → card concluído","Não → passo 8"], pd:"Hoje a regra exige despesa igual ao card; afrouxar para imóvel + item (Ray, 19/10)."},
+   {a:"A", t:"Validar e auditar a evidência", d:"Validador, antifraude e auditor.", s:"Parecer da evidência.", f:"Validador · antifraude · auditor"},
+   {a:"A", t:"Qual o resultado?", dec:["Incompleta → pede o que falta e volta ao passo 5","Sinal de fraude → passo 10","Completa → card concluído"]},
+   {a:"M", t:"Revisar o sinal de fraude", d:"Confere a foto suspeita e decide.", s:"Card concluído ou devolvido à franquia.", f:"Aba Agentes de IA", m:"misto",ia:1,ex:"pessoa"}
+  ],
+  ag:[["Classificador e triagem","ar"],["Despesa prova o card","val"],["Validador, antifraude e auditor","ar"],["Lembrete de atraso","ar"]],
+  rot:["Cobrança semanal (quarta, 11h)"],
+  ind:["% concluído no prazo","Lead time médio","Cards fechados pela despesa"],
+  pend:["Quando o imóvel troca de franquia, o card vai junto, com 30 dias de carência no score."]},
+
+ {id:"MP3", tr:2, n:"Priorização do item",
+  o:"Escolher com dados qual item entra no próximo ciclo.",
+  ini:"Cerca de 30 dias antes do próximo ciclo.",
+  fim:"Item decidido com a Ray, com a análise que justifica.",
+  dono:"Analista de Manutenção", cad:"Uma vez por ciclo", val:"Menos comentário negativo",
+  steps:[
+   {a:"M", t:"Levantar os corretivos por item", d:"Cards dos últimos 30 dias por categoria e região.", s:"Volume por item.", f:"Central · Claude", m:"misto",ia:2,ex:"pessoa"},
+   {a:"M", t:"Cruzar com comentários e consultores", d:"Comentários e avaliações de hóspede e apontamentos dos consultores.", s:"Impacto por item.", f:"Data lake · skill comentários × urgência", m:"misto",ia:2,ex:"pessoa"},
+   {a:"M", t:"Montar a proposta", d:"Item, volume, impacto e época do ano (ex.: dedetização com chuva e calor).", s:"Proposta de item.", f:"Claude", m:"manual",ia:1,ex:"pessoa"},
+   {a:"G", t:"A gerência aprova o item?", dec:["Sim → passo 5","Não → ajusta a proposta e volta ao passo 3"], m:"manual",ia:0,ex:"pessoa"},
+   {a:"M", t:"Registrar a decisão", d:"Item, motivo e dados no processo da recorrente.", s:"Decisão registrada; segue no MP4.", f:"Processo recorrente", m:"manual",ia:0,ex:"pessoa"}
+  ],
+  ag:[["Skill comentários × urgência","dem"]], rot:[],
+  ind:["Queda de corretivos do item depois do ciclo"],
+  pend:["19/10: proposta de puxar a dedetização antes do travesseiro."]},
+
+ {id:"MP4", tr:2, n:"Preparação do ciclo",
+  o:"Deixar a base e a rede prontas para executar o item.",
+  ini:"Item decidido no MP3.",
+  fim:"Imóveis elegíveis, prestadores e régua de evidência prontos.",
+  dono:"Analista de Manutenção", cad:"Uma vez por ciclo", val:"Hóspede bem recebido",
+  steps:[
+   {a:"S", t:"Calcular os imóveis elegíveis", d:"Fica fora quem já fez o item na janela, imóvel com menos de 6 meses de operação e imóvel sem o item.", s:"Contagem por imóvel.", f:"Varredura da recorrente", ia:1},
+   {a:"M", t:"Conferir a contagem por franquia", d:"Recontar a regra e olhar os extremos.", s:"Base conferida.", f:"Central · aba Recorrentes", m:"manual",ia:0,ex:"pessoa"},
+   {a:"M", t:"Garantir 2 prestadores por cidade", d:"Prospectar onde faltar.", s:"Prestadores cadastrados.", f:"Hub de Serviços", m:"manual",ia:1,ex:"pessoa"},
+   {a:"T", t:"Definir a régua de evidência do item", d:"O que vale como prova no validador e no auditor.", s:"Régua no ar.", f:"Validador · GitHub", m:"manual",ia:1,ex:"pessoa"},
+   {a:"M", t:"Está tudo pronto?", dec:["Não → ajusta base, prestadores ou régua","Sim → segue no MP5"], m:"manual",ia:0,ex:"pessoa"}
+  ],
+  ag:[["Varredura da recorrente","ar"]], rot:[],
+  ind:["Cidades com 2 prestadores ou mais"], pend:[]},
+
+ {id:"MP5", tr:2, n:"Comunicação e abertura",
+  o:"Avisar a franquia uma semana antes, com os dados, e abrir os cards de uma vez.",
+  ini:"Base pronta no MP4.",
+  fim:"Franquias avisadas e cards do ciclo abertos.",
+  dono:"Analista de Manutenção", cad:"Uma semana antes do ciclo e no dia da abertura", val:"Hóspede bem recebido",
+  steps:[
+   {a:"M", t:"Enviar o comunicado com os dados", d:"Por que o item entrou e a lista de imóveis de cada franquia.", s:"Comunicado enviado.", f:"Canal de avisos · Suporte", m:"manual",ia:1,ex:"pessoa"},
+   {a:"M", t:"Reforçar e alertar", d:"Reforço na quinta e alerta no sábado.", s:"Franquias avisadas.", f:"Canal de avisos", m:"manual",ia:0,ex:"pessoa"},
+   {a:"M", t:"Auditar a base antes do disparo", d:"Recontagem, volume por franquia e texto das mensagens.", s:"Disparo liberado.", f:"Central", m:"manual",ia:0,ex:"pessoa"},
+   {a:"S", t:"Abrir os cards do ciclo", d:"Um card por imóvel elegível, prazo de 15 dias úteis. Quem já tem a despesa do item fecha sozinho.", s:"Cards e chamados abertos.", f:"Regra da recorrente"},
+   {a:"M", t:"A abertura saiu certa?", dec:["Não → corrige e reabre o que falhou","Sim → segue no MP6"], m:"manual",ia:0,ex:"pessoa"}
+  ],
+  ag:[["Varredura da recorrente","ar"]], rot:["Abertura do ciclo (1ª segunda-feira útil)"],
+  ind:["Cards abertos × imóveis elegíveis"], pend:[]},
+
+ {id:"MP6", tr:2, n:"Execução e evidência",
+  o:"Ter o item feito e provado no prazo.",
+  ini:"Card do ciclo aberto no MP5.",
+  fim:"Card concluído, encaminhado ou com exceção registrada.",
+  dono:"Analista de Manutenção", cad:"Durante o ciclo (15 dias úteis); report às sextas, 9h", val:"Menos desconto por manutenção",
+  steps:[
+   {a:"F", t:"Executar e anexar a prova", d:"Foto do serviço, nota ou recibo do prestador.", s:"Evidência no card.", f:"Portal da Franquia", m:"manual",ia:0,ex:"pessoa"},
+   {a:"S", t:"Fechar pela despesa", d:"Se a despesa do item é lançada no imóvel, o card fecha sozinho.", s:"Card concluído pela despesa.", f:"Varredura da recorrente", ia:1},
+   {a:"A", t:"Validar e auditar a evidência", d:"A prova é lida pela régua do item.", s:"Parecer da evidência.", f:"Validador · auditor"},
+   {a:"A", t:"Qual o parecer?", dec:["Completa → card concluído","Incompleta → pede o que falta e volta ao passo 1","Recusa do proprietário → MP9","Imóvel sem o item → baixa e corrige o cadastro"]},
+   {a:"S", t:"Cobrar quem não mandou prova", d:"Lembretes de atraso e report de sexta, 9h.", s:"Franquia cobrada.", f:"Lembrete de atraso"},
+   {a:"M", t:"Registrar exceção combinada", d:"Só pela coordenação (ex.: Blumenau até 04/11).", s:"Exceção com data.", f:"Central", m:"manual",ia:0,ex:"pessoa"}
+  ],
+  ag:[["Validador e auditor","ar"],["Varredura da recorrente","ar"],["Lembrete de atraso","ar"]], rot:["Report do ciclo (sexta, 9h)"],
+  ind:["% concluído com evidência","Cards sem resposta da franquia"],
+  pend:["Ciclo de ar-condicionado (prazo 22/10): 627 de 1.147 concluídos com evidência e 317 sem nenhuma resposta (API do Sapron, 22/10)."]},
+
+ {id:"MP7", tr:2, n:"Fechamento do ciclo",
+  o:"Fechar o ciclo, ajudar quem ficou para trás e aprender antes do próximo.",
+  ini:"Prazo do ciclo vencido.",
+  fim:"Balanço feito, pendências com dono e ajustes decididos.",
+  dono:"Analista de Manutenção", cad:"No fim de cada ciclo", val:"Menos comentário negativo",
+  steps:[
+   {a:"M", t:"Puxar o balanço", d:"Gerados, concluídos, em aprovação e sem resposta, por franquia.", s:"Relatório do ciclo.", f:"Central · Claude", m:"misto",ia:2,ex:"pessoa"},
+   {a:"M", t:"Separar o que faltou por motivo", d:"Sem resposta, agendado sem prova, sem o item, distrato, recusa do proprietário.", s:"Lista por motivo.", f:"Claude", m:"misto",ia:2,ex:"pessoa"},
+   {a:"M", t:"Encaminhar cada grupo", d:"Recusa → MP9; sem o item → corrige o cadastro; adiou com data → reprograma.", s:"Pendências com dono.", f:"Central · Suporte", m:"manual",ia:1,ex:"pessoa"},
+   {a:"M", t:"Conversar com a franquia com pendência", d:"O que trava: proprietário, dinheiro ou falta de prestador? Combina meta.", s:"Meta registrada.", f:"Google Meet", m:"manual",ia:1,ex:"pessoa"},
+   {a:"M", t:"A franquia resolveu?", dec:["Não → MP11 Franquias críticas","Sim → fecha o ciclo da franquia"], m:"manual",ia:0,ex:"pessoa"},
+   {a:"G", t:"Retro e ajuste do próximo ciclo", d:"Cadência, datas e régua de evidência.", s:"Decisões registradas no processo.", f:"Processo recorrente", m:"manual",ia:0,ex:"pessoa"}
+  ],
+  ag:[], rot:[], ind:["% do ciclo concluído","Franquias com pendência no fechamento"], pend:[]},
+
+ {id:"MP8", tr:3, n:"Controle de manutenção",
+  o:"Saber todo dia se as áreas estão mandando o que deveriam e se os agentes estão decidindo certo.",
+  ini:"Todo dia útil (rotina) e toda semana (monitoramento).",
+  fim:"Desvio avisado ao dono e agentes conferidos.",
+  dono:"Analista de Manutenção", cad:"Diária e semanal", val:"Hóspede bem recebido",
+  steps:[
+   {a:"D", t:"As áreas mandam os pedidos", d:"Danos de hóspede, Suporte, comentários, consultores, UTI, Implantação, migração, limpeza e a própria franquia. Entrada não é processo da Manutenção: aqui ela é vigiada.", s:"Cards na Central.", f:"Central · ponte do Suporte · integração UTI", m:"misto",ia:0,ex:"pessoa"},
+   {a:"M", t:"Começar o dia pelos urgentes e travas", d:"Urgentes vencendo e travas no proprietário ainda não acionadas.", s:"Lista do dia.", f:"Central", m:"manual",ia:0,ex:"pessoa"},
+   {a:"A", t:"Comparar o volume de cada entrada", d:"Com o histórico de 1 mês por origem.", s:"Variação por entrada.", f:"Monitor de entradas", ia:1},
+   {a:"A", t:"Caiu além da meta?", dec:["Sim (ex.: 20% abaixo do habitual) → passo 5","Não → segue o monitoramento"], ia:1, pd:"Definir a meta de variação por entrada (Ray citou 20%)."},
+   {a:"M", t:"Avisar o dono da entrada", d:"'Danos 10% abaixo do habitual esta semana: aconteceu algo?'", s:"Dono acionado.", f:"Slack", m:"manual",ia:0,ex:"pessoa"},
+   {a:"M", t:"Conferir os agentes", d:"Pulso semanal de cada agente e auditoria por amostra.", s:"Agentes conferidos.", f:"Aba Agentes · Claude", m:"misto",ia:2,ex:"pessoa"},
+   {a:"M", t:"Algum agente parado ou errando?", dec:["Sim → corrige com a Tecnologia","Não → segue"], m:"manual",ia:0,ex:"pessoa"}
+  ],
+  ag:[["Monitor de entradas","des"],["Heartbeat dos agentes","dem"]], rot:["Rotina diária de urgentes e travas","Monitoramento semanal das entradas"],
+  ind:["Entradas fora da faixa","Agentes com pulso em dia"], pend:[]},
+
+ {id:"MP9", tr:3, n:"Adequação com o proprietário",
+  o:"Destravar o conserto que depende do proprietário autorizar ou pagar.",
+  ini:"Card urgente, corretivo ou recorrente travado porque o proprietário não autoriza, não paga ou recusa.",
+  fim:"Decisão do proprietário registrada e card de volta ao processo de origem, reprogramado ou fechado.",
+  dono:"Analista de Manutenção + CS de Proprietários", cad:"Diária (filtro) e semanal (escalonamento)", val:"Menos reserva cancelada",
+  steps:[
+   {a:"F", t:"Sinalizar a trava no card", d:"Responsabilidade 'proprietário' e print da conversa.", s:"Card sinalizado.", f:"Portal da Franquia", m:"manual",ia:0,ex:"pessoa"},
+   {a:"M", t:"Filtrar as travas ainda não acionadas", d:"Faz parte da rotina do dia (MP8).", s:"Lista de travas novas.", f:"Central", m:"manual",ia:0,ex:"pessoa"},
+   {a:"M", t:"Tem print do proprietário?", dec:["Não → pede o print à franquia; sem print a recusa não vale","Sim → passo 4"], m:"manual",ia:0,ex:"pessoa", pd:"Prazo para a franquia mandar o print (proposta: 5 dias úteis)."},
+   {a:"M", t:"Abrir o chamado ao CS", d:"Suporte → Proprietários → Manutenção e Adequação do Imóvel, com a frase do proprietário, o risco e o link do card.", s:"Chamado no Suporte.", f:"Suporte Unificado", m:"manual",ia:1,ex:"pessoa"},
+   {a:"M", t:"Marcar o card e avisar a franquia", d:"Card 'CS proprietário acionado' e mensagem no card com o link do chamado.", s:"Franquia avisada.", f:"Central", m:"manual",ia:0,ex:"pessoa", pd:"Marcação 'CS proprietário acionado' ainda a criar na Central."},
+   {a:"C", t:"Falar com o proprietário", d:"Registra a decisão e que ele está ciente do risco: sem o serviço, o custo e a avaliação ruim ficam com ele.", s:"Resposta no chamado.", f:"Suporte Unificado", m:"manual",ia:0,ex:"pessoa"},
+   {a:"C", t:"O que o proprietário decidiu?", dec:["Autorizou → volta ao processo de origem (MP1, MP2 ou MP6)","Adiou com data → card reprogramado","Recusou → passo 8","Sem resposta do CS em uma semana → leva à Ray"], m:"manual",ia:0,ex:"pessoa"},
+   {a:"M", t:"Fechar como contestado", d:"A recusa comprovada não conta contra a franquia; o imóvel volta no próximo ciclo.", s:"Card fechado.", f:"Central", m:"manual",ia:0,ex:"pessoa", pd:"Regra proposta em 22/10, a decidir."}
+  ],
+  ag:[["Aviso ao CS de Proprietários","des"]], rot:["Rotina diária de travas (MP8)"],
+  ind:["Travas acionadas no mesmo dia","Tempo até a decisão do proprietário","Imóveis bloqueados por trava"],
+  pend:["22/10: 9 recusas do ciclo de ar-condicionado encaminhadas assim (8 chamados novos e 1 comentário)."]},
+
+ {id:"MP10", tr:3, n:"Ocorrências de manutenção",
+  o:"Transformar o desvio de manutenção em ocorrência para a franquia, junto com a Qualidade.",
+  ini:"Card que se enquadra no critério (ex.: urgente sem resposta em 48 horas).",
+  fim:"Ocorrência registrada e refletida no score.",
+  dono:"Analista de Manutenção + Qualidade (Vick)", cad:"Diária", val:"Menos comentário negativo",
+  steps:[
+   {a:"A", t:"Achar o card no critério", d:"Urgente sem resposta em 48 horas; manutenção vinda de comentário negativo.", s:"Lista do dia.", f:"Agente de ocorrência"},
+   {a:"A", t:"Montar a ocorrência", d:"Link do card e a seção do MGO que foi descumprida.", s:"Rascunho da ocorrência.", f:"Agente de ocorrência"},
+   {a:"Q", t:"A ocorrência está correta?", dec:["Não → descarta e ajusta o critério","Sim → passo 4"], m:"manual",ia:0,ex:"pessoa"},
+   {a:"Q", t:"Registrar a ocorrência", d:"Para a franquia.", s:"Ocorrência aberta.", f:"Ocorrências", m:"manual",ia:0,ex:"pessoa", pd:"Destino das ocorrências na Central de Qualidade ainda a definir."},
+   {a:"S", t:"Refletir no score", d:"A ocorrência pesa na nota mensal da franquia (MP11).", s:"Score atualizado.", f:"Score da franquia", pd:"Falta acesso às Ocorrências para o score."}
+  ],
+  ag:[["Agente de ocorrência do urgente","val"]], rot:[],
+  ind:["Ocorrências de manutenção no mês"], pend:["O agente está em sombra desde 20/10: conferir a amostra antes de liberar."]},
+
+ {id:"MP11", tr:3, n:"Franquias críticas",
+  o:"Identificar a franquia crítica em manutenção e ajudá-la antes da UTI.",
+  ini:"Score do mês (dia 10) ou franquia vinda do fechamento do ciclo (MP7).",
+  fim:"Franquia fora da faixa ou levada à UTI.",
+  dono:"Analista de Manutenção", cad:"Semanal; fechamento mensal no dia 10", val:"Menos reserva cancelada",
+  steps:[
+   {a:"S", t:"Calcular o score", d:"Lead time, SLA, reincidência e volume, toda segunda.", s:"Nota por franquia.", f:"Aba do score"},
+   {a:"M", t:"Triar pelas faixas", d:"5 sinais por franquia.", s:"Faixa de cada franquia.", f:"Skill recuperação de franquias", m:"misto",ia:2,ex:"pessoa"},
+   {a:"M", t:"Está em Recuperação ou Crítica?", dec:["Sim → passo 4","Não → acompanha no mês seguinte"], m:"manual",ia:0,ex:"pessoa"},
+   {a:"M", t:"Call de 15 minutos com a franquia", d:"O que trava: proprietário, dinheiro ou prestador?", s:"Diagnóstico.", f:"Google Meet", m:"manual",ia:1,ex:"pessoa"},
+   {a:"M", t:"Combinar o plano", d:"Plano · Ação · Resultado da semana.", s:"Plano registrado.", f:"Registro da triagem", m:"manual",ia:1,ex:"pessoa"},
+   {a:"M", t:"Saiu da faixa no mês?", dec:["Sim → encerra o acompanhamento","Não → passo 7"], m:"manual",ia:0,ex:"pessoa"},
+   {a:"G", t:"Levar à UTI", d:"Com o histórico da manutenção.", s:"Caso na UTI.", f:"UTI de Franquias", m:"manual",ia:0,ex:"pessoa"}
+  ],
+  ag:[["Score da franquia","val"]], rot:["Score mensal (dia 10)","Triagem semanal"],
+  ind:["Franquias na faixa Crítica","Franquias que saíram da faixa"], pend:["Legenda de cada item na aba do score."]}
+];
+
+const ST = {ar:"No ar", val:"Em validação", des:"Em desenho", dem:"Sob demanda"};
+const e = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const mp = s => e(s).replace(/MP\d+/g, m => P.some(p=>p.id===m) ? `<a href="#${m}">${m}</a>` : m);
+const st = s => Object.assign({m:"manual",ia:0,ex:"pessoa"}, DEF[s.a]||{}, Object.fromEntries(["m","ia","ex"].filter(k=>k in s).map(k=>[k,s[k]])));
+const tr = p => TRILHAS[p.tr];
+const plink = id => { const p = P.find(x=>x.id===id); return `<a href="#${id}">${id} ${e(p.n)}</a>`; };
+
+function summary(){
+  const all = P.flatMap(p=>p.steps), acts = all.filter(s=>!s.dec), cnt = f => all.filter(f).length;
+  document.getElementById("summary").innerHTML =
+   `<div class="g"><span class="gl">Arquitetura</span><span class="gv"><span><b>${P.length}</b> processos em ${TRILHAS.length} trilhas</span><span><b>${acts.length}</b> atividades</span><span><b>${all.length-acts.length}</b> decisões</span></span></div>`+
+   `<div class="g"><span class="gl">Execução</span><span class="gv">${Object.keys(MODE).map(k=>`<span><span class="mode ${k}">${MODE[k]}</span> <b>${cnt(s=>st(s).m===k)}</b></span>`).join("")}</span></div>`+
+   `<div class="g"><span class="gl">Uso de IA</span><span class="gv">${[0,1,2].map(i=>`<span><span class="ia i${i}">${IA[i]}</span> <b>${cnt(s=>st(s).ia===i)}</b></span>`).join("")}</span></div>`+
+   `<div class="g"><span class="gl">Quem executa · a validar</span><span class="gv">${Object.keys(EX).map(k=>`<span><span class="ex">${EX[k]}</span> <b>${cnt(s=>st(s).ex===k)}</b></span>`).join("")}<span><span class="chk">Validar</span> <b>${cnt(s=>s.pd)+P.reduce((n,p)=>n+p.pend.length,0)}</b></span></span></div>`;
+}
+
+function tabs(cur){
+  let h = `<button class="tab" type="button" role="tab" data-id="geral" aria-selected="${cur==="geral"}">Todos os processos</button>`;
+  TRILHAS.forEach((t,i) => {
+    h += `<span class="tabsep" aria-hidden="true"></span>`;
+    P.filter(p=>p.tr===i).forEach(p => h += `<button class="tab" type="button" role="tab" data-id="${p.id}" aria-selected="${cur===p.id}"><span class="code">${p.id}</span>${e(p.n)}</button>`);
+  });
+  const nav = document.getElementById("tabs"); nav.innerHTML = h;
+  nav.querySelectorAll(".tab").forEach(b => b.onclick = () => { location.hash = b.dataset.id; });
+  const on = nav.querySelector('[aria-selected="true"]'); if (on) on.scrollIntoView({block:"nearest",inline:"center"});
+}
+
+function geral(){
+  const head = p => { const t = tr(p), acts = p.steps.filter(s=>!s.dec).length, decs = p.steps.length-acts;
+    return `<a class="head ${t.cls}" href="#${p.id}"><span class="v">${p.id}</span><span class="n">${e(p.n)}</span><span class="o">${e(p.o)}</span>
+      <span class="e"><b>Começa:</b> ${e(p.ini)}<br><b>Termina:</b> ${e(p.fim)}</span><span class="cnt">${acts} atividades · ${decs} decisões →</span></a>`; };
+  let h = `<p class="hint">Cada processo tem a sua aba com a sequência de atividades, quem faz cada uma e as decisões. Clique em um processo para abrir.</p>`;
+  h += `<section class="panel"><div class="autos-h" style="margin-bottom:10px"><span class="tn" style="color:var(--navy)">Como um pedido de manutenção chega</span><span class="to">Entrada não é processo da Manutenção: o volume de cada uma é vigiado no ${plink("MP8")}.</span></div>
+    <div class="entry"><div class="eb"><b>Quem pede</b>Danos de hóspede, Suporte Unificado, comentários, consultores, UTI, Implantação, migração, limpeza e a própria franquia.</div><span class="arr">→</span>
+    <div class="eb"><b>Classificador e triagem</b>Nota de 0 a 100 pela lista de urgentes do MGO, a cada 15 minutos.</div><span class="arr">→</span>
+    <div class="outs"><a class="head urg" href="#MP1"><span class="v">Nota 70 ou mais</span><span class="n">MP1 Manutenção urgente</span></a><a class="head fin" href="#MP2"><span class="v">Nota abaixo de 70</span><span class="n">MP2 Manutenção corretiva</span></a>
+    <a class="head fin2" href="#MP3"><span class="v">Não vem de pedido: nasce do ciclo</span><span class="n">MP3 a MP7 Manutenção recorrente</span></a></div></div></section>`;
+  h += `<section class="panel" style="overflow-x:auto"><table class="cmp"><thead><tr><th></th><th class="urg"><span class="h">Urgente</span></th><th class="fin"><span class="h">Corretiva</span></th><th class="fin2"><span class="h">Recorrente</span></th></tr></thead><tbody>
+    <tr><td>O que é</td><td>Imóvel sem condição de uso ou hóspede em risco</td><td>Conserto que não impede o uso do imóvel</td><td>Preventiva de um item escolhido para o ciclo</td></tr>
+    <tr><td>Como nasce</td><td>Pedido com nota 70 ou mais</td><td>Pedido com nota abaixo de 70</td><td>Abertura do ciclo, um card por imóvel elegível</td></tr>
+    <tr><td>Prazo</td><td>24 horas</td><td>7 dias (pode ser programado)</td><td>15 dias úteis</td></tr>
+    <tr><td>Imóvel</td><td>Bloqueado até resolver</td><td>Segue à venda</td><td>Segue à venda</td></tr>
+    <tr><td>Se atrasar</td><td>Recobra em 24h e vira ocorrência em 48h</td><td>Cobrança semanal e lembretes D+7, D+14, D+21</td><td>Lembretes e conversa no fechamento do ciclo</td></tr>
+    <tr><td>Se depende do proprietário</td><td colspan="3">Vai para o ${plink("MP9")}, com o CS de Proprietários</td></tr></tbody></table></section>`;
+  TRILHAS.forEach((t,i) => {
+    h += `<section class="trail ${t.cls}"><div class="trail-h"><span class="tk">${t.k}</span><span class="tn">${e(t.n)}</span><span class="to">${e(t.o)}</span></div><div class="ovgrid">${P.filter(p=>p.tr===i).map(head).join("")}</div></section>`;
+  });
+  h += `<section class="panel"><div class="autos-h" style="margin-bottom:8px"><span class="tn" style="color:var(--navy)">Como os processos se ligam</span></div><ul style="margin:0;padding-left:18px;font:400 13px/1.6 var(--serif)">
+    <li>${plink("MP1")}, ${plink("MP2")} e ${plink("MP6")} levam ao ${plink("MP9")} tudo o que depende do proprietário; o card volta ao processo de origem quando ele decide.</li>
+    <li>${plink("MP1")}: urgente sem resposta em 48 horas vira ocorrência no ${plink("MP10")}.</li>
+    <li>${plink("MP3")} → ${plink("MP4")} → ${plink("MP5")} → ${plink("MP6")} → ${plink("MP7")} formam um ciclo da recorrente.</li>
+    <li>${plink("MP7")} e ${plink("MP10")} alimentam o ${plink("MP11")}; só vai para a UTI quem não sai da faixa.</li>
+    <li>${plink("MP8")} vigia as entradas e confere os agentes de todos os processos.</li></ul></section>`;
+  return h;
+}
+
+function proc(p){
+  const t = tr(p);
+  const lanes = ORDER.filter(a => p.steps.some(s=>s.a===a));
+  let fl = `<div class="swim" style="grid-template-columns:repeat(${lanes.length},minmax(0,1fr))">` + lanes.map(a=>`<div class="lh">${e(ACT[a])}</div>`).join("");
+  p.steps.forEach((s,i) => {
+    if (i) fl += `<div class="dn"><div class="down"><svg viewBox="0 0 10 16" aria-hidden="true"><line x1="5" y1="0" x2="5" y2="10"/><path d="M1 9 L5 16 L9 9 Z"/></svg></div></div>`;
+    else fl += `<div class="dn" style="height:10px"></div>`;
+    const x = st(s);
+    lanes.forEach((a,j) => {
+      if (a !== s.a) { fl += `<div class="cell ln empty${j?"":" first"}"></div>`; return; }
+      const tags = `<span class="tags">${s.dec?`<span class="chk" style="color:var(--amber);background:var(--amberbg)">Decisão</span>`:""}<span class="mode ${x.m}">${MODE[x.m]}</span><span class="ia i${x.ia}">${IA[x.ia]}</span><span class="ex">${EX[x.ex]}</span>${s.pd?`<span class="chk">Validar</span>`:""}</span>`;
+      const body = s.dec
+        ? `<ul class="br">${s.dec.map(d=>`<li>${mp(d)}</li>`).join("")}</ul>`
+        : `${s.d?`<span class="o">${mp(s.d)}</span>`:""}${s.s?`<span class="out"><b>Saída:</b> ${mp(s.s)}</span>`:""}${s.f?`<span><span class="tool">${e(s.f)}</span></span>`:""}`;
+      fl += `<div class="cell ln${j?"":" first"}"><div class="box stp${s.dec?" dec":""}"><span class="who">${e(ACT[a])}</span><span class="t"><span class="n">${i+1}</span>${e(s.t)}</span>${body}${tags}${s.pd?`<span class="pd">A validar: ${e(s.pd)}</span>`:""}</div></div>`;
+    });
+  });
+  fl += `</div>`;
+  const ul = (arr, vazio) => arr.length ? `<ul>${arr.map(x=>`<li>${mp(x)}</li>`).join("")}</ul>` : `<p class="hint">${vazio}</p>`;
+  const liga = [...new Set(p.steps.flatMap(s => [s.d,s.s,...(s.dec||[])].join(" ").match(/MP\d+/g)||[]).concat((p.ini.match(/MP\d+/g)||[])))].filter(x => x!==p.id && P.some(q=>q.id===x));
+  return `<div class="ptop"><div class="head ${t.cls}"><span class="v">${t.k} · ${e(t.n)} · ${p.id}</span><span class="n" style="font-size:22px">${e(p.n)}</span><span class="o" style="font-size:14px">${e(p.o)}</span></div></div>
+   <section class="panel pmeta"><div><span class="gl">Começa quando</span>${mp(p.ini)}</div><div><span class="gl">Termina quando</span>${mp(p.fim)}</div><div><span class="gl">Dono</span>${e(p.dono)}</div><div><span class="gl">Cadência e prazo</span>${e(p.cad)}</div><div><span class="gl">Valor que entrega</span>${e(p.val)}</div></section>
+   <div class="pgrid ${t.cls}"><section class="panel"><div class="autos-h" style="margin-bottom:12px"><span class="tn" style="color:var(--c)">Sequência de atividades</span><span class="to">De cima para baixo; cada coluna é quem faz.</span></div><div style="overflow-x:auto">${fl}</div></section>
+   <aside class="side">
+     <section class="panel"><h3>Agentes e automações</h3>${p.ag.length?p.ag.map(([n,s])=>`<div class="acard"><span class="t">${e(n)} <span class="st ${s}">${ST[s]}</span></span></div>`).join(""):`<p class="hint">Nenhum.</p>`}</section>
+     <section class="panel"><h3>Rotinas fixas</h3>${ul(p.rot,"Nenhuma.")}</section>
+     <section class="panel"><h3>Indicadores</h3>${ul(p.ind,"A definir.")}</section>
+     ${liga.length?`<section class="panel"><h3>Liga com</h3><ul>${liga.map(x=>`<li>${plink(x)}</li>`).join("")}</ul></section>`:""}
+     ${p.pend.length?`<section class="panel warnp"><h3>Notas e pontos a validar</h3>${ul(p.pend,"")}</section>`:""}
+   </aside></div>`;
+}
+
+function render(){
+  const id = (location.hash||"#geral").slice(1), p = P.find(x=>x.id===id);
+  tabs(p ? p.id : "geral");
+  document.getElementById("view").innerHTML = p ? proc(p) : geral();
+  window.scrollTo({top: p ? document.getElementById("tabs").offsetTop - 8 : 0});
+}
+summary();
+window.addEventListener("hashchange", render);
+render();
+</script>
+
+</body>
+</html>

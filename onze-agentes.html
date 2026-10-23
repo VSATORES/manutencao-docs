@@ -1,0 +1,655 @@
+<title>Onze Agentes da Manutenção</title>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap">
+<style>
+  :root {
+    --paper: #eef0f2;
+    --surface: #f7f8f9;
+    --surface-2: #e6e9ec;
+    --ink: #151b22;
+    --ink-2: #3d4854;
+    --ink-3: #6b7683;
+    --rule: #d3d8dd;
+    --rule-strong: #b6bec6;
+    --accent: #1f5771;
+    --accent-soft: #dbe6ec;
+    --amber: #8a5d0e;
+    --amber-soft: #f2e6cc;
+    --rust: #97403a;
+    --rust-soft: #f0dcda;
+    --moss: #336248;
+    --moss-soft: #dce8e0;
+    --shadow: 0 1px 0 rgba(21, 27, 34, .04);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --paper: #10151a;
+      --surface: #161d24;
+      --surface-2: #1b232b;
+      --ink: #e8ecef;
+      --ink-2: #b3bdc6;
+      --ink-3: #7d8996;
+      --rule: #28323b;
+      --rule-strong: #3a4650;
+      --accent: #86b9d2;
+      --accent-soft: #172c38;
+      --amber: #d9a94e;
+      --amber-soft: #33280f;
+      --rust: #d98a80;
+      --rust-soft: #35201d;
+      --moss: #7fb394;
+      --moss-soft: #17281e;
+      --shadow: none;
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper: #10151a;
+    --surface: #161d24;
+    --surface-2: #1b232b;
+    --ink: #e8ecef;
+    --ink-2: #b3bdc6;
+    --ink-3: #7d8996;
+    --rule: #28323b;
+    --rule-strong: #3a4650;
+    --accent: #86b9d2;
+    --accent-soft: #172c38;
+    --amber: #d9a94e;
+    --amber-soft: #33280f;
+    --rust: #d98a80;
+    --rust-soft: #35201d;
+    --moss: #7fb394;
+    --moss-soft: #17281e;
+    --shadow: none;
+  }
+
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: "Source Serif 4", Georgia, "Times New Roman", serif;
+    font-size: 17px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 60rem; margin: 0 auto; padding: 3rem 1.5rem 5rem; }
+
+  .eyebrow {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: .72rem;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+  }
+  h1 {
+    font-family: Archivo, "Helvetica Neue", Arial, sans-serif;
+    font-weight: 700;
+    font-size: clamp(2.1rem, 6vw, 3.2rem);
+    line-height: 1.03;
+    letter-spacing: -.02em;
+    text-wrap: balance;
+    margin: .5rem 0 0;
+  }
+  .standfirst {
+    max-width: 34em;
+    font-size: 1.12rem;
+    color: var(--ink-2);
+    margin: 1rem 0 0;
+  }
+
+  .tally {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0;
+    margin: 2.5rem 0 0;
+    border: 1px solid var(--rule);
+    border-radius: 3px;
+    background: var(--surface);
+    box-shadow: var(--shadow);
+  }
+  .tally div {
+    flex: 1 1 8rem;
+    padding: .9rem 1.1rem;
+    border-right: 1px solid var(--rule);
+  }
+  .tally div:last-child { border-right: 0; }
+  .tally b {
+    display: block;
+    font-family: Archivo, sans-serif;
+    font-weight: 700;
+    font-size: 1.7rem;
+    font-variant-numeric: tabular-nums;
+    line-height: 1.1;
+  }
+  .tally span {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: .7rem;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+  }
+  .t-none b { color: var(--rust); }
+  .t-doing b { color: var(--amber); }
+  .t-done b { color: var(--ink-3); }
+
+  .note {
+    margin: 2.2rem 0 0;
+    padding: 1rem 1.2rem;
+    border-left: 3px solid var(--accent);
+    background: var(--accent-soft);
+    font-size: 1rem;
+    color: var(--ink-2);
+    border-radius: 0 3px 3px 0;
+  }
+  .note strong { color: var(--ink); }
+
+  .group { margin-top: 3.5rem; }
+  .group-head {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: .3rem;
+    padding-bottom: .8rem;
+    border-bottom: 2px solid var(--rule-strong);
+  }
+  .group-head h2 {
+    font-family: Archivo, sans-serif;
+    font-weight: 600;
+    font-size: 1.28rem;
+    letter-spacing: -.01em;
+    margin: 0;
+  }
+  .group-head p { margin: 0; color: var(--ink-3); font-size: .98rem; max-width: 46em; }
+
+  .item {
+    padding: 1.6rem 0;
+    border-bottom: 1px solid var(--rule);
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: .7rem;
+  }
+  .item-top {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: .6rem .9rem;
+  }
+  .item-top h3 {
+    font-family: Archivo, sans-serif;
+    font-weight: 600;
+    font-size: 1.08rem;
+    margin: 0;
+    flex: 1 1 20rem;
+    text-wrap: balance;
+  }
+  .pill {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: .68rem;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    padding: .22rem .5rem;
+    border-radius: 2px;
+    white-space: nowrap;
+  }
+  .p-none { color: var(--rust); background: var(--rust-soft); }
+  .p-doing { color: var(--amber); background: var(--amber-soft); }
+  .p-code { color: var(--moss); background: var(--moss-soft); }
+
+  .item p { margin: 0; }
+  .item .what { color: var(--ink); }
+  .facts { display: grid; gap: .45rem; margin: 0; }
+  .fact {
+    display: grid;
+    grid-template-columns: 8.5rem 1fr;
+    gap: .2rem .9rem;
+    font-size: .95rem;
+    color: var(--ink-2);
+  }
+  .fact dt {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: .68rem;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    padding-top: .28rem;
+  }
+  .fact dd { margin: 0; }
+  .fact dd code, .what code, .note code, .foot code {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: .84em;
+    background: var(--surface-2);
+    padding: .08em .32em;
+    border-radius: 2px;
+  }
+  .flag { color: var(--rust); }
+  .flag dt { color: var(--rust); }
+
+  .foot {
+    margin-top: 4rem;
+    padding-top: 1.6rem;
+    border-top: 2px solid var(--rule-strong);
+    font-size: .95rem;
+    color: var(--ink-2);
+  }
+  .foot h2 {
+    font-family: Archivo, sans-serif;
+    font-weight: 600;
+    font-size: 1.15rem;
+    margin: 0 0 .6rem;
+    color: var(--ink);
+  }
+  .foot p { margin: 0 0 .8rem; max-width: 46em; }
+  .sources {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: .74rem;
+    line-height: 1.7;
+    color: var(--ink-3);
+    letter-spacing: .01em;
+  }
+
+  /* ---- lógica do primeiro agente ---- */
+  .spec { margin-top: 3.5rem; }
+  .spec > .group-head { margin-bottom: 1.8rem; }
+  .figure-wrap { overflow-x: auto; padding-bottom: .4rem; }
+  figure { margin: 0; min-width: 44rem; }
+  figure svg { max-width: 100%; height: auto; display: block; }
+  figcaption {
+    font-size: .9rem;
+    color: var(--ink-3);
+    margin-top: .7rem;
+    max-width: 44em;
+  }
+  .dg-b { fill: var(--surface); stroke: var(--rule-strong); stroke-width: 1; }
+  .dg-b.key { stroke: var(--accent); stroke-width: 1.6; }
+  .dg-b.soft { fill: var(--surface-2); }
+  .dg-b.warn { fill: none; stroke: var(--rust); stroke-dasharray: 5 4; }
+  .dg-t { fill: var(--ink); font-family: Archivo, sans-serif; font-size: 13px; font-weight: 600; }
+  .dg-t.key { fill: var(--accent); }
+  .dg-t.warn { fill: var(--rust); }
+  .dg-s { fill: var(--ink-3); font-family: "IBM Plex Mono", monospace; font-size: 10.5px; }
+  .dg-l { stroke: var(--rule-strong); stroke-width: 1.4; fill: none; }
+  .dg-l.key { stroke: var(--accent); stroke-width: 1.8; }
+  .dg-l.warn { stroke: var(--rust); stroke-dasharray: 4 4; stroke-width: 1.2; }
+  .dg-lab { fill: var(--ink-3); font-family: "IBM Plex Mono", monospace; font-size: 10px; letter-spacing: .04em; text-transform: uppercase; }
+  .dg-lab.key { fill: var(--accent); }
+  .dg-head { fill: var(--rule-strong); }
+  .dg-head.key { fill: var(--accent); }
+
+  .rules { display: grid; gap: 1.4rem; margin-top: 2.4rem; }
+  @media (min-width: 48rem) { .rules { grid-template-columns: 1fr 1fr; gap: 1.4rem 2.5rem; } }
+  .rule h4 {
+    font-family: Archivo, sans-serif;
+    font-size: .78rem;
+    font-weight: 600;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin: 0 0 .3rem;
+  }
+  .rule p { margin: 0; font-size: .96rem; color: var(--ink-2); }
+  pre {
+    margin: 2rem 0 0;
+    padding: 1.1rem 1.2rem;
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    border-radius: 3px;
+    overflow-x: auto;
+    font-family: "IBM Plex Mono", monospace;
+    font-size: .82rem;
+    line-height: 1.65;
+    color: var(--ink-2);
+  }
+  pre b { color: var(--ink); font-weight: 500; }
+  pre i { color: var(--ink-3); font-style: normal; }
+  .pre-label {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: .7rem;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    margin: 2rem 0 -1.4rem;
+  }
+
+  @media (min-width: 56rem) {
+    .group { display: grid; grid-template-columns: 13rem 1fr; gap: 0 2.5rem; }
+    .group-head {
+      grid-column: 1 / -1;
+      grid-template-columns: 13rem 1fr;
+      gap: 0 2.5rem;
+      align-items: baseline;
+    }
+    .items { grid-column: 2; }
+  }
+  @media (max-width: 34rem) {
+    .fact { grid-template-columns: 1fr; }
+    .fact dt { padding-top: .4rem; }
+  }
+</style>
+
+<div class="wrap">
+  <p class="eyebrow">Gestão de Manutenção · roadmap de agentes · 08 set 2026</p>
+  <h1>Onze agentes, e o que cada um é</h1>
+  <p class="standfirst">A lista do TaskDex tem onze linhas e nenhuma explicação. Isto é a leitura de cada uma: o que o agente faz no fluxo do card, o que já existe no código e o que trava.</p>
+
+  <div class="tally">
+    <div class="t-done"><b>0</b><span>concluídos</span></div>
+    <div class="t-doing"><b>2</b><span>em andamento</span></div>
+    <div class="t-none"><b>9</b><span>não iniciadas</span></div>
+    <div><b>5</b><span>com código já pronto</span></div>
+  </div>
+
+  <p class="note">Estes onze <strong>escrevem</strong> no fluxo: movem card, preenchem campo, fecham chamado, alimentam multa. É outro projeto que os três assistentes de leitura do dossiê (custo, caso, panorama), que só consultam. A ordem do board não é a ordem de construção — o agrupamento abaixo é por onde cada um age no ciclo de vida do card.</p>
+
+  <section class="group">
+    <div class="group-head">
+      <h2>Entrada</h2>
+      <p>Fazer o card nascer certo. Cinco dos onze estão aqui, e é onde o efeito aparece mais rápido: card mal nascido contamina relatório, SLA e cobrança.</p>
+    </div>
+    <div class="items">
+
+      <article class="item">
+        <div class="item-top">
+          <h3>Preenchimento automático de cards</h3>
+          <span class="pill p-none">Não iniciada</span>
+        </div>
+        <p class="what">Lê o pedido cru — o relato do consultor, a foto, a mensagem da franquia — e escreve o card no padrão: descrição, itens a cobrar e comentário interno. Hoje isso é digitação.</p>
+        <dl class="facts">
+          <div class="fact"><dt>Entregável</dt><dd>Fluxo ponta a ponta sem operação manual no caminho feliz.</dd></div>
+          <div class="fact"><dt>Já existe</dt><dd>Os campos de destino: <code>description</code>, <code>items_to_charge</code> (separado do problema, de propósito) e comentário interno que a franquia nunca vê.</dd></div>
+          <div class="fact"><dt>Precisa</dt><dd>Escrita no Sapron — o primeiro dos onze a precisar disso.</dd></div>
+        </dl>
+      </article>
+
+      <article class="item">
+        <div class="item-top">
+          <h3>Triagem e priorização</h3>
+          <span class="pill p-none">Não iniciada</span>
+        </div>
+        <p class="what">Decide urgente × programada e marca a prioridade na entrada, em vez de alguém varrer a fila para achar o que pega fogo.</p>
+        <dl class="facts">
+          <div class="fact"><dt>Já existe</dt><dd>O vocabulário inteiro: <code>urgent</code>, os status <code>urgente</code> / <code>programada</code> / <code>nao_urgente</code>, <code>due_at</code> e <code>scheduled_for</code>.</dd></div>
+          <div class="fact"><dt>Cuidado</dt><dd><code>scheduled_responsibility</code> em branco significa que a decisão da Seazone ainda não saiu — não existe campo &ldquo;aprovado&rdquo;, a responsabilidade <em>é</em> a aprovação. O agente não pode preencher isso sozinho.</dd></div>
+          <div class="fact flag"><dt>Onde mora o risco</dt><dd>239 dos 267 cards abertos hoje estão em <code>nao_urgente</code>. É a caixa onde o backlog se esconde: errar para esse lado é invisível.</dd></div>
+        </dl>
+      </article>
+
+      <article class="item">
+        <div class="item-top">
+          <h3>Auto-classificação de categoria e urgência</h3>
+          <span class="pill p-none">Não iniciada</span>
+        </div>
+        <p class="what">Classificador de texto + foto que define a categoria, dá uma urgência de 0 a 100 e sugere os itens a cobrar. É o de maior efeito nos números da área.</p>
+        <dl class="facts">
+          <div class="fact"><dt>Por quê</dt><dd>O campo <code>category</code> está vazio em <strong>83,6%</strong> dos cards. Por isso todo relatório é obrigado a cortar por <code>origin</code> (de onde veio) em vez de por tipo de serviço (o que era o problema).</dd></div>
+          <div class="fact"><dt>Já existe</dt><dd>A taxonomia de 15 categorias, de ar-condicionado a automação residencial — reusada de Danos. Falta quem preencha.</dd></div>
+        </dl>
+      </article>
+
+      <article class="item">
+        <div class="item-top">
+          <h3>Verificação de card duplicado</h3>
+          <span class="pill p-none">Não iniciada</span>
+          <span class="pill p-code">Meio caminho no código</span>
+        </div>
+        <p class="what">No instante em que o card cai na central, olhar se já existe card aberto para o mesmo problema no mesmo imóvel — antes de a franquia receber dois pedidos da mesma coisa.</p>
+        <dl class="facts">
+          <div class="fact"><dt>Já existe</dt><dd>A varredura das regras de recorrência já pula imóvel com card aberto (<code>cards_abertos_pulados</code>) e já casa texto por <code>dedup_keywords</code>. A peça existe; falta ligá-la na porta de entrada.</dd></div>
+        </dl>
+      </article>
+
+      <article class="item">
+        <div class="item-top">
+          <h3>Origem</h3>
+          <span class="pill p-doing">Em andamento</span>
+          <span class="pill p-code">Base no código</span>
+        </div>
+        <p class="what">Trazer para dentro da central os cards que entram por todas as portas, com a porta registrada. Não é um classificador: é encanamento de entrada.</p>
+        <dl class="facts">
+          <div class="fact"><dt>Já existe</dt><dd>Doze origens (<code>danos</code>, <code>consultor</code>, <code>review</code>, <code>migracao</code>, <code>franquia</code>, <code>implantacao</code>, <code>limpeza</code>, <code>uti</code>…) e o corte por origem já no dashboard.</dd></div>
+          <div class="fact"><dt>Onde está o volume</dt><dd>Dano de hóspede é <strong>51,8%</strong> dos cards; abertura manual, 23%. Uma porta nova mal instrumentada desaparece nesse ruído.</dd></div>
+        </dl>
+      </article>
+
+    </div>
+  </section>
+
+  <section class="group">
+    <div class="group-head">
+      <h2>Fechamento</h2>
+      <p>Fazer o card morrer certo. Aqui o erro custa dinheiro nos dois sentidos: fechar o que não foi feito, ou cobrar quem já fez.</p>
+    </div>
+    <div class="items">
+
+      <article class="item">
+        <div class="item-top">
+          <h3>Encerramento inteligente</h3>
+          <span class="pill p-none">Não iniciada</span>
+          <span class="pill p-code">Metade no código</span>
+        </div>
+        <p class="what">Lê a evidência que a franquia mandou e move o card para Finalizado sem passar por humano — o caminho feliz andando sozinho de ponta a ponta.</p>
+        <dl class="facts">
+          <div class="fact"><dt>Já existe</dt><dd>Mais do que carimbo: <code>register_evidence_from_message</code> detecta o anexo que a franquia manda no chat do chamado, grava <code>evidence_received_at</code> <em>e move o card</em> para Aguardando aprovação — nos status não urgente, recorrente e urgente. O salto que falta é só o último, aprovação → concluído.</dd></div>
+          <div class="fact"><dt>Por que o último salto é humano</dt><dd>Está escrito no próprio código: o caso que originou a regra era &ldquo;comprei a peça, chega em 15 dias&rdquo; com a nota anexada. Anexo não era sinônimo de resolvido — e por isso a Manutenção Programada nasceu antes.</dd></div>
+          <div class="fact flag"><dt>Depende de</dt><dd>Anti-fraude na evidência, abaixo. Fechar card lendo foto sem checar se a foto é daquele imóvel e daquele mês é assinar embaixo do que a franquia mandou.</dd></div>
+        </dl>
+      </article>
+
+      <article class="item">
+        <div class="item-top">
+          <h3>Anti-fraude na evidência</h3>
+          <span class="pill p-none">Não iniciada</span>
+        </div>
+        <p class="what">O freio do agente anterior: antes de fechar, conferir o EXIF da foto (é este imóvel? é foto de agora?), comparar antes × depois e detectar foto reciclada de outro serviço.</p>
+        <dl class="facts">
+          <div class="fact"><dt>Por que vem antes</dt><dd>No board é uma linha ao lado das outras. Na prática é pré-requisito: sem ele, o encerramento automático é um caminho feliz que paga serviço não feito.</dd></div>
+        </dl>
+      </article>
+
+      <article class="item">
+        <div class="item-top">
+          <h3>Fechar o card quando a despesa é lançada</h3>
+          <span class="pill p-none">Não iniciada</span>
+          <span class="pill p-code">Já roda em recorrência</span>
+        </div>
+        <p class="what">Se a manutenção já foi paga, o card não deveria continuar cobrando a franquia. O entregável é escrito na régua certa: <em>franquia deixa de ser cobrada por manutenção que já fez.</em></p>
+        <dl class="facts">
+          <div class="fact"><dt>Já existe</dt><dd>Para card de recorrência isso está em produção: a aba Recorrentes mostra <em>Auto-verificados (despesa)</em> e <em>Auto-verificados (IA)</em>, casando por item financeiro (<code>dedup_items</code>) ou por palavra-chave na descrição da despesa.</dd></div>
+          <div class="fact"><dt>O que falta</dt><dd>Para card avulso não existe campo ligando despesa a pedido — mas o caminho é o mesmo, com o eixo invertido: para cada card aberto, procurar despesa daquele imóvel na janela daquele card. É o que a recorrência já faz.</dd></div>
+          <div class="fact flag"><dt>Correção de leitura</dt><dd>Os <strong>16,6%</strong> que circulam mediram o sentido contrário — despesa → card, em 12 meses, retroativamente. Prospectivamente, com 267 cards abertos e poucos por imóvel, a ambiguidade é muito menor. O campo de ligação continua valendo, mas não é pré-requisito deste item.</dd></div>
+        </dl>
+      </article>
+
+    </div>
+  </section>
+
+  <section class="group">
+    <div class="group-head">
+      <h2>Consequência</h2>
+      <p>O que a área faz com tudo isso: nota de franquia que vira multa, e o número que se olha na daily.</p>
+    </div>
+    <div class="items">
+
+      <article class="item">
+        <div class="item-top">
+          <h3>Score da franquia por lead time × SLA × reincidência</h3>
+          <span class="pill p-none">Não iniciada</span>
+        </div>
+        <p class="what">Uma nota por franquia, rodando em produção e alimentando a Política de Multas, integrada com Ocorrências. É o único dos onze cujo resultado sai do sistema e chega no bolso de alguém.</p>
+        <dl class="facts">
+          <div class="fact"><dt>Já existe</dt><dd>SLA da atividade (<code>sla_due_at</code>, <code>sla_breached_at</code>), o lead time da franquia (primeiro envio → evidência) e o monitor de atraso que concorda com a cobrança que ela recebe.</dd></div>
+          <div class="fact"><dt>Cuidado</dt><dd>Há <strong>dois</strong> lead times e eles não são o mesmo número: o da franquia e o ciclo total até a finalização. Um score construído sobre o errado pune quem respondeu rápido e esperou aprovação interna.</dd></div>
+          <div class="fact flag"><dt>Ressalva minha</dt><dd><strong>22,9%</strong> dos cards são cancelados, e 70% desses cancelamentos são de dano de hóspede. Reincidência que conte card cancelado vira multa em cima de pedido que nunca existiu.</dd></div>
+        </dl>
+      </article>
+
+      <article class="item">
+        <div class="item-top">
+          <h3>Aba de KPI</h3>
+          <span class="pill p-doing">Em andamento</span>
+          <span class="pill p-code">Rota e tela no código</span>
+        </div>
+        <p class="what">Os onze indicadores diários da área, os mesmos do print que circula na daily, dentro da tela em vez de numa foto de tela.</p>
+        <dl class="facts">
+          <div class="fact"><dt>Já existe</dt><dd>Rota, tipo e tiles no dashboard, com solicitações, backlog, em andamento, finalizadas, urgentes novas e resolvidas, lead time e quebra por origem.</dd></div>
+          <div class="fact"><dt>Regra que não pode se perder</dt><dd><em>Backlog</em> e <em>em andamento</em> são estoque — fotografia do momento, não do dia consultado. O resto é fluxo do dia. Somar as duas coisas na mesma linha é o erro clássico dessa aba.</dd></div>
+          <div class="fact"><dt>Limite conhecido</dt><dd>O card não guarda histórico de transições, então <em>tempo médio por etapa</em> não existe — só contagem por etapa. Não prometa esse número na aba.</dd></div>
+        </dl>
+      </article>
+
+    </div>
+  </section>
+
+  <section class="group">
+    <div class="group-head">
+      <h2>Controle</h2>
+      <p>O item que decide se os outros dez podem ficar ligados.</p>
+    </div>
+    <div class="items">
+
+      <article class="item">
+        <div class="item-top">
+          <h3>Auditoria amostral dos agentes</h3>
+          <span class="pill p-none">Não iniciada</span>
+        </div>
+        <p class="what">Sortear uma amostra do que os agentes decidiram — cards fechados, categorias atribuídas, duplicados barrados — e conferir contra o julgamento humano, com a taxa de acerto publicada.</p>
+        <dl class="facts">
+          <div class="fact"><dt>Para quê</dt><dd>É o que transforma &ldquo;o agente rodou&rdquo; em &ldquo;o agente acerta&rdquo;. Sem amostra, o primeiro erro sistemático só aparece quando uma franquia reclama.</dd></div>
+          <div class="fact"><dt>Onde eu colocaria</dt><dd>Junto do primeiro agente que escreve, não no fim da fila. Ela é barata quando nasce com um agente e caríssima de retroagir sobre oito.</dd></div>
+        </dl>
+      </article>
+
+    </div>
+  </section>
+
+  <section class="spec">
+    <div class="group-head">
+      <h2>A lógica do primeiro</h2>
+      <p>Recomendação: começar pela auto-classificação. É a única cujo pior caso é o presente — se a IA falha, o campo continua vazio, que é onde 83,6% dos cards já estão.</p>
+    </div>
+
+    <div class="figure-wrap">
+      <figure>
+        <svg viewBox="0 0 920 420" role="img" aria-label="Fluxo da auto-classificação: card novo ou backfill entram, um teste verifica se a categoria está vazia, o classificador do AI Hub responde em JSON, e a única escrita é o campo categoria mais um comentário interno que alimenta a auditoria amostral. Urgência, status e prazo nunca são escritos.">
+          <defs>
+            <marker id="arw" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+              <polygon class="dg-head" points="0,1 10,5 0,9" />
+            </marker>
+            <marker id="arwk" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+              <polygon class="dg-head key" points="0,1 10,5 0,9" />
+            </marker>
+          </defs>
+
+          <rect class="dg-b" x="20" y="142" width="150" height="56" rx="2" />
+          <text class="dg-t" x="32" y="168">Card novo</text>
+          <text class="dg-s" x="32" y="186">actions/create_card</text>
+
+          <rect class="dg-b" x="20" y="250" width="150" height="56" rx="2" />
+          <text class="dg-t" x="32" y="276">Backfill</text>
+          <text class="dg-s" x="32" y="294">3.336 do histórico</text>
+
+          <polygon class="dg-b soft" points="206,170 280,120 354,170 280,220" />
+          <text class="dg-s" x="280" y="166" text-anchor="middle">category</text>
+          <text class="dg-s" x="280" y="182" text-anchor="middle">vazia?</text>
+
+          <rect class="dg-b" x="390" y="52" width="250" height="56" rx="2" />
+          <text class="dg-t" x="404" y="78">Não escreve nada</text>
+          <text class="dg-s" x="404" y="96">escolha humana manda</text>
+
+          <rect class="dg-b" x="390" y="138" width="250" height="64" rx="2" />
+          <text class="dg-t" x="404" y="162">Classificador</text>
+          <text class="dg-s" x="404" y="180">AI Hub · json_schema</text>
+          <text class="dg-s" x="404" y="195">enum das 15 categorias</text>
+
+          <rect class="dg-b key" x="700" y="118" width="200" height="64" rx="2" />
+          <text class="dg-t key" x="714" y="142">grava category</text>
+          <text class="dg-s" x="714" y="160">só se estiver vazia</text>
+          <text class="dg-s" x="714" y="175">e confiança ≥ limiar</text>
+
+          <rect class="dg-b" x="700" y="204" width="200" height="64" rx="2" />
+          <text class="dg-t" x="714" y="228">Comentário interno</text>
+          <text class="dg-s" x="714" y="246">urgência 0-100 · confiança</text>
+          <text class="dg-s" x="714" y="261">modelo e prompt usados</text>
+
+          <rect class="dg-b" x="390" y="300" width="270" height="56" rx="2" />
+          <text class="dg-t" x="404" y="326">Fail-open: segue vazia</text>
+          <text class="dg-s" x="404" y="344">= estado de hoje, sem regressão</text>
+
+          <rect class="dg-b" x="700" y="300" width="200" height="56" rx="2" />
+          <text class="dg-t" x="714" y="326">Auditoria amostral</text>
+          <text class="dg-s" x="714" y="344">taxa por categoria</text>
+
+          <rect class="dg-b warn" x="20" y="330" width="330" height="70" rx="2" />
+          <text class="dg-t warn" x="34" y="354">Nunca escreve</text>
+          <text class="dg-s" x="34" y="372">urgent · status · due_at · items_to_charge</text>
+          <text class="dg-s" x="34" y="388">a fila continua decisão humana na v1</text>
+
+          <line class="dg-l" x1="170" y1="170" x2="200" y2="170" marker-end="url(#arw)" />
+          <polyline class="dg-l" points="170,278 280,278 280,226" marker-end="url(#arw)" />
+          <polyline class="dg-l" points="280,120 280,80 384,80" marker-end="url(#arw)" />
+          <text class="dg-lab" x="292" y="104">não</text>
+          <line class="dg-l" x1="354" y1="170" x2="384" y2="170" marker-end="url(#arw)" />
+          <text class="dg-lab" x="357" y="162">sim</text>
+          <polyline class="dg-l key" points="640,156 668,156 668,146 694,146" marker-end="url(#arwk)" />
+          <text class="dg-lab key" x="648" y="134">categoria</text>
+          <polyline class="dg-l" points="640,184 668,184 668,236 694,236" marker-end="url(#arw)" />
+          <text class="dg-lab" x="662" y="206" text-anchor="end">rastro</text>
+          <polyline class="dg-l" points="440,202 440,294" marker-end="url(#arw)" />
+          <text class="dg-lab" x="450" y="252">erro / timeout</text>
+          <line class="dg-l" x1="800" y1="268" x2="800" y2="294" marker-end="url(#arw)" />
+          <text class="dg-lab" x="810" y="286">amostra</text>
+        </svg>
+        <figcaption>O agente tem uma escrita só, e ela é condicional. Todo o resto do que ele conclui — urgência, itens sugeridos, confiança, modelo — vira comentário interno, que a franquia nunca vê e a auditoria lê depois.</figcaption>
+      </figure>
+    </div>
+
+    <div class="rules">
+      <div class="rule">
+        <h4>Um campo, uma condição</h4>
+        <p>A escrita é um <code>UPDATE</code> condicional com <code>category=''</code> no <code>WHERE</code>, no mesmo padrão que <code>evidence_from_message</code> já usa contra corrida. Classificação humana nunca é sobrescrita, mesmo que a IA discorde.</p>
+      </div>
+      <div class="rule">
+        <h4>Urgência não move a fila</h4>
+        <p>A nota de 0 a 100 é sugestão registrada, não decisão. Mexer em <code>urgent</code> ou <code>status</code> na v1 seria escrever no lugar onde o erro é invisível — 239 dos 267 cards abertos moram em <code>nao_urgente</code>.</p>
+      </div>
+      <div class="rule">
+        <h4>Enum no schema, não na validação</h4>
+        <p>As 15 categorias entram como <code>enum</code> no <code>json_schema</code> do AI Hub, que no Hub vira decodificação restrita do Gemini. Categoria inválida deixa de ser possível, em vez de ser rejeitada depois.</p>
+      </div>
+      <div class="rule">
+        <h4>Falha devolve ao presente</h4>
+        <p>Fail-open, igual ao dedup da recorrência: exceção logada, campo vazio, card segue. É o que permite ligar o agente sem plano de rollback — o rollback é não escrever.</p>
+      </div>
+    </div>
+
+    <p class="pre-label">O contrato de saída</p>
+<pre>json_schema_format(<b>"classificacao_card"</b>, {
+  "type": "object",
+  "properties": {
+    <b>"categoria"</b>:       {"enum": [<i>as 15 de MaintenanceCategory</i>]},
+    <b>"urgencia"</b>:        {"type": "integer", "minimum": 0, "maximum": 100},
+    <b>"confianca"</b>:       {"type": "number",  "minimum": 0, "maximum": 1},
+    <b>"itens_a_cobrar"</b>:  {"type": "array", "items": {"type": "string"}}
+  },
+  "required": ["categoria", "urgencia", "confianca"]
+})
+
+<i># entrada: título + descrição do card (+ foto, quando o modelo do Hub aceitar)</i>
+<i># serviço novo espelhando maintenance/services/recurrence_ai.py — 40 linhas</i>
+<i># settings: AI_HUB_API_KEY_MAINTENANCE_CLASSIFY / AI_HUB_MODEL_MAINTENANCE_CLASSIFY</i></pre>
+
+    <div class="rules">
+      <div class="rule">
+        <h4>Como saber se funcionou</h4>
+        <p>Rodar o backfill numa amostra de 100 cards e comparar com a categoria que alguém da área daria nos mesmos 100. Publicar a taxa de acerto <em>por categoria</em>, não a média: se hidráulica e ar-condicionado acertam e &ldquo;outros&rdquo; virou lixeira, a média esconde exatamente o defeito que importa.</p>
+      </div>
+      <div class="rule">
+        <h4>O que ele destrava</h4>
+        <p>Com <code>category</code> preenchido, o lado do pedido passa a ter tipo de serviço — backlog por serviço, reincidência por serviço, e a base do score da franquia. Hoje todo corte é por <code>origin</code>, que diz de onde o card veio, não o que era.</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="foot">
+    <h2>Duas coisas para decidir antes de escrever código</h2>
+    <p><strong>A ordem.</strong> Anti-fraude antes de encerramento inteligente, e auditoria amostral junto do primeiro que escreve. Do jeito que está no board, os dois freios ficam para o fim.</p>
+    <p><strong>A ponte.</strong> Três dos onze — fechar por despesa, score de franquia e qualquer custo por tipo de serviço — encostam no mesmo buraco: não existe campo ligando despesa a pedido. Um campo de ligação no cadastro de despesa destrava os três de uma vez, e provavelmente vale mais que vários dos agentes somados. É trabalho de produto, não de agente.</p>
+    <p class="sources">Fontes · lista do TaskDex (workspace <code>opera-o</code>), status lido em 08/09/2026 · código conferido em <code>sapron-frontend</code>, módulo da Central de Manutenção, commit de 04/09/2026 · backend conferido em <code>sapron-backend</code>, app <code>src/maintenance</code>, em 08/09/2026 · números medidos no Sapron em 01–02/09/2026, janela set/2025–ago/2026 · complementa a folha de contexto da manutenção e o documento dos quatro agentes de leitura.</p>
+  </div>
+</div>

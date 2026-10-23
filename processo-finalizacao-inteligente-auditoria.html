@@ -1,0 +1,266 @@
+<title>Finalização Inteligente de Cards</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&amp;family=Newsreader:opsz,wght@6..72,500;6..72,600&amp;family=Source+Sans+3:wght@400;600&amp;display=swap">
+<style>
+:root{
+  --ground:#F6F6F3; --surface:#FFFFFF; --line:#DEDFD8; --line-soft:#EAEBE4;
+  --ink:#17201C; --ink-2:#4A574F; --ink-3:#7D8981;
+  --accent:#0B6B62; --accent-soft:rgba(11,107,98,.09);
+  --ok-fg:#15803D; --ok-bg:rgba(22,163,74,.12);
+  --wait-fg:#B45309; --wait-bg:rgba(217,119,6,.13);
+  --stop-fg:#B91C1C; --stop-bg:rgba(220,38,38,.11);
+  --code-bg:#EDEEE8;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --ground:#0E1311; --surface:#161D1A; --line:#2A3531; --line-soft:#1F2825;
+    --ink:#E9EEEA; --ink-2:#A9B6AF; --ink-3:#74837B;
+    --accent:#4FB3A6; --accent-soft:rgba(79,179,166,.13);
+    --ok-fg:#5FD68A; --ok-bg:rgba(22,163,74,.17);
+    --wait-fg:#F0B429; --wait-bg:rgba(217,119,6,.17);
+    --stop-fg:#FCA5A5; --stop-bg:rgba(220,38,38,.17);
+    --code-bg:#1E2622;
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#0E1311; --surface:#161D1A; --line:#2A3531; --line-soft:#1F2825;
+  --ink:#E9EEEA; --ink-2:#A9B6AF; --ink-3:#74837B;
+  --accent:#4FB3A6; --accent-soft:rgba(79,179,166,.13);
+  --ok-fg:#5FD68A; --ok-bg:rgba(22,163,74,.17);
+  --wait-fg:#F0B429; --wait-bg:rgba(217,119,6,.17);
+  --stop-fg:#FCA5A5; --stop-bg:rgba(220,38,38,.17);
+  --code-bg:#1E2622;
+}
+body{background:var(--ground);color:var(--ink);font-family:'Source Sans 3',system-ui,-apple-system,sans-serif;font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased;}
+.wrap{max-width:760px;margin:0 auto;padding:0 16px;padding-block:40px 72px;}
+.eyebrow{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);font-weight:600;margin:0 0 10px;}
+h1{font-family:'Newsreader',Georgia,serif;font-weight:600;font-size:clamp(30px,6vw,42px);line-height:1.12;margin:0 0 14px;text-wrap:balance;letter-spacing:-.01em;}
+.lede{font-size:18px;color:var(--ink-2);margin:0 0 28px;max-width:62ch;}
+h2{font-family:'Newsreader',Georgia,serif;font-weight:600;font-size:24px;line-height:1.25;margin:0 0 14px;text-wrap:balance;}
+h3{font-size:15px;font-weight:600;margin:22px 0 8px;letter-spacing:-.005em;}
+p{margin:0 0 14px;max-width:66ch;}
+section{margin-top:38px;}
+.rule{height:1px;background:var(--line);border:0;margin:0 0 26px;}
+.sec-head{display:flex;align-items:baseline;gap:12px;margin-bottom:14px;}
+.sec-head h2{margin:0;}
+.sec-n{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--ink-3);padding-top:4px;}
+code,.mono{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:.88em;background:var(--code-bg);padding:.12em .38em;border-radius:3px;}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:18px 20px;}
+.meta{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:6px;overflow:hidden;margin-bottom:34px;}
+.meta div{background:var(--surface);padding:12px 14px;}
+.meta dt{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3);margin:0 0 4px;}
+.meta dd{margin:0;font-size:14px;font-weight:600;}
+.tag{display:inline-block;font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;padding:3px 8px;border-radius:3px;vertical-align:1px;}
+.t-ok{color:var(--ok-fg);background:var(--ok-bg);}
+.t-wait{color:var(--wait-fg);background:var(--wait-bg);}
+.t-stop{color:var(--stop-fg);background:var(--stop-bg);}
+.tbl-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:6px;background:var(--surface);}
+table{width:100%;border-collapse:collapse;font-size:14.5px;}
+th{text-align:left;font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-3);font-weight:600;padding:11px 14px;border-bottom:1px solid var(--line);white-space:nowrap;}
+td{padding:11px 14px;border-bottom:1px solid var(--line-soft);vertical-align:top;}
+tr:last-child td{border-bottom:0;}
+td.num{font-variant-numeric:tabular-nums;white-space:nowrap;}
+.flow{list-style:none;counter-reset:s;margin:0;padding:0;}
+.flow li{counter-increment:s;position:relative;padding:0 0 20px 44px;border-left:1px solid var(--line);margin-left:13px;}
+.flow li:last-child{border-left-color:transparent;padding-bottom:0;}
+.flow li::before{content:counter(s);position:absolute;left:-13px;top:-2px;width:26px;height:26px;border-radius:50%;background:var(--accent-soft);color:var(--accent);border:1px solid var(--accent);display:grid;place-items:center;font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:500;}
+.flow b{display:block;font-size:15px;margin-bottom:3px;}
+.flow p{margin:0;color:var(--ink-2);font-size:14.5px;}
+.callout{border-left:3px solid var(--accent);background:var(--accent-soft);padding:14px 16px;border-radius:0 5px 5px 0;margin:20px 0;}
+.callout.warn{border-left-color:var(--wait-fg);background:var(--wait-bg);}
+.callout.stop{border-left-color:var(--stop-fg);background:var(--stop-bg);}
+.callout p:last-child{margin-bottom:0;}
+.callout b{font-weight:600;}
+ul.plain{margin:0 0 14px;padding-left:20px;}
+ul.plain li{margin-bottom:7px;max-width:64ch;}
+pre{background:var(--code-bg);border:1px solid var(--line);border-radius:5px;padding:13px 15px;overflow-x:auto;font-family:'IBM Plex Mono',monospace;font-size:13px;line-height:1.55;margin:0 0 16px;}
+pre code{background:none;padding:0;font-size:inherit;}
+.foot{margin-top:48px;padding-top:18px;border-top:1px solid var(--line);font-size:13px;color:var(--ink-3);}
+.foot p{max-width:none;margin-bottom:6px;}
+@media (max-width:520px){.flow li{padding-left:36px;}}
+</style>
+<style>
+.split{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin:0 0 16px;}
+.split .card h3{margin-top:0;}
+.split .card p{font-size:14.5px;color:var(--ink-2);margin:0;}
+.split .card.ok{border-top:3px solid var(--ok-fg);}
+.split .card.wait{border-top:3px solid var(--wait-fg);}
+.split .card.stop{border-top:3px solid var(--stop-fg);}
+.stack{display:flex;height:30px;border-radius:5px;overflow:hidden;border:1px solid var(--line);margin:4px 0 10px;}
+.stack span{display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:500;min-width:0;}
+.s-wait{background:var(--wait-bg);color:var(--wait-fg);}
+.s-ok{background:var(--ok-bg);color:var(--ok-fg);}
+.s-stop{background:var(--stop-bg);color:var(--stop-fg);}
+.s-mute{background:var(--code-bg);color:var(--ink-3);}
+.legend{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:13.5px;color:var(--ink-2);margin:0 0 18px;}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:6px;vertical-align:0;}
+.msg{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:14px 16px;font-size:14.5px;white-space:pre-line;margin:0 0 16px;}
+.msg .who{display:block;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3);margin-bottom:6px;white-space:normal;}
+</style>
+<div class="wrap">
+
+<p class="eyebrow">Central de Manutenção · Processo dos agentes 4 e 5</p>
+<h1>Finalização inteligente de cards e auditoria</h1>
+<p class="lede">Quando a franquia manda a evidência, dois agentes leem o material cada um por conta própria. O <b>validador</b> confere item por item o que foi pedido. O <b>auditor</b> relê tudo e diz se concorda. Se os dois concordam que está tudo comprovado, o card pode ser finalizado sozinho. Se os dois concordam que falta item, a franquia recebe um pedido do que falta. <b>Nenhum agente devolve card.</b></p>
+
+<dl class="meta">
+  <div><dt>Onde age</dt><dd>Aguardando aprovação</dd></div>
+  <div><dt>Validador</dt><dd>:10 e :40 · até 50 cards</dd></div>
+  <div><dt>Auditor</dt><dd>10 min depois · até 30 cards</dd></div>
+  <div><dt>Código em produção</dt><dd>desde 24/09/2026 (PR #4916)</dd></div>
+</dl>
+
+<section>
+  <div class="sec-head"><span class="sec-n">01</span><h2>A regra que manda no desenho</h2></div>
+  <p>Na coluna Aguardando aprovação existem duas decisões possíveis, e o custo de errar em cada uma é muito diferente:</p>
+  <div class="split">
+    <div class="card ok"><h3>Finalizar por engano</h3><p>Um card fechado a mais. Alguém percebe e reabre. Custo baixo, e dá para desfazer.</p></div>
+    <div class="card stop"><h3>Devolver por engano</h3><p>A data de recebimento da evidência é apagada, o prazo da franquia volta a contar desde o envio e, <b>passando de 35 dias, a nota do mês dela é zerada</b> (regra do David).</p></div>
+  </div>
+  <p>Em 23/09/2026, <b>20 dos 82 cards</b> aguardando aprovação já tinham passado dos 35 dias. Um agente que devolvesse sozinho poderia zerar a nota de uma franquia por causa de uma foto mal enquadrada.</p>
+  <div class="callout"><p><b>Por isso só o lado barato é automático.</b> O agente pode finalizar e pode perguntar o que falta. Devolver continua sendo sempre um clique de gente. Decisão do Vinicius em 23/09: "pode ser essa opção, pelo menos por enquanto".</p></div>
+</section>
+
+<section>
+  <div class="sec-head"><span class="sec-n">02</span><h2>O caminho do card</h2></div>
+  <ol class="flow">
+    <li><b>A franquia manda fotos ou vídeos no chamado</b><p>O card está em Aguardando aprovação. Pode ser o primeiro envio ou um complemento.</p></li>
+    <li><b>Espera de 10 minutos</b><p>A franquia costuma mandar seis fotos em dois minutos. O validador espera a conversa parar por 10 minutos para não ler o mesmo envio seis vezes.</p></li>
+    <li><b>O validador lê o card inteiro</b><p>Lê o enunciado, os itens cobrados, as últimas 30 mensagens do chamado, até 20 fotos e até 3 vídeos. Para cada item, dá um veredito: comprovado, sem prova ou contestado.</p></li>
+    <li><b>O parecer do card sai da lista de itens, não da IA</b><p>Todos os itens comprovados: <span class="tag t-ok">completa</span>. Algum sem prova: <span class="tag t-wait">incompleta</span>. Não conseguiu ler tudo: <span class="tag t-stop">inconclusiva</span>. Assim o parecer nunca contradiz a própria lista.</p></li>
+    <li><b>O auditor relê, 10 minutos depois</b><p>Recebe o mesmo material e o parecer do validador, e responde só uma coisa: concorda ou não, e por quê. Parecer inconclusivo não é auditado, porque não há o que reler.</p></li>
+    <li><b>A decisão</b><p>Os dois concordam e está tudo comprovado: o card é <b>finalizado</b>. Os dois concordam que falta item: a franquia recebe um <b>pedido do que falta</b> e o card fica onde está. Qualquer outro caso: o card fica para uma pessoa decidir, com os dois pareceres na tela.</p></li>
+    <li><b>Chegou coisa nova? Volta para o passo 2</b><p>Toda mensagem nova da franquia faz o parecer envelhecer e o card voltar para a fila. São no máximo 5 leituras por card.</p></li>
+  </ol>
+</section>
+
+<section>
+  <div class="sec-head"><span class="sec-n">03</span><h2>Os vereditos</h2></div>
+  <h3>De cada item</h3>
+  <div class="tbl-wrap"><table>
+    <thead><tr><th>Veredito</th><th>Quando</th><th>O que faz com o card</th></tr></thead>
+    <tbody>
+      <tr><td><span class="tag t-ok">comprovado</span></td><td>há foto, vídeo ou mensagem que mostra o item resolvido</td><td>conta para finalizar</td></tr>
+      <tr><td><span class="tag t-wait">sem prova</span></td><td>nada no material mostra o item</td><td>vira pedido para a franquia</td></tr>
+      <tr><td><span class="tag t-stop">contestado</span></td><td>a franquia argumenta que não há defeito a reparar</td><td><b>trava a baixa</b>: aceitar o argumento é decisão de gente</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>Do card</h3>
+  <div class="tbl-wrap"><table>
+    <thead><tr><th>Parecer</th><th>Regra</th><th>Próximo passo</th></tr></thead>
+    <tbody>
+      <tr><td><span class="tag t-ok">completa</span></td><td>nenhum item sem prova</td><td>vai para o auditor</td></tr>
+      <tr><td><span class="tag t-wait">incompleta</span></td><td>algum item sem prova, com todo o material lido</td><td>vai para o auditor. Só aqui o validador escreve um rascunho de mensagem</td></tr>
+      <tr><td><span class="tag t-stop">inconclusiva</span></td><td>algum item sem prova, mas parte dos anexos ficou de fora (mais de 20 fotos, vídeo grande demais) ou a resposta da IA veio cortada</td><td>para. Uma pessoa olha os anexos</td></tr>
+    </tbody>
+  </table></div>
+  <div class="callout warn"><p><b>Por que "inconclusiva" existe.</b> O item que a IA diz faltar pode estar justamente na foto que ela não recebeu. Dizer "não consegui ver tudo" é barato. Acusar falta e levar alguém a devolver o card não é. Essa trava disparou de verdade no card #5869: 5 de 6 itens sem prova, mas os vídeos não tinham sido lidos, e o parecer caiu para inconclusiva em vez de acusar falta.</p></div>
+</section>
+
+<section>
+  <div class="sec-head"><span class="sec-n">04</span><h2>O que o auditor decide</h2></div>
+  <div class="tbl-wrap"><table>
+    <thead><tr><th>Parecer</th><th>Auditor</th><th>Resultado</th></tr></thead>
+    <tbody>
+      <tr><td><span class="tag t-ok">completa</span>, tudo comprovado</td><td>concorda</td><td><b>Finaliza o card</b> <span class="mono">autoclose</span></td></tr>
+      <tr><td><span class="tag t-ok">completa</span> com item contestado</td><td>concorda</td><td>não finaliza. Anota o motivo: "a franquia contesta 1 item"</td></tr>
+      <tr><td><span class="tag t-wait">incompleta</span></td><td>concorda</td><td><b>Pede à franquia o que falta</b> <span class="mono">ask_missing</span>. Não mexe em data nem em coluna</td></tr>
+      <tr><td>qualquer</td><td>discorda</td><td>nada acontece. Os dois pareceres ficam na tela para uma pessoa</td></tr>
+      <tr><td><span class="tag t-stop">inconclusiva</span></td><td>não roda</td><td>fica para uma pessoa</td></tr>
+    </tbody>
+  </table></div>
+  <p>A regra de finalizar é a mesma função (<span class="mono">pode_finalizar</span>) em qualquer lugar que decida baixa. Em 23/09 ela segurou o card #871, que teria sido fechado por engano olhando só o rótulo "completa".</p>
+</section>
+
+<section>
+  <div class="sec-head"><span class="sec-n">05</span><h2>O que a franquia lê</h2></div>
+  <h3>Quando falta item</h3>
+  <div class="msg"><span class="who">Seazone · no chamado · exemplo</span>📋 Conferência automática da evidência enviada.
+
+Localizamos a evidência de: troca do chuveiro; limpeza do ralo.
+Ainda não localizamos evidência de: vedação do box.
+
+Pode enviar as fotos ou vídeos que faltam aqui mesmo neste chamado? Assim que chegarem, conferimos de novo.</div>
+  <ul class="plain">
+    <li><b>O texto é montado por regra, não escrito pela IA.</b> Sai sem revisão humana para um parceiro, então tem sempre a mesma forma e dá para saber exatamente o que foi enviado.</li>
+    <li><b>Diz o que veio certo antes do que falta.</b> As devoluções feitas à mão eram só a lista do que faltava, e a franquia lia como se nada tivesse servido.</li>
+    <li><b>Não repete o mesmo pedido.</b> Se a lista de itens faltantes for igual à do último pedido, fica calado. Se a franquia mandou parte, pede de novo só o resto.</li>
+    <li><b>O pedido não conta como novidade.</b> A mensagem do agente é ignorada na hora de decidir se chegou evidência nova. Sem isso, o agente leria o próprio pedido e gastaria uma leitura à toa (achado da revisão do Alfred).</li>
+  </ul>
+  <h3>Quando o card é finalizado</h3>
+  <div class="msg"><span class="who">Seazone · no chamado</span>✅ Manutenção concluída: &lt;título do card&gt;</div>
+  <p>É a mesma mensagem de sempre, igual à de uma baixa feita por pessoa. Internamente, o card ganha um comentário dizendo que foi o auditor que finalizou e por quê, e a baixa fica registrada sem nome de pessoa.</p>
+</section>
+
+<section>
+  <div class="sec-head"><span class="sec-n">06</span><h2>Os quatro interruptores</h2></div>
+  <p>Cada parte liga e desliga no PostHog, sem deploy. Todos nascem desligados. Prefixo: <span class="mono">ff_sapron_backend_enable_maintenance_</span></p>
+  <div class="tbl-wrap"><table>
+    <thead><tr><th>Interruptor</th><th>O que libera</th><th>Alcance</th><th>Produção em 25/09</th></tr></thead>
+    <tbody>
+      <tr><td><span class="mono">evidence_validator</span></td><td>escreve o parecer</td><td>só campo interno</td><td><span class="tag t-ok">ligado</span></td></tr>
+      <tr><td><span class="mono">evidence_audit</span></td><td>escreve a segunda opinião</td><td>só campo interno</td><td><span class="tag t-ok">ligado</span></td></tr>
+      <tr><td><span class="mono">evidence_ask_missing</span></td><td>pede o que falta</td><td><b>fala com a franquia</b></td><td><span class="tag t-ok">ligado</span></td></tr>
+      <tr><td><span class="mono">evidence_autoclose</span></td><td>finaliza o card</td><td><b>fecha o chamado</b></td><td><span class="tag t-ok">ligado</span></td></tr>
+    </tbody>
+  </table></div>
+  <p>Fonte: PostHog, consultado em 25/09/2026. Cada ambiente tem seu próprio projeto no PostHog: <b>Sapron Production (127887)</b> e <b>Sapron Staging (125066)</b>. As quatro flags foram criadas em 24/09 só no projeto de staging. Lá, validador e auditor estão ligados; pedido e finalização, pausados.</p>
+  <div class="callout stop"><p><b>Por isso a tela de produção mostrava os dois agentes "Desligado"</b> até 25/09: sem a flag no projeto de produção, o backend entende "desligado" e o agente não roda. As quatro foram criadas em produção em 25/09/2026 às 09:25 (horário de Brasília), e pedido e finalização foram ligados às 09:36. <b>Toda flag nova precisa ser criada nos dois projetos.</b></p></div>
+  <div class="callout"><p><b>Decisão de 25/09:</b> os quatro ligados juntos, sem a semana de observação que estava prevista. O acompanhamento passa a ser depois: taxa de discordância, cards finalizados pelo agente que alguém reabriu, e reclamação de franquia sobre pedido automático. <b>Para desligar</b>, basta pausar a flag no projeto Sapron Production do PostHog. Vale a partir da próxima passada, mas não desfaz o que já foi enviado ou fechado.</p></div>
+</section>
+
+<section>
+  <div class="sec-head"><span class="sec-n">07</span><h2>O que o ensaio mostrou</h2></div>
+  <h3>Teste com cards já decididos por gente (23/09/2026)</h3>
+  <p>Três cards reconstruídos no instante antes da decisão humana. <b>O veredito final bateu nos 3</b> e <b>8 de 9 itens</b> bateram. O erro caro não aconteceu: no #917, que uma pessoa aceitou, o agente não inventou falta nenhuma. O vídeo foi decisivo no #962, onde a prova da porta estava só nele. A única diferença (#771) foi para o lado barato: o agente creditou um item a mais, com o mesmo veredito final.</p>
+
+  <h3>A fila real inteira (101 cards, 23/09/2026 à noite)</h3>
+  <div class="stack" role="img" aria-label="62 pediria itens, 29 finalizaria, 5 inconclusiva, 5 travados no contestado">
+    <span class="s-wait" style="width:61.4%">62</span>
+    <span class="s-ok" style="width:28.7%">29</span>
+    <span class="s-stop" style="width:5%">5</span>
+    <span class="s-mute" style="width:5%">5</span>
+  </div>
+  <div class="legend">
+    <span><i class="s-wait"></i>pediria itens</span>
+    <span><i class="s-ok"></i>finalizaria</span>
+    <span><i class="s-stop"></i>inconclusiva</span>
+    <span><i class="s-mute"></i>travado no contestado</span>
+  </div>
+  <p>Os agentes rodaram localmente, lendo produção, e os <b>29 cards aprovados</b> foram baixados pela API em quatro rodadas entre 22:46 e 23:15. A fila caiu de 101 para 73 (entrou 1 card novo na mesma noite). Confirmado no banco: 29 cards <span class="mono">concluido</span> e 29 mensagens de conclusão no chat.</p>
+  <div class="callout"><p><b>Dois terços da fila precisam de cobrança, não de baixa.</b> Os cards que fecham sozinhos são quase todos reposição de enxoval com foto, ou vídeo curto do conserto funcionando. É o argumento mais forte para ligar o pedido do que falta antes da finalização automática.</p></div>
+</section>
+
+<section>
+  <div class="sec-head"><span class="sec-n">08</span><h2>Limites conhecidos</h2></div>
+  <ul class="plain">
+    <li><b>O teto de vídeo está alto demais.</b> O código aceita até 100 MB, mas o AI Hub recusou vídeos de 62,8, 77,6 e 92 MB. Baixar para 50 MB faz o vídeo grande cair em "fora da leitura" em vez de gastar uma chamada que vai falhar. A correção está na branch <span class="mono">fix/anexo-sem-upload-e-teto-de-video</span>, ainda fora de produção.</li>
+    <li><b>41 dos 101 cards não têm itens cobrados preenchidos.</b> Sem a lista, o agente trabalha só com o título e a descrição, e o parecer fica mais fraco. É a causa mais provável de veredito ruim.</li>
+    <li><b>Mais de 20 fotos ou mais de 3 vídeos</b> viram inconclusiva de propósito. Em 23/09, 2 dos 84 cards passavam de 20 fotos.</li>
+    <li><b>O modelo de vídeo não tem reserva configurada no Hub.</b> Se o Gemini recusa, a chamada inteira cai, e o card fica sem parecer até a próxima passada.</li>
+    <li><b>A tela do parecer ainda não estava em produção em 24/09.</b> O front (#3575) estava só em staging, então os pareceres gravados em produção não aparecem para quem abre o card.</li>
+  </ul>
+</section>
+
+<section>
+  <div class="sec-head"><span class="sec-n">09</span><h2>Como conferir se está funcionando</h2></div>
+  <p>Pareceres e auditorias gravados, e quantas vezes o auditor discordou:</p>
+<pre><code>SELECT ai_evidence_verdict              AS parecer,
+       count(*)                         AS cards,
+       count(*) FILTER (WHERE ai_audit_ok)     AS concordou,
+       count(*) FILTER (WHERE NOT ai_audit_ok) AS discordou,
+       count(ai_audit_closed_at)        AS finalizados_pelo_agente,
+       count(ai_evidence_asked_at)      AS pedidos_feitos
+FROM maintenance_maintenancecard
+WHERE ai_evidence_message_at IS NOT NULL
+GROUP BY 1;</code></pre>
+  <p><b>Discordou ÷ (concordou + discordou)</b> é a taxa de discordância, o número que decide se vale ligar os interruptores que agem para fora. O "último acesso" que o PostHog mostra não prova que o agente está rodando. Quem prova são os campos gravados no card.</p>
+</section>
+
+<div class="foot">
+  <p>Código: <span class="mono">maintenance/actions/validate_evidence.py</span> e <span class="mono">audit_evidence.py</span> · prompts em <span class="mono">services/evidence_ai.py</span> e <span class="mono">evidence_audit_ai.py</span> · tasks <span class="mono">maintenance.validate_evidence_cards</span> (:10 e :40) e <span class="mono">maintenance.audit_evidence_cards</span> (10 min depois)</p>
+  <p>Conferido contra o <span class="mono">main</span> do sapron-backend em 25/09/2026 (commit 3a629484, de 24/09). Números da fila: ensaio de 23/09/2026 lendo o banco de produção.</p>
+  <p>Entrega: PR #4916, em produção desde 24/09/2026 pela promoção #4922 · Vinicius Satores</p>
+</div>
+
+</div>

@@ -1,0 +1,197 @@
+<title>Esteira do Despesa prova o card</title>
+<style>
+  :root{
+    --tinta:#0f172a; --texto:#334155; --fraco:#64748b; --fraquinho:#94a3b8;
+    --linha:#e2e8f0; --fundo:#f1f5f9; --papel:#ffffff; --azul:#0055ff; --azul-f:rgba(0,85,255,.07);
+    --ambar-b:#e8d3b0; --ambar-f:#fdfaf5; --ambar-t:#7a4800;
+    --verde-b:#bbe5d5; --verde-f:#f3faf7; --verde-t:#1f7a5c;
+    --verm-b:#f5c2c2; --verm-f:#fef5f5; --verm-t:#b91c1c;
+    --cinza-b:#dfe5ee; --cinza-f:#f8fafc; --cinza-t:#64748b;
+    --code:#eef2f7;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      color-scheme:dark;
+      --tinta:#e8edf5; --texto:#c3ccd9; --fraco:#8d99ab; --fraquinho:#6b778a;
+      --linha:#243044; --fundo:#0c1320; --papel:#131c2b; --azul:#6f9bff; --azul-f:rgba(111,155,255,.12);
+      --ambar-b:#5c4420; --ambar-f:#221a0e; --ambar-t:#f0c27a;
+      --verde-b:#1f5242; --verde-f:#0f2019; --verde-t:#6fd3ac;
+      --verm-b:#5a2a2a; --verm-f:#2e1818; --verm-t:#f19a9a;
+      --cinza-b:#2a3649; --cinza-f:#161f2e; --cinza-t:#8d99ab;
+      --code:#1c2738;
+    }
+  }
+  :root[data-theme="dark"]{
+    color-scheme:dark;
+    --tinta:#e8edf5; --texto:#c3ccd9; --fraco:#8d99ab; --fraquinho:#6b778a;
+    --linha:#243044; --fundo:#0c1320; --papel:#131c2b; --azul:#6f9bff; --azul-f:rgba(111,155,255,.12);
+    --ambar-b:#5c4420; --ambar-f:#221a0e; --ambar-t:#f0c27a;
+    --verde-b:#1f5242; --verde-f:#0f2019; --verde-t:#6fd3ac;
+    --verm-b:#5a2a2a; --verm-f:#2e1818; --verm-t:#f19a9a;
+      --cinza-b:#2a3649; --cinza-f:#161f2e; --cinza-t:#8d99ab;
+    --code:#1c2738;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--fundo);color:var(--texto);
+    font:14px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+  .folha{max-width:1040px;margin:0 auto;padding:36px 16px 80px}
+  h1{font-size:26px;line-height:1.2;color:var(--tinta);margin:0 0 6px;font-weight:800;text-wrap:balance}
+  .sub{color:var(--fraco);margin:0 0 4px;max-width:72ch}
+  .data{color:var(--fraquinho);font-size:12px;margin:0 0 28px}
+  h2{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--fraco);
+    font-weight:700;margin:40px 0 12px;padding-bottom:8px;border-bottom:1px solid var(--linha)}
+  p{margin:0 0 12px;max-width:78ch}
+  code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:12px;
+    background:var(--code);padding:1px 5px;border-radius:4px;color:var(--tinta);word-break:break-all}
+  .nota{font-size:12.5px;color:var(--fraco);max-width:78ch}
+
+  /* resumo */
+  .resumo{display:flex;flex-wrap:wrap;gap:10px;align-items:center;background:var(--papel);
+    border:1px solid var(--linha);border-radius:10px;padding:14px 16px}
+  .resumo b{color:var(--tinta)}
+
+  /* esteira */
+  .esteira{display:grid;grid-template-columns:repeat(4,1fr);gap:0;background:var(--papel);
+    border:1px solid var(--linha);border-radius:10px;overflow:hidden}
+  .etapa{padding:14px 14px 16px;border-right:1px solid var(--linha);display:flex;flex-direction:column;gap:10px}
+  .etapa:last-child{border-right:0}
+  .etapa h3{margin:0;font-size:13px;color:var(--tinta);display:flex;justify-content:space-between;gap:8px;align-items:center}
+  .etapa h3 small{font-weight:400;color:var(--fraquinho);font-size:11px}
+  .pr{border:1px solid var(--linha);border-radius:8px;padding:9px 10px;display:flex;flex-direction:column;gap:4px;background:var(--cinza-f)}
+  .pr .t{display:flex;justify-content:space-between;gap:6px;align-items:baseline}
+  .pr b{color:var(--tinta);font-size:13px}
+  .pr span{font-size:12px;color:var(--fraco)}
+  .pr .url{font-size:11px;color:var(--fraquinho);word-break:break-all;user-select:all}
+  .vazio{font-size:12px;color:var(--fraquinho);border:1px dashed var(--linha);border-radius:8px;padding:9px 10px}
+  @media (max-width:820px){
+    .esteira{grid-template-columns:1fr}
+    .etapa{border-right:0;border-bottom:1px solid var(--linha)}
+    .etapa:last-child{border-bottom:0}
+  }
+
+  /* pílulas */
+  .pill{display:inline-block;font-size:10.5px;font-weight:700;letter-spacing:.03em;padding:2px 8px;border-radius:999px;border:1px solid;white-space:nowrap}
+  .ok{color:var(--verde-t);background:var(--verde-f);border-color:var(--verde-b)}
+  .roda{color:var(--ambar-t);background:var(--ambar-f);border-color:var(--ambar-b)}
+  .espera{color:var(--cinza-t);background:var(--cinza-f);border-color:var(--cinza-b)}
+  .trava{color:var(--verm-t);background:var(--verm-f);border-color:var(--verm-b)}
+  .voce{color:var(--azul);background:var(--azul-f);border-color:var(--azul)}
+
+  /* passos */
+  ol.passos{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px;counter-reset:p}
+  ol.passos li{counter-increment:p;display:grid;grid-template-columns:28px 1fr auto;gap:12px;align-items:start;
+    background:var(--papel);border:1px solid var(--linha);border-radius:10px;padding:12px 14px}
+  ol.passos li::before{content:counter(p);width:24px;height:24px;border-radius:50%;background:var(--azul-f);color:var(--azul);
+    font-weight:800;font-size:12px;display:grid;place-items:center}
+  ol.passos b{color:var(--tinta);display:block;margin-bottom:2px}
+  ol.passos p{margin:0;font-size:12.5px;color:var(--fraco)}
+  @media (max-width:560px){ ol.passos li{grid-template-columns:28px 1fr} ol.passos li .pill{grid-column:2;justify-self:start} }
+
+  /* tabelas */
+  .tabela-wrap{overflow-x:auto;border:1px solid var(--linha);border-radius:10px;background:var(--papel)}
+  table{border-collapse:collapse;width:100%;min-width:620px;font-size:12.5px;font-variant-numeric:tabular-nums}
+  th{text-align:left;font-size:10.5px;letter-spacing:.04em;text-transform:uppercase;color:var(--fraco);
+    background:var(--cinza-f);padding:9px 11px;border-bottom:1px solid var(--linha)}
+  td{padding:10px 11px;border-bottom:1px solid var(--linha);vertical-align:top}
+  tr:last-child td{border-bottom:0}
+  td:first-child{font-weight:700;color:var(--tinta);white-space:nowrap}
+
+  .duas{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  @media (max-width:720px){ .duas{grid-template-columns:1fr} }
+  .caixa{background:var(--papel);border:1px solid var(--linha);border-radius:10px;padding:14px 16px}
+  .caixa h3{margin:0 0 8px;font-size:13.5px;color:var(--tinta)}
+  .caixa ul{margin:0;padding-left:18px;font-size:12.5px} .caixa li{margin:4px 0}
+</style>
+
+<main class="folha">
+  <h1>Despesa prova o card: onde está a entrega</h1>
+  <p class="sub">O agente que casa a despesa aprovada no Lançamento de Despesas com o card aberto do mesmo imóvel, anexa as fotos e a nota no card e dá baixa. O código está pronto. Agora ele passa pela staging e depois vai para produção desligado.</p>
+  <p class="data">Situação em 29/09/2026, lida do GitHub (checagens dos PRs) e dos testes rodados localmente no mesmo dia.</p>
+
+  <div class="resumo">
+    <span class="pill ok">na develop</span><span>back #4986 e front #3599</span>
+    <span class="pill ok">liberado</span><span>staging front #3601 e correções #4995</span>
+    <span class="pill trava">travado</span><span>staging back #4988, por testes de reservas de outro time</span>
+    <span class="pill espera">depois</span><span>produção, chave e flags</span>
+  </div>
+
+  <h2>Esteira</h2>
+  <div class="esteira">
+    <section class="etapa">
+      <h3>Develop <span class="pill ok">feito</span></h3>
+      <div class="pr"><div class="t"><b>Back #4986</b><span class="pill ok">merge</span></div>
+        <span>Model, tarefa a cada 15 min, juízes, régua, tela de conferência</span>
+        <span class="url">github.com/seazone-tech/sapron-backend/pull/4986</span></div>
+      <div class="pr"><div class="t"><b>Front #3599</b><span class="pill ok">merge</span></div>
+        <span>Cartão na aba Agentes de IA com a fila de conferência</span>
+        <span class="url">github.com/seazone-tech/sapron-frontend/pull/3599</span></div>
+    </section>
+    <section class="etapa">
+      <h3>Correções <small>para develop</small></h3>
+      <div class="pr"><div class="t"><b>Back #4995</b><span class="pill ok">pronto para merge</span></div>
+        <span>Pontos da revisão do Alfred depois do merge. Alfred passou e as 6 checagens estão verdes.</span>
+        <span class="url">github.com/seazone-tech/sapron-backend/pull/4995</span></div>
+    </section>
+    <section class="etapa">
+      <h3>Staging <small>merge commit</small></h3>
+      <div class="pr"><div class="t"><b>Back #4988</b><span class="pill trava">travado</span></div>
+        <span>PR de promoção do kwojtyla, já inclui o #4986. Falharam 5 de 11.336 testes, todos de reservas, vindos do #4987. Esperando o outro time corrigir.</span>
+        <span class="url">github.com/seazone-tech/sapron-backend/pull/4988</span></div>
+      <div class="pr"><div class="t"><b>Front #3601</b><span class="pill ok">pronto para merge</span></div>
+        <span>As 7 checagens passaram.</span>
+        <span class="url">github.com/seazone-tech/sapron-frontend/pull/3601</span></div>
+    </section>
+    <section class="etapa">
+      <h3>Produção <small>main</small></h3>
+      <div class="vazio">Depois da staging. Precisa da aprovação de um Seazoner. Sem atalho de admin.</div>
+    </section>
+  </div>
+  <p class="nota">O #4995 entra na staging na próxima promoção da develop. Até lá a staging roda sem as correções, e isso não tem risco enquanto as flags estiverem fechadas.</p>
+
+  <h2>Para ligar o agente</h2>
+  <ol class="passos">
+    <li><div><b>Fazer o merge das promoções para a staging</b><p>O #3601 já pode. O #4988 espera a correção dos testes de reservas. É merge commit, nunca squash.</p></div><span class="pill voce">você roda</span></li>
+    <li><div><b>Criar a chave do AI Hub no SSM, em stg e prd</b><p><code>AI_HUB_API_KEY_MAINTENANCE_EXPENSE</code>. A chave vai pelo Passbolt. Sem ela, o juiz de IA usa a chave global.</p></div><span class="pill voce">você roda</span></li>
+    <li><div><b>Criar as 3 flags no PostHog, todas fechadas</b><p><code>ff_sapron_backend_enable_maintenance_expense_match</code> (sombra), <code>…_attach</code> (anexar) e <code>…_autoclose</code> (baixa sozinha).</p></div><span class="pill voce">você roda</span></li>
+    <li><div><b>Abrir só a sombra</b><p>O agente julga e grava, mas não mexe em card. A fila aparece na aba Agentes de IA para a equipe conferir.</p></div><span class="pill espera">depois</span></li>
+    <li><div><b>Abrir o anexar</b><p>Com a sombra conferida, o agente passa a postar fotos e nota no card e a mover para aguardando aprovação. A baixa ainda é de gente.</p></div><span class="pill espera">depois</span></li>
+    <li><div><b>Abrir a baixa sozinha</b><p>Só vale para o juiz que passou na régua abaixo. Os outros continuam esperando gente.</p></div><span class="pill espera">depois</span></li>
+  </ol>
+
+  <h2>Régua para liberar a baixa sozinha</h2>
+  <div class="tabela-wrap">
+    <table>
+      <thead><tr><th>Juiz</th><th>Como decide</th><th>Conferências</th><th>Discordâncias no máximo</th></tr></thead>
+      <tbody>
+        <tr><td>Danos</td><td>Valor total do card igual ao valor da despesa</td><td>15</td><td>0</td></tr>
+        <tr><td>Recorrente</td><td>Item da despesa está na lista da regra recorrente</td><td>30</td><td>1</td></tr>
+        <tr><td>IA</td><td>Lê card e despesa item a item, só texto</td><td>30</td><td>1</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="nota">Aprovar o card com a despesa anexada conta como "concordo", e devolver conta como "discordo". Qualquer operador da Central pode conferir, e fica gravado quem, quando e por onde. Depois de liberada, 1 em cada 10 baixas sozinhas volta para auditoria.</p>
+
+  <h2>O que já foi conferido</h2>
+  <div class="duas">
+    <div class="caixa">
+      <h3>Testes</h3>
+      <ul>
+        <li>Back: 58 testes do agente passaram localmente em 29/09. Os 7 da última correção passaram de novo.</li>
+        <li>Front: 11 testes do cartão de conferência.</li>
+        <li>5 testes do financeiro já falham na develop sem este trabalho (categoria Multa e caução).</li>
+      </ul>
+    </div>
+    <div class="caixa">
+      <h3>Correções do #4995</h3>
+      <ul>
+        <li>Se a IA devolver a lista de itens vazia, o agente não casa.</li>
+        <li>Cada rodada para em 10 minutos, inclusive entre os cards da mesma despesa.</li>
+        <li>A tela carrega as fotos das despesas de uma vez só.</li>
+        <li>A conferência valida o que chega: motivo de até 1.000 caracteres.</li>
+      </ul>
+    </div>
+  </div>
+
+  <h2>Links</h2>
+  <p class="nota">Desenho do bot (v0.2): <code>https://claude.ai/artifact/GejJ9UWosG1xdFsouJ4eyQ</code></p>
+</main>

@@ -1,0 +1,432 @@
+<title>Pendências Patrick Josoe Brando</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+  :root{
+    --ground:#F2F5F3; --surface:#FFFFFF; --surface-2:#E9EFEC;
+    --line:#D6E0DB; --line-soft:#E6ECE9;
+    --ink:#151B26; --ink-2:#44524D; --ink-3:#6B7A74;
+    --accent:#2C8F73; --accent-soft:#E2F1EB;
+    --crit:#C0341F; --crit-bg:#FAE7E3;
+    --med:#C2810E;  --med-bg:#FBF0DC;
+    --low:#2D8E71;  --low-bg:#E2F1EB;
+    --display:'Quicksand', 'Trebuchet MS', sans-serif;
+    --body:'IBM Plex Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --ground:#12161A; --surface:#1A1F23; --surface-2:#232A2E;
+      --line:#303A3E; --line-soft:#262E32;
+      --ink:#EDF2F0; --ink-2:#B3C0BB; --ink-3:#8A9994;
+      --accent:#4FC3A1; --accent-soft:#1E332C;
+      --crit:#F0705C; --crit-bg:#3A201B;
+      --med:#E8B33C;  --med-bg:#362C16;
+      --low:#4FC3A1;  --low-bg:#1E332C;
+    }
+  }
+  :root[data-theme="dark"]{
+    --ground:#12161A; --surface:#1A1F23; --surface-2:#232A2E;
+    --line:#303A3E; --line-soft:#262E32;
+    --ink:#EDF2F0; --ink-2:#B3C0BB; --ink-3:#8A9994;
+    --accent:#4FC3A1; --accent-soft:#1E332C;
+    --crit:#F0705C; --crit-bg:#3A201B;
+    --med:#E8B33C;  --med-bg:#362C16;
+    --low:#4FC3A1;  --low-bg:#1E332C;
+  }
+
+  body{background:var(--ground); color:var(--ink); font-family:var(--body); line-height:1.55;}
+  .wrap{max-width:1060px; margin:0 auto; padding-inline:20px; padding-block:40px 64px;}
+  h1,h2,h3{font-family:var(--display); text-wrap:balance; margin:0;}
+  p{margin:0;}
+  .num{font-variant-numeric:tabular-nums;}
+
+  /* ---- cabeçalho ---- */
+  .eyebrow{font-family:var(--display); font-size:12px; font-weight:700; letter-spacing:.14em;
+           text-transform:uppercase; color:var(--accent);}
+  header h1{font-size:clamp(28px,5vw,40px); font-weight:700; letter-spacing:-.01em; margin-top:10px;}
+  .sub{color:var(--ink-2); font-size:15px; margin-top:12px; max-width:62ch;}
+  .meta{display:flex; flex-wrap:wrap; gap:8px 22px; margin-top:20px; font-size:13px; color:var(--ink-3);}
+  .meta b{font-weight:600; color:var(--ink-2);}
+
+  /* ---- números de topo ---- */
+  .kpis{display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-top:34px;}
+  @media (max-width:760px){ .kpis{grid-template-columns:repeat(2,1fr);} }
+  .kpi{background:var(--surface); border:1px solid var(--line); border-radius:10px; padding:16px 18px;}
+  .kpi .v{font-family:var(--display); font-size:34px; font-weight:700; line-height:1.1;
+          letter-spacing:-.02em; font-variant-numeric:tabular-nums;}
+  .kpi .v small{font-size:15px; font-weight:600; color:var(--ink-3); margin-left:3px;}
+  .kpi .k{font-size:12.5px; color:var(--ink-3); margin-top:6px;}
+  .kpi.hot{border-color:var(--crit);} .kpi.hot .v{color:var(--crit);}
+
+  /* ---- seções ---- */
+  section{margin-top:52px;}
+  section > h2{font-size:21px; font-weight:700; letter-spacing:-.01em;}
+  section > .lede{color:var(--ink-2); font-size:14.5px; margin-top:8px; max-width:70ch;}
+
+  /* ---- criticidade ---- */
+  .crit-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-top:20px;}
+  @media (max-width:760px){ .crit-grid{grid-template-columns:1fr;} }
+  .crit-card{background:var(--surface); border:1px solid var(--line); border-radius:10px;
+             padding:18px; border-top:3px solid var(--line);}
+  .crit-card.a{border-top-color:var(--crit);} .crit-card.b{border-top-color:var(--med);}
+  .crit-card.c{border-top-color:var(--low);}
+  .crit-card h3{font-size:15px; font-weight:700; display:flex; align-items:center; gap:8px;}
+  .dot{width:9px; height:9px; border-radius:50%; flex:none;}
+  .a .dot{background:var(--crit);} .b .dot{background:var(--med);} .c .dot{background:var(--low);}
+  .crit-card .two{display:flex; gap:26px; margin-top:14px;}
+  .crit-card .two div span{display:block; font-family:var(--display); font-size:27px; font-weight:700;
+                           font-variant-numeric:tabular-nums; line-height:1.1;}
+  .crit-card .two div em{font-style:normal; font-size:11.5px; color:var(--ink-3); letter-spacing:.04em;
+                         text-transform:uppercase;}
+  .crit-card p{font-size:13px; color:var(--ink-2); margin-top:14px;}
+
+  /* ---- gráficos ---- */
+  .chart{background:var(--surface); border:1px solid var(--line); border-radius:10px;
+         padding:20px 18px; margin-top:20px;}
+  .chart h3{font-size:14.5px; font-weight:700;}
+  .chart .note{font-size:12.5px; color:var(--ink-3); margin-top:4px;}
+  .rows{display:flex; flex-direction:column; gap:11px; margin-top:20px;}
+  .row{display:grid; grid-template-columns:132px 1fr; gap:12px; align-items:center;}
+  @media (max-width:560px){ .row{grid-template-columns:96px 1fr; gap:8px;} }
+  .row .name{font-size:12.5px; color:var(--ink-2); font-weight:500;}
+  .row .name em{display:block; font-style:normal; font-size:11px; color:var(--ink-3);}
+  .track{position:relative; height:22px;}
+  .bar{height:22px; border-radius:0 4px 4px 0; display:block;}
+  .bar.late{background:var(--crit);} .bar.mid{background:var(--med);} .bar.ok{background:var(--accent);}
+  .val{position:absolute; top:50%; transform:translateY(-50%); font-size:12px; font-weight:600;
+       color:var(--ink-2); font-variant-numeric:tabular-nums; white-space:nowrap;}
+  .axis{display:flex; justify-content:space-between; margin-top:14px; padding-left:144px;
+        font-size:11px; color:var(--ink-3); font-variant-numeric:tabular-nums;}
+  @media (max-width:560px){ .axis{padding-left:104px;} }
+  .stack{display:flex; height:22px; gap:2px;}
+  .seg{height:22px; border-radius:2px;}
+  .seg.a{background:var(--crit);} .seg.b{background:var(--med);} .seg.c{background:var(--low);}
+  .legend{display:flex; flex-wrap:wrap; gap:16px; margin-top:16px; font-size:12px; color:var(--ink-2);}
+  .legend span{display:flex; align-items:center; gap:7px;}
+
+  /* ---- tabela ---- */
+  .filters{display:flex; flex-wrap:wrap; gap:8px; margin-top:20px; align-items:center;}
+  .filters .lbl{font-size:12px; color:var(--ink-3); margin-right:2px;}
+  .chip{font-family:var(--body); font-size:12.5px; font-weight:500; padding:6px 13px; cursor:pointer;
+        border:1px solid var(--line); background:var(--surface); color:var(--ink-2); border-radius:999px;}
+  .chip[aria-pressed="true"]{background:var(--ink); color:var(--ground); border-color:var(--ink);}
+  .chip:focus-visible{outline:2px solid var(--accent); outline-offset:2px;}
+  .tablebox{overflow-x:auto; margin-top:16px; border:1px solid var(--line); border-radius:10px;
+            background:var(--surface);}
+  table{border-collapse:collapse; width:100%; min-width:720px; font-size:13.2px;}
+  th{font-family:var(--display); font-size:11px; font-weight:700; letter-spacing:.1em;
+     text-transform:uppercase; color:var(--ink-3); text-align:left; padding:13px 14px;
+     border-bottom:1px solid var(--line); background:var(--surface-2); white-space:nowrap;}
+  td{padding:12px 14px; border-bottom:1px solid var(--line-soft); vertical-align:top; color:var(--ink-2);}
+  tr:last-child td{border-bottom:0;}
+  td.id{font-variant-numeric:tabular-nums; color:var(--ink-3); white-space:nowrap;}
+  td.prop{font-weight:600; color:var(--ink); white-space:nowrap;}
+  td.item{color:var(--ink); min-width:300px;}
+  td.item em{display:block; font-style:normal; font-size:11.5px; color:var(--ink-3); margin-top:3px;}
+  td.delay{font-variant-numeric:tabular-nums; font-weight:600; white-space:nowrap; text-align:right;}
+  td.delay.a{color:var(--crit);}
+  .tag{display:inline-flex; align-items:center; gap:6px; font-size:11.5px; font-weight:600;
+       padding:3px 9px; border-radius:999px; white-space:nowrap;}
+  .tag.a{background:var(--crit-bg); color:var(--crit);}
+  .tag.b{background:var(--med-bg); color:var(--med);}
+  .tag.c{background:var(--low-bg); color:var(--low);}
+
+  /* ---- listas de leitura ---- */
+  .callouts{display:grid; grid-template-columns:repeat(2,1fr); gap:14px; margin-top:20px;}
+  @media (max-width:760px){ .callouts{grid-template-columns:1fr;} }
+  .callout{background:var(--surface); border:1px solid var(--line); border-left:3px solid var(--crit);
+           border-radius:8px; padding:15px 17px;}
+  .callout.info{border-left-color:var(--accent);}
+  .callout h3{font-size:13.5px; font-weight:700; margin-bottom:6px;}
+  .callout p{font-size:13px; color:var(--ink-2);}
+  .callout code{font-family:var(--body); font-weight:600; color:var(--ink);}
+
+  ol.notes{margin:18px 0 0; padding-left:20px; display:flex; flex-direction:column; gap:10px;
+           font-size:13.5px; color:var(--ink-2); max-width:78ch;}
+  ol.notes b{color:var(--ink); font-weight:600;}
+  footer{margin-top:52px; padding-top:20px; border-top:1px solid var(--line);
+         font-size:12px; color:var(--ink-3);}
+</style>
+
+<div class="wrap">
+
+<header>
+  <p class="eyebrow">Central de Manutenção · Cobrança de franquia</p>
+  <h1>Patrick Josoe Brando — o que está em aberto</h1>
+  <p class="sub">Todos os cards de manutenção enviados à franquia 293 que ainda não foram
+  concluídos nem cancelados, com a criticidade de cada item e há quanto tempo o prazo venceu.</p>
+  <div class="meta">
+    <span><b>Franquia</b> 293</span>
+    <span><b>Imóveis</b> 14 na carteira · 12 com pendência</span>
+    <span><b>Data de corte</b> 17/09/2026</span>
+    <span><b>Fonte</b> Sapron · <span class="num">maintenance_maintenancecard</span></span>
+  </div>
+</header>
+
+<div class="kpis">
+  <div class="kpi hot"><div class="v num">42</div><div class="k">cards em aberto</div></div>
+  <div class="kpi"><div class="v num">55,6<small>d</small></div><div class="k">atraso médio sobre o prazo</div></div>
+  <div class="kpi"><div class="v num">104<small>d</small></div><div class="k">o item mais antigo</div></div>
+  <div class="kpi"><div class="v num">41<small>/42</small></div><div class="k">já com prazo vencido</div></div>
+</div>
+
+<section>
+  <h2>Criticidade</h2>
+  <p class="lede">O Sapron não guarda criticidade para estes cards: os 42 estão com
+  <span class="num">urgent = false</span>, <span class="num">category</span> em branco e sem
+  classificação de IA. A escala abaixo foi atribuída na leitura item a item da descrição de cada
+  card — risco físico e de habitabilidade primeiro, experiência do hóspede depois, reposição de
+  utensílio por último.</p>
+
+  <div class="crit-grid">
+    <div class="crit-card a">
+      <h3><span class="dot"></span>Crítica — risco ou imóvel comprometido</h3>
+      <div class="two">
+        <div><span class="num">12</span><em>cards</em></div>
+        <div><span class="num">69,6 d</span><em>atraso médio</em></div>
+      </div>
+      <p>Elétrica instável, vazamento, infiltração, cupim estrutural, porta sem fechadura ou
+      arrombada, ar-condicionado parado. São os que geram avaliação ruim e chamado de hóspede.</p>
+    </div>
+    <div class="crit-card b">
+      <h3><span class="dot"></span>Média — experiência do hóspede</h3>
+      <div class="two">
+        <div><span class="num">12</span><em>cards</em></div>
+        <div><span class="num">69,0 d</span><em>atraso médio</em></div>
+      </div>
+      <p>Higienização de ar-condicionado, geladeira e fogão, cortina com mofo, lâmpadas queimadas,
+      assento de privada inutilizável, portas e persianas emperradas.</p>
+    </div>
+    <div class="crit-card c">
+      <h3><span class="dot"></span>Baixa — reposição de item</h3>
+      <div class="two">
+        <div><span class="num">18</span><em>cards</em></div>
+        <div><span class="num">36,2 d</span><em>atraso médio</em></div>
+      </div>
+      <p>Liquidificador, ferro de passar, talheres, taças, travesseiros, cabides, enxoval. Barato
+      de resolver e é onde está a maior parte do volume.</p>
+    </div>
+  </div>
+
+  <div class="callouts">
+    <div class="callout">
+      <h3>Crítico e médio atrasam igual</h3>
+      <p>69,6 contra 69,0 dias. A franquia não está priorizando pelo risco — o que sai primeiro é
+      o que é barato, não o que é grave. O card mais crítico da carteira (<code>#837</code>,
+      disjuntores caindo no AGS0642) está parado há 52 dias.</p>
+    </div>
+    <div class="callout info">
+      <h3>Concentração em VLE</h3>
+      <p>8 dos 12 imóveis com pendência são do condomínio VLE e somam 32 dos 42 cards. Cinco
+      queixas se repetem em quase todas as unidades: falta liquidificador, falta ferro de passar,
+      assento de privada acabado, lâmpada queimada e cupim.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>Quanto tempo cada cobrança está parada</h2>
+  <p class="lede">Os 42 cards saíram em sete lotes. O prazo de cada card é de 7 dias corridos
+  a partir do envio (<span class="num">PRAZO_PADRAO_DIAS</span>), e o atraso abaixo é contado
+  do vencimento até hoje.</p>
+
+  <div class="chart">
+    <h3>Atraso por lote de cobrança</h3>
+    <p class="note">Dias vencidos em 17/09/2026 · o rótulo traz quantos cards saíram no lote</p>
+    <div class="rows" id="lotes"></div>
+    <div class="axis"><span>0</span><span>30</span><span>60</span><span>90</span><span>110 d</span></div>
+  </div>
+
+  <div class="chart">
+    <h3>Carga por imóvel</h3>
+    <p class="note">Cards em aberto, repartidos por criticidade · atraso médio do imóvel à direita</p>
+    <div class="rows" id="imoveis"></div>
+    <div class="legend">
+      <span><i class="dot" style="background:var(--crit)"></i>Crítica</span>
+      <span><i class="dot" style="background:var(--med)"></i>Média</span>
+      <span><i class="dot" style="background:var(--low)"></i>Baixa</span>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>Os 42 itens</h2>
+  <p class="lede">Ordenados do mais atrasado para o mais recente. O título do card no Sapron é só
+  o código do imóvel — o item aqui vem da descrição.</p>
+
+  <div class="filters">
+    <span class="lbl">Criticidade:</span>
+    <button class="chip" id="f-todas" data-f="todas" aria-pressed="true">Todas (42)</button>
+    <button class="chip" id="f-a" data-f="a" aria-pressed="false">Crítica (12)</button>
+    <button class="chip" id="f-b" data-f="b" aria-pressed="false">Média (12)</button>
+    <button class="chip" id="f-c" data-f="c" aria-pressed="false">Baixa (18)</button>
+  </div>
+
+  <div class="tablebox">
+    <table>
+      <thead>
+        <tr>
+          <th>Card</th><th>Imóvel</th><th>Item</th><th>Criticidade</th><th>Origem</th>
+          <th>Venceu em</th><th style="text-align:right">Atraso</th>
+        </tr>
+      </thead>
+      <tbody id="tbody"></tbody>
+    </table>
+  </div>
+</section>
+
+<section>
+  <h2>O que ler junto com os números</h2>
+  <ol class="notes">
+    <li><b>Um dos 42 já não é dívida da franquia.</b> O card <span class="num">#705</span>
+    (AGS0642) está em <em>Aguardando aprovação</em> com evidência recebida em 08/09 — a bola está
+    do nosso lado. Os outros 41 seguem com a franquia.</li>
+    <li><b>Todos foram recobrados em 16/09.</b> 40 dos 42 tiveram
+    <span class="num">charged_at</span> carimbado ontem, num disparo em lote. O relógio de atraso
+    exibido aqui é o do prazo original, não o da última cobrança — é ele que mede a dívida real.</li>
+    <li><b>A régua de atraso já bateu no teto.</b> 16 cards passaram do marco de 91 e 98 dias de
+    notificação automática, e 23 estão no marco de 21 dias. A escada de lembretes não está
+    produzindo entrega.</li>
+    <li><b>Histórico de cumprimento:</b> a franquia fechou 31 cards, em média 43,5 dias após a
+    abertura. Dos 6 que tinham prazo registrado, os 6 foram entregues atrasados — em média 30,5
+    dias depois do vencimento. O atraso é padrão de comportamento, não exceção.</li>
+    <li><b>O que este relatório não mede:</b> custo. <span class="num">financial_expenses</span>
+    não tem vínculo com card no Sapron, então não existe "quanto custa a fila" — só quantos itens
+    e há quanto tempo.</li>
+  </ol>
+</section>
+
+<footer>
+  Levantado em 17/09/2026 a partir do banco do Sapron (host 293, status fora de
+  <span class="num">concluido</span> e <span class="num">cancelada</span>). Criticidade atribuída
+  na leitura das descrições — não é campo do sistema. Nomes de hóspedes das avaliações foram
+  omitidos.
+</footer>
+</div>
+
+<script>
+(function(){
+  var LOTES = [
+    {d:"29/05/2026", o:"Migração de imóveis", n:11, atraso:104, venc:"05/06"},
+    {d:"08/06/2026", o:"Consultoria regional", n:5, atraso:94, venc:"15/06"},
+    {d:"06/07/2026", o:"Migração de imóveis", n:1, atraso:65, venc:"14/07"},
+    {d:"20/07/2026", o:"Avaliação de hóspede", n:1, atraso:52, venc:"27/07"},
+    {d:"17/08/2026", o:"Consultoria regional", n:19, atraso:24, venc:"24/08"},
+    {d:"18/08/2026", o:"Consultoria regional", n:4, atraso:23, venc:"25/08"},
+    {d:"15/09/2026", o:"Avaliação de hóspede", n:1, atraso:0, venc:"—"}
+  ];
+  var MAX = 110;
+  document.getElementById("lotes").innerHTML = LOTES.map(function(l){
+    var pct = Math.max(l.atraso / MAX * 100, l.atraso === 0 ? 1.5 : 0);
+    var cls = l.atraso >= 60 ? "late" : (l.atraso >= 20 ? "mid" : "ok");
+    var txt = l.atraso === 0 ? "no prazo" : l.atraso + " dias";
+    var inside = pct > 26;
+    return '<div class="row"><div class="name">' + l.d + '<em>' + l.o + ' · ' + l.n +
+      (l.n > 1 ? ' cards' : ' card') + '</em></div>' +
+      '<div class="track"><span class="bar ' + cls + '" style="width:' + pct + '%"></span>' +
+      '<span class="val" style="left:calc(' + pct + '% ' + (inside ? '- 10px); transform:translate(-100%,-50%); color:var(--surface)' : '+ 10px)') + '">' +
+      txt + '</span></div></div>';
+  }).join("");
+
+  var IMOVEIS = [
+    {c:"VLE005", a:3, b:1, l:3, m:35.4},
+    {c:"AGS0642", a:4, b:0, l:2, m:41.3},
+    {c:"VLE003", a:0, b:2, l:3, m:54.0},
+    {c:"VLE006", a:0, b:2, l:3, m:40.0},
+    {c:"VLE002", a:1, b:2, l:1, m:96.5},
+    {c:"VLE004", a:0, b:2, l:2, m:44.0},
+    {c:"VLE001", a:1, b:1, l:1, m:50.7},
+    {c:"CCM004", a:1, b:0, l:1, m:99.0},
+    {c:"VLE007", a:0, b:1, l:1, m:64.0},
+    {c:"VLE008", a:0, b:1, l:1, m:104.0},
+    {c:"SDN042", a:1, b:0, l:0, m:65.0},
+    {c:"VDT0401", a:1, b:0, l:0, m:104.0}
+  ];
+  var UNIT = 100 / 7;
+  document.getElementById("imoveis").innerHTML = IMOVEIS.map(function(p){
+    var total = p.a + p.b + p.l;
+    var segs = "";
+    if (p.a) segs += '<span class="seg a" style="width:' + (p.a * UNIT) + '%"></span>';
+    if (p.b) segs += '<span class="seg b" style="width:' + (p.b * UNIT) + '%"></span>';
+    if (p.l) segs += '<span class="seg c" style="width:' + (p.l * UNIT) + '%"></span>';
+    var w = total * UNIT;
+    return '<div class="row"><div class="name">' + p.c + '<em>' + total +
+      (total > 1 ? ' cards' : ' card') + '</em></div>' +
+      '<div class="track"><span class="stack" style="width:' + w + '%">' + segs + '</span>' +
+      '<span class="val" style="left:calc(' + w + '% + 10px)">' +
+      p.m.toFixed(1).replace(".", ",") + ' d em média</span></div></div>';
+  }).join("");
+
+  var CARDS = [
+    [704,"CCM004","Ar-condicionado não liga, lâmpada e TV sem funcionar, registros do chuveiro soltando, porta sem chave nem acabamento de fechadura","a","Migração","05/06/2026",104],
+    [705,"AGS0642","Infiltração no teto, tomadas do banheiro sem funcionar, porta danificada sem fechadura, cortina com mofo, 3 ar-condicionados a higienizar","a","Migração","05/06/2026",104,"Evidência recebida em 08/09 — aguardando nossa aprovação"],
+    [706,"VLE001","Parede com infiltração, 2 portas de correr sem fechadura nem trinco, chuveirinho sem suporte, fogão e forno não testados","a","Migração","05/06/2026",104],
+    [707,"VLE002","Parede com rachadura, porta sem chave, porta sem puxador, 2 panelas sem tampa","a","Migração","05/06/2026",104],
+    [710,"VLE005","Tomada sem acabamento junto ao armário, 2 portas sem chave, 2 ar-condicionados a testar, tampa do freezer quebrada","a","Migração","05/06/2026",104],
+    [714,"VDT0401","Torneira da sacada com vazamento, persiana que não abre, porta sem chave, papel de parede soltando no corredor","a","Migração","05/06/2026",104],
+    [708,"VLE003","Porta do quarto sem chave, fogão e forno impossíveis de testar, sanduicheira sem luz indicadora","b","Migração","05/06/2026",104],
+    [709,"VLE004","Fechadura ausente na porta do quarto, fogão e forno a testar, faltam panelas e utensílios","b","Migração","05/06/2026",104],
+    [711,"VLE006","Chuveiro enrolado e sem suporte, 2 lâmpadas queimadas, torneira da área de serviço a instalar, ar-condicionado a higienizar","b","Migração","05/06/2026",104],
+    [712,"VLE007","Banheiro sem janela, exaustor ou saída de ar; lâmpada queimada na cozinha","b","Migração","05/06/2026",104],
+    [713,"VLE008","Portas do banheiro a ajustar, cortina da sala a higienizar, repetidor de Wi-Fi a instalar","b","Migração","05/06/2026",104],
+    [723,"VLE002","Fogão com coloração escura, tipo queimado — higienização","b","Consultoria","15/06/2026",94],
+    [724,"VLE002","Muita sujeira acumulada nas borrachas da geladeira — troca e higienização completa","b","Consultoria","15/06/2026",94],
+    [722,"VLE002","Controle da TV com botão liga/desliga sem funcionar","c","Consultoria","15/06/2026",94],
+    [725,"VLE003","Sem liquidificador e sem ferro de passar","c","Consultoria","15/06/2026",94],
+    [726,"CCM004","Sem secador de cabelo","c","Consultoria","15/06/2026",94],
+    [791,"SDN042","Vazamento no chuveiro e no vaso sanitário, ralo da pia sem escoar, fogão com 3 bocas e sem acendimento automático, 3 ar-condicionados sem aquecer, geladeira enferrujada","a","Migração","14/07/2026",65],
+    [837,"AGS0642","Disjuntores caindo constantemente, deixando chuveiros frios e a bomba d'água parada; cheiro forte de mofo em um quarto; porta com maçaneta estourada e sinal de arrombamento","a","Avaliação","27/07/2026",52,"Origem: avaliação pública negativa de hóspede em 11/07"],
+    [941,"VLE005","Ar-condicionado do quarto de solteiro não liga; o do quarto de casal não ventila","a","Consultoria","24/08/2026",24],
+    [944,"VLE005","Cupim na porta do quarto, na porta da sala e na janela da sala","a","Consultoria","24/08/2026",24],
+    [934,"VLE001","Assento de privada muito acabado e escova sanitária quebrada","b","Consultoria","24/08/2026",24],
+    [937,"VLE004","Assento de privada inutilizável, manchado","b","Consultoria","24/08/2026",24],
+    [940,"VLE003","Assento de privada inutilizável nos 2 banheiros (marcado como grave) e puxador de gaveta da cozinha quebrado","b","Consultoria","24/08/2026",24],
+    [946,"VLE005","Tampa de privada manchada e armário da TV com cupim","b","Consultoria","24/08/2026",24],
+    [950,"VLE006","Cupim no armário e na torneira do banheiro; assento de privada sujo","b","Consultoria","24/08/2026",24],
+    [933,"VLE001","Falta liquidificador e colheres; sanduicheira quebrada, filtro da cafeteira ausente, grelha amassada","c","Consultoria","24/08/2026",24],
+    [935,"VLE004","Sem liquidificador, cafeteira sem filtro, faltam colheres de cozinhar","c","Consultoria","24/08/2026",24],
+    [936,"VLE004","Freezer formando gelo — desgelo","c","Consultoria","24/08/2026",24],
+    [938,"VLE003","Controle da TV falhando, sem conseguir acessar a smart TV","c","Consultoria","24/08/2026",24],
+    [939,"VLE003","Falta liquidificador e ferro de passar; sanduicheira desgastada","c","Consultoria","24/08/2026",24],
+    [942,"VLE005","TV não liga — verificar controle","c","Consultoria","24/08/2026",24],
+    [943,"VLE005","Falta liquidificador, ferro de passar e colheres de cozinhar","c","Consultoria","24/08/2026",24],
+    [945,"VLE005","Plafon da cozinha queimado","c","Consultoria","24/08/2026",24],
+    [947,"VLE006","Falta liquidificador e ferro de passar; forma de inox acabada","c","Consultoria","24/08/2026",24],
+    [948,"VLE006","Luz da geladeira queimada","c","Consultoria","24/08/2026",24],
+    [949,"VLE006","Lâmpada da cozinha queimada","c","Consultoria","24/08/2026",24],
+    [951,"VLE007","Falta liquidificador e ferro de passar; cafeteira sem filtro","c","Consultoria","24/08/2026",24],
+    [957,"AGS0642","Porta do quarto de solteiro com sinais de arrombamento","a","Consultoria","25/08/2026",23],
+    [959,"AGS0642","Tomada do banheiro da suíte sem funcionar","a","Consultoria","25/08/2026",23],
+    [956,"AGS0642","Faltam 2 garfos, 2 facas e 4 colheres; tábua de madeira e forma manchada a substituir","c","Consultoria","25/08/2026",23],
+    [958,"AGS0642","4 lâmpadas queimadas: banheiro da escada, quarto de solteiro, sala e mesa de jantar","c","Consultoria","25/08/2026",23],
+    [5838,"VLE008","Lençóis, toalhas e sofá manchados; utensílios de cozinha e jogos de taças a substituir","c","Avaliação","—",null,"Enviado em 17/09 — ainda dentro do prazo"]
+  ];
+  var NOME = {a:"Crítica", b:"Média", c:"Baixa"};
+  var tbody = document.getElementById("tbody");
+
+  function render(filtro){
+    tbody.innerHTML = CARDS.filter(function(c){
+      return filtro === "todas" || c[3] === filtro;
+    }).map(function(c){
+      var atraso = c[6] === null ? '<span style="color:var(--ink-3);font-weight:500">no prazo</span>'
+                                 : c[6] + ' d';
+      var hot = c[6] !== null && c[6] >= 60 ? " a" : "";
+      return '<tr><td class="id">#' + c[0] + '</td>' +
+        '<td class="prop">' + c[1] + '</td>' +
+        '<td class="item">' + c[2] + (c[7] ? '<em>' + c[7] + '</em>' : '') + '</td>' +
+        '<td><span class="tag ' + c[3] + '">' + NOME[c[3]] + '</span></td>' +
+        '<td>' + c[4] + '</td><td class="num">' + c[5] + '</td>' +
+        '<td class="delay' + hot + '">' + atraso + '</td></tr>';
+    }).join("");
+  }
+  render("todas");
+
+  Array.prototype.forEach.call(document.querySelectorAll(".chip"), function(btn){
+    btn.addEventListener("click", function(){
+      Array.prototype.forEach.call(document.querySelectorAll(".chip"), function(b){
+        b.setAttribute("aria-pressed", String(b === btn));
+      });
+      render(btn.dataset.f);
+    });
+  });
+})();
+</script>

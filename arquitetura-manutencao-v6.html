@@ -1,0 +1,396 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Arquitetura da Manutenção</title>
+<style>
+:root{
+  --bg:#f5f6f8;--card:#fff;--fg:#17202e;--mu:#5f6b7a;--li:#dfe3e8;--navy:#0b1a33;--coral:#eb615e;
+  --t1:#1d5bd8;--t2:#0f7a6c;--t3:#1f2f4d;--dec:#b26b00;--decbg:#fff6e6;--chip:#eef1f5;--hl:#fdecec;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0f141c;--card:#171e29;--fg:#e6e9ee;--mu:#9aa5b4;--li:#2a3442;--navy:#0a1222;--coral:#f07a77;
+  --t1:#6f9bff;--t2:#3fc2ad;--t3:#9fb3d6;--dec:#f0b04a;--decbg:#2c2414;--chip:#222b38;--hl:#3a1f1f}}
+:root[data-theme="dark"]{
+  --bg:#0f141c;--card:#171e29;--fg:#e6e9ee;--mu:#9aa5b4;--li:#2a3442;--navy:#0a1222;--coral:#f07a77;
+  --t1:#6f9bff;--t2:#3fc2ad;--t3:#9fb3d6;--dec:#f0b04a;--decbg:#2c2414;--chip:#222b38;--hl:#3a1f1f}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif}
+header.top{background:var(--navy);color:#fff;padding:22px 16px 0}
+.wrap{max-width:1180px;margin:0 auto}
+.brand{display:flex;justify-content:space-between;gap:12px;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:#aab6c8}
+.brand b{color:var(--coral)}
+h1{font-size:30px;margin:14px 0 4px}
+.lede{max-width:760px;color:#cfd7e3;margin:0 0 16px}
+nav.tabs{display:flex;gap:4px;overflow-x:auto;scrollbar-width:thin;padding-top:6px}
+nav.tabs a{flex:0 0 auto;color:#cfd7e3;text-decoration:none;padding:9px 12px;border-radius:8px 8px 0 0;font-size:13px;white-space:nowrap}
+nav.tabs a .n{opacity:.6;margin-right:4px}
+nav.tabs a.on{background:var(--bg);color:var(--fg);font-weight:600}
+nav.tabs .sep{flex:0 0 1px;background:#33415a;margin:8px 4px}
+main{padding:20px 16px 48px}
+h2{font-size:22px;margin:0 0 4px}
+.sub{color:var(--mu);margin:0 0 18px}
+.trail{background:var(--card);border:1px solid var(--li);border-radius:12px;padding:16px;margin:0 0 16px}
+.trail h3{margin:0 0 2px;font-size:17px;display:flex;align-items:center;gap:8px}
+.trail .tag{font-size:11px;color:#fff;border-radius:4px;padding:2px 7px;letter-spacing:.05em}
+.trail p{margin:0 0 12px;color:var(--mu);font-size:14px}
+.procs{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px}
+.pc{display:block;text-decoration:none;color:var(--fg);border:1px solid var(--li);border-top:4px solid var(--c);border-radius:10px;padding:12px;background:var(--card);transition:transform .1s}
+.pc:hover{transform:translateY(-2px);border-color:var(--c)}
+.pc .id{font-size:12px;color:var(--c);font-weight:700}
+.pc b{display:block;font-size:15px;margin:2px 0 6px}
+.pc .io{font-size:12.5px;color:var(--mu)}
+.pc .io span{display:block}
+.pc .cnt{font-size:12px;margin-top:8px;color:var(--c)}
+.links{background:var(--card);border:1px solid var(--li);border-radius:12px;padding:16px}
+.links h3{margin:0 0 8px;font-size:16px}
+.links ul{margin:0;padding-left:18px}.links li{margin:4px 0;font-size:14px}
+.links a{color:var(--t1)}
+/* processo */
+.phead{background:var(--card);border:1px solid var(--li);border-left:6px solid var(--c);border-radius:12px;padding:16px;margin-bottom:16px}
+.phead .id{color:var(--c);font-weight:700;font-size:13px}
+.meta{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px 18px;margin-top:12px}
+.meta div{font-size:14px}.meta .k{display:block;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--mu)}
+.grid2{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:16px;align-items:start}
+@media(max-width:900px){.grid2{grid-template-columns:1fr}}
+.flow{background:var(--card);border:1px solid var(--li);border-radius:12px;padding:16px}
+.flow h3,.side h3{margin:0 0 12px;font-size:16px}
+.lanes{display:grid;gap:0 10px}
+.lh{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--mu);text-align:center;padding:6px 4px;border-bottom:2px solid var(--li);position:sticky;top:0;background:var(--card)}
+.cell{position:relative;padding:8px 0;min-height:10px}
+.cell.lane{border-left:1px dashed var(--li)}
+.cell.lane:first-of-type{border-left:none}
+.st{border:1px solid var(--li);background:var(--card);border-radius:8px;padding:9px 10px;font-size:13.5px;position:relative}
+.st .num{display:inline-block;min-width:22px;height:22px;line-height:22px;text-align:center;border-radius:11px;background:var(--c);color:#fff;font-size:12px;font-weight:700;margin-right:6px}
+.st b{font-size:14px}
+.st .d{color:var(--mu);margin-top:4px}
+.st .out{margin-top:5px;font-size:12.5px}
+.st .tool{display:inline-block;margin-top:6px;font-size:11.5px;background:var(--chip);border-radius:4px;padding:1px 6px;color:var(--mu)}
+.st.dec{background:var(--decbg);border-color:var(--dec)}
+.st.dec .num{background:var(--dec)}
+.st.dec .br{margin:6px 0 0;padding:0;list-style:none;font-size:12.5px}
+.st.dec .br li{margin:2px 0}.st.dec .br li::before{content:"→ ";color:var(--dec);font-weight:700}
+.st.pend{box-shadow:inset 3px 0 0 var(--coral)}
+.st .pd{color:var(--coral);font-size:12px;margin-top:5px}
+.st .go{color:var(--c);font-weight:600;text-decoration:none}
+.arrow{grid-column:1/-1;height:14px;display:flex;justify-content:center}
+.arrow::before{content:"";width:2px;height:100%;background:var(--li)}
+.side{display:flex;flex-direction:column;gap:12px}
+.box{background:var(--card);border:1px solid var(--li);border-radius:12px;padding:14px}
+.box h3{font-size:14px;margin:0 0 8px}
+.box ul{margin:0;padding-left:16px;font-size:13.5px}.box li{margin:4px 0}
+.box a{color:var(--t1)}
+.box.warn{border-color:var(--coral);background:var(--hl)}
+.legend{display:flex;flex-wrap:wrap;gap:12px;font-size:12px;color:var(--mu);margin:0 0 12px}
+.legend i{display:inline-block;width:12px;height:12px;border-radius:3px;vertical-align:-2px;margin-right:4px;border:1px solid var(--li)}
+/* mobile: uma coluna, raia vira etiqueta */
+.who{display:none;font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--mu);margin-bottom:3px}
+@media(max-width:700px){
+  .lanes{grid-template-columns:1fr!important}.lh,.cell.empty{display:none}.cell.lane{border-left:none}.who{display:block}
+}
+footer{color:var(--mu);font-size:12px;text-align:center;padding:0 16px 30px}
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap">
+  <div class="brand"><span><b>Seazone</b> · Franquias · Manutenção</span><span>Arquitetura de processos · v6 · 22/10/2026</span></div>
+  <h1>Manutenção</h1>
+  <p class="lede">A Manutenção garante que o imóvel esteja pronto para o hóspede: o urgente resolvido em 24 horas, a preventiva feita no mês certo e a franquia com maturidade para cuidar do imóvel. Resultado esperado: menos reserva cancelada, menos desconto e menos comentário negativo por manutenção.</p>
+  <nav class="tabs" id="tabs"></nav>
+</div></header>
+<main><div class="wrap" id="view"></div></main>
+<footer>Vinicius Satores · vinicius.satores@seazone.com.br · Documento interno · base: weekly de 19/10/2026 com a Ray e processos em vigor</footer>
+
+<script>
+const ACT = {
+  F:"Franquia", S:"Sistema (Sapron)", A:"Agentes de IA", M:"Analista de Manutenção",
+  C:"CS de Proprietários", Q:"Qualidade", G:"Gerência (Ray)", T:"Tecnologia", D:"Áreas de entrada"
+};
+const TRILHAS = [
+  {k:"T1", n:"Gestão da manutenção corretiva", c:"var(--t1)", o:"Resolver o problema que aparece no imóvel: o urgente em 24 horas, o resto no prazo, e o que depende do proprietário destravado com o CS."},
+  {k:"T2", n:"Gestão da manutenção recorrente", c:"var(--t2)", o:"Fazer a preventiva certa, no mês certo e só onde ainda não foi feita, escolhendo o item pelos dados."},
+  {k:"T3", n:"Gestão e consultoria de manutenção", c:"var(--t3)", o:"Ser o radar da área: vigiar entradas e agentes, transformar desvio em ocorrência e levar a franquia crítica à consultoria antes da UTI."}
+];
+/* passo: {a:ator, t:título, d:descrição, s:saída, f:ferramenta, dec:[ramos], go:"MPx", pd:"pendência"} */
+const P = [
+ {id:"MP1", tr:"T1", n:"Manutenção urgente",
+  o:"Resolver em 24 horas o que deixa o imóvel sem condição de uso ou com risco para o hóspede.",
+  ini:"Card novo com nota de urgência 70 ou mais, ou com gatilho duro (gás, choque, sem água, sem energia, hóspede sem acesso).",
+  fim:"Card concluído com evidência e imóvel desbloqueado.",
+  dono:"Analista de Manutenção", cad:"Contínua; prazo de 24 horas a partir da abertura do card (MGO)", val:"Menos reserva cancelada",
+  steps:[
+   {a:"A", t:"Classificar a urgência", d:"Nota de 0 a 100 pelo relato e pela lista de urgentes do MGO.", s:"Nota e motivo no card.", f:"Classificador · a cada 15 min"},
+   {a:"A", t:"É urgente?", dec:["Não (nota abaixo de 70) → segue no MP2 Corretiva","Sim → passo 3"], go:"MP2"},
+   {a:"A", t:"Verificar duplicata", d:"Marca possível card repetido do mesmo problema.", s:"Duplicata marcada.", f:"Verificador de duplicata"},
+   {a:"M", t:"Confirmar a duplicata", d:"Fecha ou descarta na tela de duplicatas.", s:"Um card por problema.", f:"Central · tela de duplicatas"},
+   {a:"S", t:"Abrir o chamado com a franquia", d:"Card nasce na aba Urgente, com a tag e a mensagem 'Prazo: 24 horas, até dd/mm'.", s:"Chamado aberto.", f:"Central de Atividades", pd:"Destaque visual de urgente no portal (vermelho/sirene), pedido da Ray em 19/10."},
+   {a:"F", t:"Bloquear o imóvel", d:"Tira o imóvel de venda até resolver (regra do MGO).", s:"Calendário bloqueado.", f:"Suporte Unificado"},
+   {a:"F", t:"Depende do proprietário?", dec:["Sim (acima de R$ 300 ou sem autorização) → sinaliza no card e segue no MP3","Não → passo 8"], go:"MP3"},
+   {a:"F", t:"Consertar e anexar a evidência", d:"Foto do serviço, nota ou recibo no card.", s:"Evidência no card.", f:"Portal da Franquia"},
+   {a:"S", t:"Respondeu em 24 horas?", dec:["Não → recobra a franquia (lembrete de atraso)","Não em 48 horas → ocorrência no MP10","Sim → passo 10"], go:"MP10"},
+   {a:"A", t:"Validar e auditar a evidência", d:"Validador lê a prova, antifraude confere se a foto é nova, auditor conclui.", s:"Parecer por item.", f:"Validador · antifraude · auditor"},
+   {a:"A", t:"Evidência completa?", dec:["Não → pede o que falta à franquia e volta ao passo 8","Sim → card concluído"]},
+   {a:"F", t:"Desbloquear o imóvel", d:"Devolve o imóvel à venda no mesmo dia.", s:"Calendário liberado.", f:"Suporte Unificado", pd:"Quem desbloqueia depois da baixa ainda não está definido."}
+  ],
+  ag:["Classificador de urgência","Triagem automática","Verificador de duplicata","Validador, antifraude e auditor","Lembrete de atraso","Agente de ocorrência do urgente (em sombra desde 20/10)"],
+  rot:["Rotina diária de urgentes (primeira coisa do dia)"],
+  ind:["% de urgentes resolvidos em 24 horas","Tempo médio do urgente","Urgentes que viraram ocorrência"],
+  pend:["O Sapron ainda mede o urgente em 1 dia útil (PR #5367); o MGO diz 24 horas.","Comunicado às franquias só depois de a Rose publicar a seção no MGO."]},
+
+ {id:"MP2", tr:"T1", n:"Manutenção corretiva",
+  o:"Ter o conserto não urgente feito no prazo, provado e fechado.",
+  ini:"Card novo com nota de urgência abaixo de 70.",
+  fim:"Card concluído por evidência ou pela despesa lançada.",
+  dono:"Analista de Manutenção", cad:"Contínua; prazo de 7 dias; cobrança semanal", val:"Menos desconto por manutenção",
+  steps:[
+   {a:"A", t:"Classificar e triar", d:"Vai para a coluna Não urgente, com responsável e sem duplicata.", s:"Card triado.", f:"Classificador · triagem · duplicata"},
+   {a:"S", t:"Abrir o chamado com prazo de 7 dias", d:"A mensagem de abertura já diz a data.", s:"Chamado aberto.", f:"Central de Atividades"},
+   {a:"F", t:"Consegue fazer no prazo?", dec:["Depende do proprietário → MP3","Não dá no prazo → passo 4","Sim → passo 5"], go:"MP3"},
+   {a:"F", t:"Programar com data e motivo", d:"A data combinada vira o novo prazo.", s:"Card em Programada.", f:"Portal da Franquia", pd:"Evidência anexada em Programada fica parada; mudança para Programada sem agente."},
+   {a:"F", t:"Consertar e provar", d:"Anexa a evidência no card ou lança a despesa no Sapron.", s:"Evidência ou despesa.", f:"Portal · Financeiro do Sapron"},
+   {a:"S", t:"Cobrar o atraso", d:"Cobrança semanal (quarta, 11h) e lembretes em D+7, D+14, D+21.", s:"Franquia cobrada.", f:"Lembrete de atraso"},
+   {a:"A", t:"A despesa prova o card?", dec:["Sim (mesmo imóvel e item, até ~2 meses) → card concluído","Não → passo 8"]},
+   {a:"A", t:"Validar e auditar a evidência", d:"Validador, antifraude e auditor.", s:"Parecer.", f:"Validador · antifraude · auditor"},
+   {a:"A", t:"Tem sinal de fraude?", dec:["Sim → passo 10","Não → card concluído"]},
+   {a:"M", t:"Revisar o sinal e a amostra", d:"Confere a foto suspeita e a amostra do auditor.", s:"Card concluído ou devolvido.", f:"Aba Agentes de IA"}
+  ],
+  ag:["Classificador e triagem","Despesa prova o card","Validador, antifraude e auditor","Lembrete de atraso"],
+  rot:["Cobrança semanal (quarta, 11h)"],
+  ind:["% concluído no prazo","Lead time médio","Cards fechados pela despesa"],
+  pend:["Afrouxar a regra da despesa para imóvel + item (Ray, 19/10).","Quando o imóvel migra, o card vai junto com 30 dias de carência no score."]},
+
+ {id:"MP3", tr:"T1", n:"Adequação com o proprietário",
+  o:"Destravar o conserto que depende do proprietário autorizar ou pagar.",
+  ini:"Franquia sinaliza no card que o proprietário não autoriza ou que o reparo passa de R$ 300.",
+  fim:"Decisão do proprietário registrada e card fechado, reprogramado ou em execução.",
+  dono:"Analista de Manutenção + CS de Proprietários", cad:"Diária (filtro) e semanal (escalonamento)", val:"Menos reserva cancelada",
+  steps:[
+   {a:"F", t:"Sinalizar a trava no card", d:"Responsabilidade 'proprietário' e print da conversa.", s:"Card sinalizado.", f:"Portal da Franquia"},
+   {a:"M", t:"Filtrar as travas ainda não acionadas", d:"Rotina do dia.", s:"Lista de travas novas.", f:"Central"},
+   {a:"M", t:"Tem print do proprietário?", dec:["Não → pede o print à franquia (5 dias úteis); sem print a recusa não vale","Sim → passo 4"]},
+   {a:"M", t:"Abrir o chamado ao CS", d:"Suporte → Proprietários → Manutenção e Adequação do Imóvel, com a frase do proprietário, o risco e o link do card.", s:"Chamado no Suporte.", f:"Suporte Unificado"},
+   {a:"M", t:"Marcar e avisar a franquia", d:"Card 'CS proprietário acionado' e mensagem no card com o link do chamado.", s:"Franquia avisada.", f:"Central", pd:"Marcação 'CS proprietário acionado' ainda a criar na Central."},
+   {a:"C", t:"Falar com o proprietário", d:"Registra que ele está ciente: sem o serviço, o custo e a avaliação ruim ficam com ele.", s:"Resposta no chamado.", f:"Suporte Unificado"},
+   {a:"C", t:"O que o proprietário decidiu?", dec:["Autorizou → volta para execução (MP1, MP2 ou MP7)","Adiou com data → card reprogramado","Recusou → passo 8"]},
+   {a:"M", t:"Fechar como contestado", d:"A recusa não conta contra a franquia; o imóvel volta no próximo ciclo.", s:"Card fechado.", f:"Central"},
+   {a:"M", t:"Escalar sem resposta", d:"Sem resposta do CS em uma semana, leva à Ray.", s:"Caso com a gerência.", f:"Slack"}
+  ],
+  ag:["Aviso ao CS de Proprietários (em desenho; hoje o chamado é aberto pelo Analista)"],
+  rot:["Rotina diária de travas","Semanal de adequação com o CS"],
+  ind:["Travas acionadas no mesmo dia","Tempo até a decisão do proprietário","Imóveis bloqueados por trava"],
+  pend:["22/10: 9 recusas do ciclo de ar-condicionado encaminhadas assim (8 chamados novos e 1 comentário)."]},
+
+ {id:"MP4", tr:"T2", n:"Priorização do item",
+  o:"Escolher com dados qual item entra no próximo ciclo da recorrente.",
+  ini:"Cerca de 30 dias antes do próximo ciclo.",
+  fim:"Item decidido com a Ray, com a análise que justifica.",
+  dono:"Analista de Manutenção", cad:"Uma vez por ciclo", val:"Menos comentário negativo",
+  steps:[
+   {a:"M", t:"Levantar os cards corretivos por item", d:"Últimos 30 dias, por categoria e região.", s:"Volume por item.", f:"Central · Claude"},
+   {a:"M", t:"Cruzar com comentários e consultores", d:"Comentários e avaliações de hóspede e apontamentos dos consultores.", s:"Impacto por item.", f:"Data lake · skill comentários × urgência"},
+   {a:"M", t:"Montar o ranking", d:"Item, volume, impacto e sazonalidade (ex.: dedetização com chuva e calor).", s:"Proposta de item.", f:"Claude"},
+   {a:"G", t:"A gerência aprova o item?", dec:["Sim → passo 5","Não → volta ao passo 3 com o ajuste"]},
+   {a:"M", t:"Registrar a decisão", d:"Item, motivo e dados no processo da recorrente.", s:"Decisão registrada; segue no MP5.", f:"Processo recorrente", go:"MP5"}
+  ],
+  ag:["Skill comentários × urgência"], rot:[],
+  ind:["Queda de cards corretivos do item depois do ciclo"],
+  pend:["19/10: proposta de puxar a dedetização antes do travesseiro."]},
+
+ {id:"MP5", tr:"T2", n:"Preparação do ciclo",
+  o:"Deixar a base e a rede prontas para executar o item.",
+  ini:"Item decidido no MP4.",
+  fim:"Imóveis elegíveis, prestadores e régua de evidência prontos.",
+  dono:"Analista de Manutenção", cad:"Uma vez por ciclo", val:"Hóspede bem recebido",
+  steps:[
+   {a:"S", t:"Calcular os imóveis elegíveis", d:"Fica fora quem fez o item na janela, imóvel com menos de 6 meses de operação e quem não tem o item.", s:"Contagem por imóvel.", f:"Varredura da recorrente"},
+   {a:"M", t:"Conferir a contagem por franquia", d:"Recontar a regra e olhar os extremos.", s:"Base conferida.", f:"Central · aba Recorrentes"},
+   {a:"M", t:"Garantir 2 prestadores por cidade", d:"Prospectar onde faltar.", s:"Prestadores cadastrados.", f:"Hub de Serviços"},
+   {a:"T", t:"Definir a régua de evidência do item", d:"O que vale como prova, no validador e no auditor.", s:"Régua no ar.", f:"Validador · GitHub"},
+   {a:"M", t:"Está tudo pronto?", dec:["Não → ajusta base, prestadores ou régua","Sim → segue no MP6"], go:"MP6"}
+  ],
+  ag:["Varredura da recorrente","Validador (régua do item)"], rot:[],
+  ind:["Cidades com 2 prestadores ou mais"],
+  pend:[]},
+
+ {id:"MP6", tr:"T2", n:"Comunicação e abertura",
+  o:"Avisar a franquia uma semana antes, com os dados, e abrir os cards de uma vez.",
+  ini:"Base pronta no MP5.",
+  fim:"Cards do ciclo abertos e franquias avisadas.",
+  dono:"Analista de Manutenção", cad:"Uma semana antes do ciclo + dia da abertura", val:"Hóspede bem recebido",
+  steps:[
+   {a:"M", t:"Enviar o comunicado com os dados", d:"Por que o item entrou ('nos últimos meses isso gerou X comentários') e a lista de imóveis.", s:"Comunicado enviado.", f:"Canal de avisos · Suporte"},
+   {a:"M", t:"Reforçar e alertar", d:"Quinta reforço, sábado alerta.", s:"Franquias avisadas.", f:"Canal de avisos"},
+   {a:"M", t:"Auditar a base antes do disparo", d:"Recontagem, volume por franquia e texto das mensagens.", s:"Disparo liberado.", f:"Central"},
+   {a:"S", t:"Abrir os cards do ciclo", d:"Um card por imóvel elegível, prazo de 15 dias úteis; fecha sozinho quem já tem a despesa.", s:"Cards e chamados abertos.", f:"Regra da recorrente"},
+   {a:"M", t:"Abertura saiu certa?", dec:["Não → corrige e reabre o que falhou","Sim → segue no MP7"], go:"MP7"}
+  ],
+  ag:["Varredura da recorrente"], rot:["Abertura do ciclo (1ª segunda útil)"],
+  ind:["Cards abertos × elegíveis","Erros na abertura"], pend:[]},
+
+ {id:"MP7", tr:"T2", n:"Execução e evidência",
+  o:"Ter o item feito e provado no prazo.",
+  ini:"Card do ciclo aberto no MP6.",
+  fim:"Card concluído por evidência, pela despesa ou encaminhado.",
+  dono:"Analista de Manutenção", cad:"Durante o ciclo (15 dias úteis)", val:"Menos desconto por manutenção",
+  steps:[
+   {a:"F", t:"Executar e anexar a prova", d:"Foto do serviço, nota ou recibo do prestador.", s:"Evidência no card.", f:"Portal da Franquia"},
+   {a:"S", t:"Fechar pela despesa", d:"Despesa do item lançada no imóvel fecha o card sozinho.", s:"Card auto-verificado.", f:"Varredura da recorrente"},
+   {a:"A", t:"Validar e auditar", d:"Prova lida pela régua do item.", s:"Parecer.", f:"Validador · auditor"},
+   {a:"A", t:"Qual o parecer?", dec:["Completa → card concluído","Incompleta → pede o que falta à franquia","Recusa do proprietário → MP3","Sem o item no imóvel → baixa e corrige o cadastro"], go:"MP3"},
+   {a:"S", t:"Cobrar quem não respondeu", d:"Lembretes de atraso e report de sexta, 9h.", s:"Franquia cobrada.", f:"Lembrete de atraso"},
+   {a:"M", t:"Registrar exceção combinada", d:"Só pela Coordenação (ex.: Blumenau até 04/11).", s:"Exceção com data.", f:"Central"}
+  ],
+  ag:["Validador e auditor","Varredura da recorrente","Lembrete de atraso"], rot:["Report do ciclo (sexta, 9h)"],
+  ind:["% concluído com evidência","Cards sem resposta da franquia"],
+  pend:["Ciclo de ar-condicionado (prazo 22/10): 627 de 1.147 concluídos com evidência; 317 sem nenhuma resposta (API do Sapron, 22/10)."]},
+
+ {id:"MP8", tr:"T2", n:"Fechamento do ciclo",
+  o:"Fechar o ciclo, ajudar quem ficou para trás e aprender antes do próximo.",
+  ini:"Prazo do ciclo vencido.",
+  fim:"Balanço, pendências encaminhadas e ajustes decididos.",
+  dono:"Analista de Manutenção", cad:"No fim de cada ciclo", val:"Menos comentário negativo",
+  steps:[
+   {a:"M", t:"Puxar o balanço", d:"Gerados, concluídos, em aprovação e sem resposta, por franquia.", s:"Relatório do ciclo.", f:"Central · Claude"},
+   {a:"M", t:"Separar o que faltou por motivo", d:"Silêncio, agendado sem prova, sem o item, distrato, recusa do proprietário.", s:"Lista por motivo.", f:"Claude"},
+   {a:"M", t:"Encaminhar cada grupo", d:"Recusa → MP3; sem o item → corrige o cadastro; adiou com data → reprograma.", s:"Pendências com dono.", f:"Central · Suporte", go:"MP3"},
+   {a:"M", t:"Consultoria às franquias com pendência", d:"É proprietário, dinheiro ou falta de prestador? Combina meta.", s:"Meta registrada.", f:"Google Meet"},
+   {a:"M", t:"A franquia resolveu?", dec:["Não → MP11 Franquias críticas","Sim → fecha o ciclo da franquia"], go:"MP11"},
+   {a:"G", t:"Retro e ajuste do próximo ciclo", d:"Cadência, datas e régua.", s:"Decisões no processo.", f:"Processo recorrente"}
+  ],
+  ag:[], rot:[], ind:["% do ciclo concluído","Franquias com pendência no fechamento"], pend:[]},
+
+ {id:"MP9", tr:"T3", n:"Controle de manutenção",
+  o:"Saber se a operação está mandando o que deveria e se os agentes estão decidindo certo.",
+  ini:"Todo dia útil (rotina) e toda semana (monitoramento).",
+  fim:"Desvio avisado ao dono e agentes auditados.",
+  dono:"Analista de Manutenção", cad:"Diária e semanal", val:"Hóspede bem recebido",
+  steps:[
+   {a:"D", t:"As áreas mandam os pedidos", d:"Danos de hóspede, Suporte, comentários, consultores, UTI, Implantação, migração, limpeza e a própria franquia. Entrada não é processo da Manutenção.", s:"Cards na Central.", f:"Central · ponte do Suporte · integração UTI"},
+   {a:"A", t:"Comparar o volume de cada entrada", d:"Com o histórico de 1 mês por origem.", s:"Variação por entrada.", f:"Monitor de entradas (em desenho)"},
+   {a:"A", t:"Caiu além da meta?", dec:["Sim (ex.: 20% abaixo do habitual) → passo 4","Não → segue o monitoramento"]},
+   {a:"M", t:"Avisar o dono da entrada", d:"'Danos 10% abaixo do habitual esta semana: aconteceu algo?'", s:"Dono acionado.", f:"Slack"},
+   {a:"M", t:"Conferir os agentes", d:"Heartbeat semanal e auditoria por amostra.", s:"Agentes conferidos.", f:"Aba Agentes · Claude"},
+   {a:"M", t:"Algum agente parado ou errando?", dec:["Sim → corrige com Tecnologia","Não → segue"]}
+  ],
+  ag:["Monitor de entradas (em desenho)","Heartbeat dos agentes"], rot:["Rotina diária de urgentes e travas","Monitoramento semanal das entradas"],
+  ind:["Entradas fora da faixa","Agentes com pulso em dia"],
+  pend:["Definir a meta de variação por entrada (Ray citou 20%)."]},
+
+ {id:"MP10", tr:"T3", n:"Ocorrências de manutenção",
+  o:"Transformar desvio de manutenção em ocorrência para a franquia, junto com a Qualidade.",
+  ini:"Card que se enquadra no critério (ex.: urgente sem resposta em 48 horas).",
+  fim:"Ocorrência registrada e refletida no score.",
+  dono:"Analista de Manutenção + Qualidade (Vick)", cad:"Diária", val:"Menos comentário negativo",
+  steps:[
+   {a:"A", t:"Achar o card no critério", d:"Urgente sem resposta em 48 horas; manutenção vinda de comentário negativo.", s:"Lista do dia.", f:"Agente de ocorrência"},
+   {a:"A", t:"Montar a ocorrência", d:"Link do card e seção do MGO.", s:"Rascunho da ocorrência.", f:"Agente de ocorrência"},
+   {a:"Q", t:"Está correta?", dec:["Não → descarta e ajusta o critério","Sim → passo 4"]},
+   {a:"Q", t:"Registrar a ocorrência", d:"Para a franquia.", s:"Ocorrência aberta.", f:"Ocorrências"},
+   {a:"S", t:"Refletir no score", d:"Pesa na nota mensal da franquia.", s:"Score atualizado.", f:"Score da franquia", go:"MP11"}
+  ],
+  ag:["Agente de ocorrência do urgente (em sombra desde 20/10)"], rot:[],
+  ind:["Ocorrências de manutenção no mês"],
+  pend:["Destino das ocorrências na Central de Qualidade ainda a definir.","Acesso às Ocorrências para o score."]},
+
+ {id:"MP11", tr:"T3", n:"Franquias críticas",
+  o:"Identificar a franquia crítica em manutenção e ajudá-la antes da UTI.",
+  ini:"Score do mês (dia 10) ou franquia vinda do fechamento do ciclo.",
+  fim:"Franquia fora da faixa ou levada à UTI.",
+  dono:"Analista de Manutenção", cad:"Semanal; fechamento mensal no dia 10", val:"Menos reserva cancelada",
+  steps:[
+   {a:"S", t:"Calcular o score", d:"Lead time, SLA, reincidência e volume; toda segunda.", s:"Nota por franquia.", f:"Aba do score"},
+   {a:"M", t:"Triar pelas faixas", d:"5 sinais por franquia.", s:"Faixa de cada franquia.", f:"Skill recuperação de franquias"},
+   {a:"M", t:"Está em Recuperação ou Crítica?", dec:["Sim → passo 4","Não → acompanha no mês seguinte"]},
+   {a:"M", t:"Call de 15 minutos com a franquia", d:"O que trava: proprietário, dinheiro ou prestador?", s:"Diagnóstico.", f:"Google Meet"},
+   {a:"M", t:"Combinar plano", d:"Plano · Ação · Resultado da semana.", s:"Plano registrado.", f:"Registro da triagem"},
+   {a:"M", t:"Saiu da faixa no mês?", dec:["Sim → encerra","Não → passo 7"]},
+   {a:"G", t:"Levar à UTI", d:"Com o histórico da manutenção.", s:"Caso na UTI.", f:"UTI de Franquias"}
+  ],
+  ag:["Score da franquia"], rot:["Score mensal (dia 10)","Triagem semanal"],
+  ind:["Franquias na faixa Crítica","Franquias que saíram da faixa"], pend:["Legenda de cada item na aba do score."]}
+];
+
+const e = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const trOf = p => TRILHAS.find(t => t.k === p.tr);
+const link = id => { const p = P.find(x => x.id === id); return p ? `<a class="go" href="#${id}">${id} ${e(p.n)}</a>` : id; };
+
+function tabs(cur){
+  let h = `<a href="#mapa" class="${cur==="mapa"?"on":""}">Todos os processos</a>`;
+  TRILHAS.forEach(t => {
+    h += `<span class="sep"></span>`;
+    P.filter(p => p.tr === t.k).forEach(p => h += `<a href="#${p.id}" class="${cur===p.id?"on":""}"><span class="n">${p.id}</span>${e(p.n)}</a>`);
+  });
+  document.getElementById("tabs").innerHTML = h;
+}
+
+function mapa(){
+  let h = `<h2>Todos os processos</h2><p class="sub">${P.length} processos em ${TRILHAS.length} trilhas. Clique em um processo para ver a sequência de atividades.</p>`;
+  TRILHAS.forEach(t => {
+    const ps = P.filter(p => p.tr === t.k);
+    h += `<section class="trail"><h3><span class="tag" style="background:${t.c}">${t.k.replace("T","Trilha ")}</span>${e(t.n)}</h3><p>${e(t.o)}</p><div class="procs">`;
+    ps.forEach(p => h += `<a class="pc" style="--c:${t.c}" href="#${p.id}"><span class="id">${p.id}</span><b>${e(p.n)}</b>
+      <span class="io"><span><strong>Começa:</strong> ${e(p.ini)}</span><span><strong>Termina:</strong> ${e(p.fim)}</span></span>
+      <div class="cnt">${p.steps.length} atividades · ${p.steps.filter(s=>s.dec).length} decisões →</div></a>`);
+    h += `</div></section>`;
+  });
+  h += `<section class="links"><h3>Como os processos se ligam</h3><ul>
+    <li>${link("MP1")} e ${link("MP2")}: o classificador decide para qual dos dois o card vai.</li>
+    <li>${link("MP1")}, ${link("MP2")} e ${link("MP7")} levam ao ${link("MP3")} tudo o que depende do proprietário.</li>
+    <li>${link("MP1")}: urgente sem resposta em 48 horas vira ocorrência no ${link("MP10")}.</li>
+    <li>${link("MP4")} → ${link("MP5")} → ${link("MP6")} → ${link("MP7")} → ${link("MP8")}: um ciclo da recorrente.</li>
+    <li>${link("MP8")} e ${link("MP10")} alimentam o ${link("MP11")}; só vai para a UTI quem não sai da faixa.</li>
+    <li>${link("MP9")} vigia as entradas que alimentam ${link("MP1")} e ${link("MP2")} e confere os agentes de todos os processos.</li></ul></section>`;
+  return h;
+}
+
+function proc(p){
+  const t = trOf(p);
+  const lanes = [...new Set(p.steps.map(s => s.a))];
+  const cols = `grid-template-columns:repeat(${lanes.length},minmax(0,1fr))`;
+  let fl = `<div class="lanes" style="${cols}">` + lanes.map(a => `<div class="lh">${e(ACT[a])}</div>`).join("");
+  p.steps.forEach((s, i) => {
+    if (i) fl += `<div class="arrow"></div>`;
+    lanes.forEach(a => {
+      if (a !== s.a) { fl += `<div class="cell lane empty"></div>`; return; }
+      let box;
+      if (s.dec) {
+        box = `<div class="st dec"><div class="who">${e(ACT[a])} · decisão</div><span class="num">${i+1}</span><b>${e(s.t)}</b><ul class="br">${s.dec.map(d=>`<li>${e(d).replace(/(MP\d+)/g,m=>`<a class="go" href="#${m}">${m}</a>`)}</li>`).join("")}</ul></div>`;
+      } else {
+        box = `<div class="st${s.pd?" pend":""}"><div class="who">${e(ACT[a])}</div><span class="num">${i+1}</span><b>${e(s.t)}</b>
+          ${s.d?`<div class="d">${e(s.d)}</div>`:""}${s.s?`<div class="out"><strong>Saída:</strong> ${e(s.s)}</div>`:""}
+          ${s.go?`<div class="out">Segue em ${link(s.go)}</div>`:""}${s.f?`<span class="tool">${e(s.f)}</span>`:""}${s.pd?`<div class="pd">A validar: ${e(s.pd)}</div>`:""}</div>`;
+      }
+      fl += `<div class="cell lane">${box}</div>`;
+    });
+  });
+  fl += `</div>`;
+  const ul = (arr, empty) => arr.length ? `<ul>${arr.map(x=>`<li>${e(x)}</li>`).join("")}</ul>` : `<p class="sub" style="margin:0">${empty}</p>`;
+  const liga = [...new Set(p.steps.flatMap(s => [s.go, ...(s.dec||[]).flatMap(d => d.match(/MP\d+/g)||[])]).filter(Boolean))].filter(x => x !== p.id);
+  return `<section class="phead" style="--c:${t.c}"><span class="id">${p.id} · ${e(t.n)}</span><h2>${e(p.n)}</h2><p class="sub" style="margin:0">${e(p.o)}</p>
+    <div class="meta"><div><span class="k">Começa quando</span>${e(p.ini)}</div><div><span class="k">Termina quando</span>${e(p.fim)}</div>
+    <div><span class="k">Dono</span>${e(p.dono)}</div><div><span class="k">Cadência e prazo</span>${e(p.cad)}</div><div><span class="k">Valor que entrega</span>${e(p.val)}</div></div></section>
+    <div class="grid2" style="--c:${t.c}"><section class="flow"><h3>Sequência de atividades</h3>
+      <div class="legend"><span><i style="background:var(--card)"></i>Atividade</span><span><i style="background:var(--decbg);border-color:var(--dec)"></i>Decisão</span><span><i style="box-shadow:inset 3px 0 0 var(--coral)"></i>Ponto a validar</span></div>${fl}</section>
+    <aside class="side">
+      <div class="box"><h3>Agentes e automações</h3>${ul(p.ag,"Nenhum.")}</div>
+      <div class="box"><h3>Rotinas fixas</h3>${ul(p.rot,"Nenhuma.")}</div>
+      <div class="box"><h3>Indicadores</h3>${ul(p.ind,"A definir.")}</div>
+      ${liga.length?`<div class="box"><h3>Liga com</h3><ul>${liga.map(x=>`<li>${link(x)}</li>`).join("")}</ul></div>`:""}
+      ${p.pend.length?`<div class="box warn"><h3>Pontos a validar e notas</h3>${ul(p.pend,"")}</div>`:""}
+    </aside></div>`;
+}
+
+function render(){
+  const id = (location.hash || "#mapa").slice(1);
+  const p = P.find(x => x.id === id);
+  tabs(p ? p.id : "mapa");
+  document.getElementById("view").innerHTML = p ? proc(p) : mapa();
+  const on = document.querySelector("nav.tabs a.on"); if (on) on.scrollIntoView({block:"nearest",inline:"center"});
+  window.scrollTo(0,0);
+}
+window.addEventListener("hashchange", render);
+render();
+</script>
+</body>
+</html>

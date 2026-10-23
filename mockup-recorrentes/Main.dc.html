@@ -1,0 +1,333 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap">
+  <style>
+    body { margin: 0; font-family: Quicksand, 'Segoe UI', sans-serif; background: #F3F6F9; }
+    a { color: #0055FF; } a:hover { color: #0044cc; }
+    table { border-collapse: collapse; width: 100%; }
+    th { background: #F6F6F6; text-align: left; font-size: 12px; font-weight: 600; color: #64748b; padding: 11px 11px; border-bottom: 1px solid #e0e0e0; white-space: nowrap; }
+    td { padding: 12px 11px; font-size: 13px; color: #151B26; border-bottom: 1px solid #eff2f6; white-space: nowrap; }
+    tr:last-child td { border-bottom: none; }
+  </style>
+</helmet>
+
+<div style="padding: 12px 24px 40px; max-width: 1560px; margin: 0 auto;">
+
+  <!-- tab strip -->
+  <div style="display: flex; gap: 22px; align-items: center; border-bottom: 1px solid #e0e0e0; margin-bottom: 18px;">
+    <span style="font-size: 13.5px; font-weight: 600; color: #51626F; padding: 10px 0;">Dashboard</span>
+    <span style="font-size: 13.5px; font-weight: 600; color: #51626F; padding: 10px 0;">Central de Cards</span>
+    <span style="font-size: 13.5px; font-weight: 600; color: #51626F; padding: 10px 0;">Por imóvel</span>
+    <span style="font-size: 13.5px; font-weight: 600; color: #51626F; padding: 10px 0;">UTI de imóveis</span>
+    <span style="font-size: 13.5px; font-weight: 700; color: #0055FF; padding: 10px 0; box-shadow: inset 0 -2px 0 0 #0055FF;">Recorrentes</span>
+    <span style="font-size: 13.5px; font-weight: 600; color: #51626F; padding: 10px 0;">KPIs diários</span>
+    <span style="font-size: 13.5px; font-weight: 600; color: #51626F; padding: 10px 0;">Guia operacional</span>
+    <span style="font-size: 13.5px; font-weight: 600; color: #51626F; padding: 10px 0;">Excluídos</span>
+    <span style="font-size: 13.5px; font-weight: 600; color: #51626F; padding: 10px 0;">Agentes de IA</span>
+  </div>
+
+  <!-- header -->
+  <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin-bottom: 16px;">
+    <div>
+      <h1 style="font-size: 24px; font-weight: 700; margin: 0; color: #151B26;">Manutenção recorrente</h1>
+      <p style="font-size: 13px; color: #64748b; margin: 2px 0 0; max-width: 640px;">O calendário decide o mês; a varredura decide o imóvel. Item cobrado abre card com prazo; lembrete não abre.</p>
+    </div>
+    <div style="display: flex; gap: 10px; align-items: center;">
+      <button style="display: inline-flex; align-items: center; gap: 8px; font-size: 13.5px; font-weight: 600; cursor: pointer; border-radius: 8px; padding: 10px 18px; border: 1px solid #e0e0e0; background: #fff; color: #151B26;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-3-6.7"/><polyline points="21 3 21 9 15 9"/></svg>
+        Rodar varredura
+      </button>
+      <button style="display: inline-flex; align-items: center; gap: 8px; font-size: 13.5px; font-weight: 600; border: none; cursor: pointer; border-radius: 8px; padding: 10px 18px; background: #0055FF; color: #fff; box-shadow: 0 1px 2px rgba(0, 85, 255, 0.3);">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Nova regra
+      </button>
+    </div>
+  </div>
+
+  <!-- calendario do ciclo -->
+  <div style="background: #fff; border: 1px solid #e0e0e0; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); padding: 16px 18px; margin-bottom: 14px;">
+    <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 12px;">
+      <h3 style="font-size: 14px; font-weight: 700; margin: 0; display: flex; align-items: center; gap: 8px; color: #151B26;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        Calendário do ciclo
+        <span style="font-size: 10.5px; font-weight: 700; border-radius: 999px; padding: 2px 8px; background: rgba(0, 85, 255, 0.1); color: #0055FF; letter-spacing: 0.02em;">NOVO</span>
+      </h3>
+      <span style="font-size: 12px; color: #64748b;">entradas de card por mês · mês fixo por item, igual para toda a carteira</span>
+    </div>
+    <div style="display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 8px;">
+      <div style="border: 1px solid #e0e0e0; border-radius: 8px; padding: 10px 8px; text-align: center; background: #fff;"><div style="font-size: 11.5px; font-weight: 600; color: #64748b;">Abr</div><div style="font-size: 20px; font-weight: 700; color: #151B26; margin-top: 2px;">2</div></div>
+      <div style="border: 1px solid #e0e0e0; border-radius: 8px; padding: 10px 8px; text-align: center; background: #fff;"><div style="font-size: 11.5px; font-weight: 600; color: #64748b;">Mai</div><div style="font-size: 20px; font-weight: 700; color: #151B26; margin-top: 2px;">2</div></div>
+      <div style="border: 1px solid #e0e0e0; border-radius: 8px; padding: 10px 8px; text-align: center; background: #fff;"><div style="font-size: 11.5px; font-weight: 600; color: #64748b;">Jun</div><div style="font-size: 20px; font-weight: 700; color: #C0CDDD; margin-top: 2px;">0</div></div>
+      <div style="border: 1px solid #e0e0e0; border-radius: 8px; padding: 10px 8px; text-align: center; background: #fff;"><div style="font-size: 11.5px; font-weight: 600; color: #64748b;">Jul</div><div style="font-size: 20px; font-weight: 700; color: #C0CDDD; margin-top: 2px;">0</div></div>
+      <div style="border: 1px solid #e0e0e0; border-radius: 8px; padding: 10px 8px; text-align: center; background: #fff;"><div style="font-size: 11.5px; font-weight: 600; color: #64748b;">Ago</div><div style="font-size: 20px; font-weight: 700; color: #151B26; margin-top: 2px;">1</div></div>
+      <div style="border: 1px solid rgba(0,85,255,0.35); border-radius: 8px; padding: 10px 8px; text-align: center; background: rgba(0,85,255,0.05);"><div style="font-size: 11.5px; font-weight: 700; color: #0055FF;">Set</div><div style="font-size: 20px; font-weight: 700; color: #0055FF; margin-top: 2px;">3</div></div>
+      <div style="border: 1px solid #e0e0e0; border-radius: 8px; padding: 10px 8px; text-align: center; background: #fff;"><div style="font-size: 11.5px; font-weight: 600; color: #64748b;">Out</div><div style="font-size: 20px; font-weight: 700; color: #151B26; margin-top: 2px;">2</div></div>
+      <div style="border: 1px solid #e0e0e0; border-radius: 8px; padding: 10px 8px; text-align: center; background: #fff;"><div style="font-size: 11.5px; font-weight: 600; color: #64748b;">Nov</div><div style="font-size: 20px; font-weight: 700; color: #151B26; margin-top: 2px;">2</div></div>
+      <div style="border: 1px dashed #C0CDDD; border-radius: 8px; padding: 10px 8px; text-align: center; background: #F6F6F6;"><div style="font-size: 11.5px; font-weight: 600; color: #9AA5B0;">Dez</div><div style="font-size: 13px; font-weight: 700; color: #9AA5B0; margin-top: 6px;">—</div></div>
+      <div style="border: 1px dashed #C0CDDD; border-radius: 8px; padding: 10px 8px; text-align: center; background: #F6F6F6;"><div style="font-size: 11.5px; font-weight: 600; color: #9AA5B0;">Jan</div><div style="font-size: 13px; font-weight: 700; color: #9AA5B0; margin-top: 6px;">—</div></div>
+      <div style="border: 1px dashed #C0CDDD; border-radius: 8px; padding: 10px 8px; text-align: center; background: #F6F6F6;"><div style="font-size: 11.5px; font-weight: 600; color: #9AA5B0;">Fev</div><div style="font-size: 13px; font-weight: 700; color: #9AA5B0; margin-top: 6px;">—</div></div>
+      <div style="border: 1px dashed #C0CDDD; border-radius: 8px; padding: 10px 8px; text-align: center; background: #F6F6F6;"><div style="font-size: 11.5px; font-weight: 600; color: #9AA5B0;">Mar</div><div style="font-size: 13px; font-weight: 700; color: #9AA5B0; margin-top: 6px;">—</div></div>
+    </div>
+    <div style="margin-top: 12px; font-size: 12.5px; color: #64748b; display: flex; gap: 8px; align-items: flex-start; background: #FFF3E0; border: 1px solid #FFCD80; border-radius: 8px; padding: 10px 14px;">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#F5A623" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0; margin-top: 1px;"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+      <span><strong style="color: #151B26; font-weight: 700;">Janela de bloqueio · 01/12 a 31/03.</strong> Nenhum card recorrente entra ou vence na alta temporada. Imóvel ativado dentro da janela não abre card nela: entra no primeiro ciclo válido de abril em diante, respeitando os 12 meses de ativação.</span>
+    </div>
+    <div style="margin-top: 8px; font-size: 12.5px; color: #64748b; display: flex; gap: 8px; align-items: flex-start; background: #F6F8FB; border: 1px solid #e0e0e0; border-radius: 8px; padding: 10px 14px;">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#51626F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0; margin-top: 1px;"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 14"/></svg>
+      <span><strong style="color: #151B26; font-weight: 700;">Primeira execução.</strong> O imóvel entra no primeiro mês do calendário que ocorrer depois de 12 meses de ativação: a ativação abre a porta, o calendário marca a data. Ativado em jul/2026 não entra em jul/2027 (julho não tem item); entra no ar-condicionado de set/2027.</span>
+    </div>
+  </div>
+
+  <!-- ja foi lancado -->
+  <div style="background: #fff; border: 1px solid #e0e0e0; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); padding: 16px 18px; margin-bottom: 14px;">
+    <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 14px;">
+      <h3 style="font-size: 14px; font-weight: 700; margin: 0; display: flex; align-items: center; gap: 8px; color: #151B26;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+        Já foi lançado?
+        <span style="font-size: 10.5px; font-weight: 700; border-radius: 999px; padding: 2px 8px; background: rgba(0, 85, 255, 0.1); color: #0055FF; letter-spacing: 0.02em;">NOVO</span>
+      </h3>
+      <span style="font-size: 12px; color: #64748b;">quatro perguntas, na ordem — a mais barata primeiro · ar-condicionado, medido em 16/09/2026 sobre 3.496 imóveis ativos</span>
+    </div>
+    <div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px;">
+      <div style="border: 1px solid #e0e0e0; border-radius: 8px; padding: 12px 14px;">
+        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;"><span style="font-size: 11px; font-weight: 700; color: #fff; background: #51626F; border-radius: 999px; width: 18px; height: 18px; display: inline-flex; align-items: center; justify-content: center;">1</span><span style="font-size: 12.5px; font-weight: 700; color: #151B26;">Ativo há mais que o ciclo</span></div>
+        <div style="font-size: 12px; color: #64748b; line-height: 1.5;">Mais de 1 ano de ativação do imóvel.</div>
+        <div style="font-size: 18px; font-weight: 700; color: #151B26; margin-top: 8px;">1.782 barrados</div><div style="font-size: 11.5px; color: #64748b; margin-top: 1px;">seguem 1.714</div>
+      </div>
+      <div style="border: 1px solid #e0e0e0; border-radius: 8px; padding: 12px 14px;">
+        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;"><span style="font-size: 11px; font-weight: 700; color: #fff; background: #51626F; border-radius: 999px; width: 18px; height: 18px; display: inline-flex; align-items: center; justify-content: center;">2</span><span style="font-size: 12.5px; font-weight: 700; color: #151B26;">Tem o item no cadastro</span></div>
+        <div style="font-size: 12px; color: #64748b; line-height: 1.5;">Separa elegível de imóvel sem o ativo.</div>
+        <div style="font-size: 18px; font-weight: 700; color: #151B26; margin-top: 8px;">20 barrados</div><div style="font-size: 11.5px; color: #64748b; margin-top: 1px;">seguem 1.694</div>
+      </div>
+      <div style="border: 1px solid #e0e0e0; border-radius: 8px; padding: 12px 14px;">
+        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;"><span style="font-size: 11px; font-weight: 700; color: #fff; background: #51626F; border-radius: 999px; width: 18px; height: 18px; display: inline-flex; align-items: center; justify-content: center;">3</span><span style="font-size: 12.5px; font-weight: 700; color: #151B26;">Despesa já lançada</span></div>
+        <div style="font-size: 12px; color: #64748b; line-height: 1.5;">Aprovada ou paga, dentro da janela do ciclo.</div>
+        <div style="font-size: 18px; font-weight: 700; color: #151B26; margin-top: 8px;">526 barrados</div><div style="font-size: 11.5px; color: #64748b; margin-top: 1px;">seguem 1.168</div>
+      </div>
+      <div style="border: 1px solid #e0e0e0; border-radius: 8px; padding: 12px 14px;">
+        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;"><span style="font-size: 11px; font-weight: 700; color: #fff; background: #51626F; border-radius: 999px; width: 18px; height: 18px; display: inline-flex; align-items: center; justify-content: center;">4</span><span style="font-size: 12.5px; font-weight: 700; color: #151B26;">Manutenção registrada</span></div>
+        <div style="font-size: 12px; color: #64748b; line-height: 1.5;">Cobre o proprietário que pagou por conta própria.</div>
+        <div style="font-size: 18px; font-weight: 700; color: #151B26; margin-top: 8px;">4 barrados</div><div style="font-size: 11.5px; color: #64748b; margin-top: 1px;">seguem 1.164</div>
+      </div>
+    </div>
+    <div style="margin-top: 12px; display: flex; gap: 18px; align-items: center; flex-wrap: wrap;">
+      <span style="font-size: 12.5px; color: #64748b;">Passou pelas quatro sem barrar → o card é gerado. <strong style="color: #151B26;">1.091 cards abrem</strong> no ciclo do ar-condicionado; <strong style="color: #151B26;">73</strong> ficam indefinidos por falta de anúncio para conferir o cadastro.</span>
+      <span style="font-size: 12px; font-weight: 600; color: #219653; display: inline-flex; align-items: center; gap: 6px;"><span style="width: 8px; height: 8px; border-radius: 999px; background: #41B592; display: inline-block;"></span>Auto-verificados (despesa)</span>
+      <span style="font-size: 12px; font-weight: 600; color: #219653; display: inline-flex; align-items: center; gap: 6px;"><span style="width: 8px; height: 8px; border-radius: 999px; background: #3CC3EE; display: inline-block;"></span>Auto-verificados (IA)</span>
+    </div>
+  </div>
+
+  <div style="background: #fff; border: 1px solid #e0e0e0; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); padding: 16px 18px; margin-bottom: 14px;">
+    <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 14px;">
+      <h3 style="font-size: 14px; font-weight: 700; margin: 0; display: flex; align-items: center; gap: 8px; color: #151B26;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+        Próximo ciclo · outubro
+        <span style="font-size: 10.5px; font-weight: 700; border-radius: 999px; padding: 2px 8px; background: rgba(0, 85, 255, 0.1); color: #0055FF; letter-spacing: 0.02em;">NOVO</span>
+      </h3>
+      <span style="font-size: 12px; color: #64748b;">caixa d'água · dedetização · aviso um por franqueado, card um por imóvel</span>
+    </div>
+    <div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; margin-bottom: 14px;">
+      <div style="border: 1px solid #e0e0e0; border-radius: 8px; padding: 10px 12px;"><div style="font-size: 11.5px; font-weight: 600; color: #64748b;">Ter 29/09</div><div style="font-size: 13.5px; font-weight: 700; color: #151B26; margin-top: 2px;">Comunicado</div><div style="font-size: 12px; color: #64748b;">avisa que vai ocorrer</div></div>
+      <div style="border: 1px solid #e0e0e0; border-radius: 8px; padding: 10px 12px;"><div style="font-size: 11.5px; font-weight: 600; color: #64748b;">Qui 01/10</div><div style="font-size: 13.5px; font-weight: 700; color: #151B26; margin-top: 2px;">Reforço</div><div style="font-size: 12px; color: #64748b;">reforça o de terça</div></div>
+      <div style="border: 1px solid #e0e0e0; border-radius: 8px; padding: 10px 12px;"><div style="font-size: 11.5px; font-weight: 600; color: #64748b;">Sáb 03/10</div><div style="font-size: 13.5px; font-weight: 700; color: #151B26; margin-top: 2px;">Alerta</div><div style="font-size: 12px; color: #64748b;">último aviso</div></div>
+      <div style="border: 1px solid rgba(0,85,255,0.35); border-radius: 8px; padding: 10px 12px; background: rgba(0,85,255,0.05);"><div style="font-size: 11.5px; font-weight: 700; color: #0055FF;">Seg 05/10 · 1ª segunda útil</div><div style="font-size: 13.5px; font-weight: 700; color: #151B26; margin-top: 2px;">Abertura dos cards</div><div style="font-size: 12px; color: #64748b;">o lead time começa aqui</div></div>
+    </div>
+    <div style="display: grid; grid-template-columns: 1fr 1.4fr; gap: 14px;">
+      <div style="border: 1px solid #e0e0e0; border-radius: 8px; padding: 12px 14px;">
+        <div style="font-size: 12.5px; font-weight: 700; color: #151B26; margin-bottom: 8px;">Prazos</div>
+        <div style="font-size: 12.5px; color: #334155; line-height: 1.7;"><strong>15 dias úteis</strong> · franquia executa e anexa a evidência<br><strong>2 dias úteis</strong> · Manutenção valida; estourou, o relógio da franquia congela<br><strong>3 dias úteis</strong> · piso para reapresentar evidência devolvida</div>
+      </div>
+      <div style="border: 1px solid #e0e0e0; border-radius: 8px; padding: 12px 14px;">
+        <div style="font-size: 12.5px; font-weight: 700; color: #151B26; margin-bottom: 8px;">Passou do prazo <span style="font-weight: 500; color: #64748b;">· dias corridos</span></div>
+        <div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; font-size: 12px; color: #334155; line-height: 1.45;">
+          <div><strong style="color: #151B26;">D+7</strong><br>lembrete automático do Sapron</div>
+          <div><strong style="color: #151B26;">D+14</strong><br>BackOffice aciona o gestor da franquia, por nome</div>
+          <div><strong style="color: #151B26;">D+21</strong><br>Coordenação assume <span style="color: #B26A00;">· consequência: decisão 3</span></div>
+          <div><strong style="color: #151B26;">+7 em +7</strong><br>lembrete repete enquanto aberto</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- tabela de regras -->
+  <div style="background: #fff; border: 1px solid #e0e0e0; border-radius: 8px; overflow-x: auto; box-shadow: 0 1px 3px rgba(0,0,0,0.08);">
+    <table>
+      <thead>
+        <tr>
+          <th>Item</th>
+          <th>Status</th>
+          <th>Mês do ciclo <span style="font-size: 9.5px; font-weight: 700; border-radius: 999px; padding: 1px 6px; background: rgba(0, 85, 255, 0.1); color: #0055FF;">NOVO</span></th>
+          <th>Periodicidade</th>
+          <th>Prazo à franquia <span style="font-size: 9.5px; font-weight: 700; border-radius: 999px; padding: 1px 6px; background: rgba(0, 85, 255, 0.1); color: #0055FF;">NOVO</span></th>
+          <th>A foto precisa mostrar <span style="font-size: 9.5px; font-weight: 700; border-radius: 999px; padding: 1px 6px; background: rgba(0, 85, 255, 0.1); color: #0055FF;">NOVO</span></th>
+          <th>Elegibilidade <span style="font-size: 9.5px; font-weight: 700; border-radius: 999px; padding: 1px 6px; background: rgba(0, 85, 255, 0.1); color: #0055FF;">NOVO</span></th>
+          <th>Cards no ciclo</th>
+          <th>Indefinidos</th>
+          <th>Regra</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span style="display: inline-flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#0055FF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="9" rx="2"/><path d="M6 18h.01M10 18h.01M14 18h.01M18 18h.01"/></svg>Ar-condicionado + Split</span><div style="font-size: 11.5px; color: #64748b; font-weight: 500; margin-top: 2px; white-space: normal; max-width: 210px;">mesmo item, um card</div></td>
+          <td><span style="font-size: 11px; font-weight: 700; border-radius: 999px; padding: 2px 9px; background: rgba(34, 197, 94, 0.12); color: #15803D;">Cobrado</span></td>
+          <td style="font-weight: 600;">Setembro</td>
+          <td>Anual</td>
+          <td>15 dias úteis</td>
+          <td style="font-size: 12px; color: #334155; min-width: 200px; max-width: 230px; line-height: 1.45; white-space: normal;">O aparelho aberto com o filtro removido e o filtro já limpo, no ambiente do imóvel</td>
+          <td style="font-size: 12px; white-space: normal; min-width: 100px; max-width: 120px;">Anúncio Airbnb: ar-condicionado</td>
+          <td><strong>1.091</strong></td>
+          <td><strong>73</strong></td>
+          <td><span style="font-size: 11px; font-weight: 700; border-radius: 999px; padding: 2px 9px; background: rgba(148, 163, 184, 0.18); color: #64748B;">Rascunho</span></td>
+        </tr>
+        <tr>
+          <td><span style="display: inline-flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#0055FF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 12l4-6M12 12l-6 2M12 12l2 7"/></svg>Filtro do exaustor</span><div style="font-size: 11.5px; color: #64748b; font-weight: 500; margin-top: 2px; white-space: normal; max-width: 210px;">mesma visita de setembro, card próprio</div></td>
+          <td><span style="font-size: 11px; font-weight: 700; border-radius: 999px; padding: 2px 9px; background: rgba(34, 197, 94, 0.12); color: #15803D;">Cobrado</span></td>
+          <td style="font-weight: 600;">Setembro</td>
+          <td>Anual</td>
+          <td>15 dias úteis</td>
+          <td style="font-size: 12px; color: #334155; min-width: 200px; max-width: 230px; line-height: 1.45; white-space: normal;">O filtro novo instalado no exaustor</td>
+          <td style="font-size: 12px; white-space: normal; min-width: 100px; max-width: 120px; color: #9AA5B0;">a definir</td>
+          <td style="color: #9AA5B0;">a medir</td>
+          <td style="color: #9AA5B0;">a medir</td>
+          <td><span style="font-size: 11px; font-weight: 700; border-radius: 999px; padding: 2px 9px; background: rgba(148, 163, 184, 0.18); color: #64748B;">Rascunho</span></td>
+        </tr>
+        <tr>
+          <td><span style="display: inline-flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#0055FF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.7S6 9 6 13a6 6 0 0 0 12 0c0-4-6-10.3-6-10.3Z"/></svg>Filtro de água</span></td>
+          <td><span style="font-size: 11px; font-weight: 700; border-radius: 999px; padding: 2px 9px; background: rgba(245, 166, 35, 0.16); color: #B26A00;">Pendente</span></td>
+          <td style="font-weight: 600;">Abril <span style="color: #F5A623;">·</span> Setembro</td>
+          <td>a definir <span style="color: #F5A623; font-weight: 700;">*</span></td>
+          <td>15 dias úteis</td>
+          <td style="font-size: 12px; color: #334155; min-width: 200px; max-width: 230px; line-height: 1.45; white-space: normal;">O filtro trocado no ponto de instalação, com a data da etiqueta visível quando houver</td>
+          <td style="font-size: 12px; white-space: normal; min-width: 100px; max-width: 120px; color: #9AA5B0;">a definir</td>
+          <td style="color: #9AA5B0;">a medir</td>
+          <td style="color: #9AA5B0;">a medir</td>
+          <td><span style="font-size: 11px; font-weight: 700; border-radius: 999px; padding: 2px 9px; background: rgba(148, 163, 184, 0.18); color: #64748B;">Rascunho</span></td>
+        </tr>
+        <tr>
+          <td><span style="display: inline-flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#0055FF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h16v10a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2Z"/><path d="M4 8V6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v2"/></svg>Limpeza da caixa d'água</span></td>
+          <td><span style="font-size: 11px; font-weight: 700; border-radius: 999px; padding: 2px 9px; background: rgba(245, 166, 35, 0.16); color: #B26A00;">Pendente</span></td>
+          <td style="font-weight: 600;">Abril <span style="color: #F5A623;">·</span> Outubro</td>
+          <td>a definir <span style="color: #F5A623; font-weight: 700;">*</span></td>
+          <td>15 dias úteis</td>
+          <td style="font-size: 12px; color: #334155; min-width: 200px; max-width: 230px; line-height: 1.45; white-space: normal;">A caixa aberta e limpa, e depois tampada<div style="font-size: 11px; color: #B26A00; font-weight: 600; margin-top: 3px;">+ certificado com CNPJ e responsável técnico</div></td>
+          <td style="font-size: 12px; white-space: normal; min-width: 100px; max-width: 120px; color: #9AA5B0;">a definir</td>
+          <td style="color: #9AA5B0;">a medir</td>
+          <td style="color: #9AA5B0;">a medir</td>
+          <td><span style="font-size: 11px; font-weight: 700; border-radius: 999px; padding: 2px 9px; background: rgba(148, 163, 184, 0.18); color: #64748B;">Rascunho</span></td>
+        </tr>
+        <tr>
+          <td><span style="display: inline-flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#0055FF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12v6h18v-6"/><path d="M5 12V8a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v4"/></svg>Higienização de sofá / estofado</span></td>
+          <td><span style="font-size: 11px; font-weight: 700; border-radius: 999px; padding: 2px 9px; background: rgba(34, 197, 94, 0.12); color: #15803D;">Cobrado</span></td>
+          <td style="font-weight: 600;">Maio</td>
+          <td>Anual</td>
+          <td>15 dias úteis</td>
+          <td style="font-size: 12px; color: #334155; min-width: 200px; max-width: 230px; line-height: 1.45; white-space: normal;">A peça durante a extração, molhada, no ambiente do imóvel</td>
+          <td style="font-size: 12px; white-space: normal; min-width: 100px; max-width: 120px; color: #9AA5B0;">a definir</td>
+          <td style="color: #9AA5B0;">a medir</td>
+          <td style="color: #9AA5B0;">a medir</td>
+          <td><span style="font-size: 11px; font-weight: 700; border-radius: 999px; padding: 2px 9px; background: rgba(148, 163, 184, 0.18); color: #64748B;">Rascunho</span></td>
+        </tr>
+        <tr>
+          <td><span style="display: inline-flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#0055FF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="9" width="18" height="8" rx="2"/><path d="M7 9V7a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v2"/></svg>Higienização de colchão</span></td>
+          <td><span style="font-size: 11px; font-weight: 700; border-radius: 999px; padding: 2px 9px; background: rgba(34, 197, 94, 0.12); color: #15803D;">Cobrado</span></td>
+          <td style="font-weight: 600;">Maio</td>
+          <td>Anual</td>
+          <td>15 dias úteis</td>
+          <td style="font-size: 12px; color: #334155; min-width: 200px; max-width: 230px; line-height: 1.45; white-space: normal;">A peça durante a extração, molhada, no ambiente do imóvel</td>
+          <td style="font-size: 12px; white-space: normal; min-width: 100px; max-width: 120px; color: #9AA5B0;">a definir</td>
+          <td style="color: #9AA5B0;">a medir</td>
+          <td style="color: #9AA5B0;">a medir</td>
+          <td><span style="font-size: 11px; font-weight: 700; border-radius: 999px; padding: 2px 9px; background: rgba(148, 163, 184, 0.18); color: #64748B;">Rascunho</span></td>
+        </tr>
+        <tr>
+          <td><span style="display: inline-flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#0055FF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="10" rx="3"/></svg>Troca de travesseiro</span></td>
+          <td><span style="font-size: 11px; font-weight: 700; border-radius: 999px; padding: 2px 9px; background: rgba(34, 197, 94, 0.12); color: #15803D;">Cobrado</span></td>
+          <td style="font-weight: 600;">Novembro</td>
+          <td>Anual</td>
+          <td>15 dias úteis</td>
+          <td style="font-size: 12px; color: #334155; min-width: 200px; max-width: 230px; line-height: 1.45; white-space: normal;">Os travesseiros novos sobre a cama, com etiqueta</td>
+          <td style="font-size: 12px; white-space: normal; min-width: 100px; max-width: 120px; color: #9AA5B0;">a definir</td>
+          <td style="color: #9AA5B0;">a medir</td>
+          <td style="color: #9AA5B0;">a medir</td>
+          <td><span style="font-size: 11px; font-weight: 700; border-radius: 999px; padding: 2px 9px; background: rgba(148, 163, 184, 0.18); color: #64748B;">Rascunho</span></td>
+        </tr>
+        <tr>
+          <td><span style="display: inline-flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#0055FF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v10"/></svg>Higienização da máquina de lavar</span></td>
+          <td><span style="font-size: 11px; font-weight: 700; border-radius: 999px; padding: 2px 9px; background: rgba(34, 197, 94, 0.12); color: #15803D;">Cobrado</span></td>
+          <td style="font-weight: 600;">Agosto</td>
+          <td>Anual</td>
+          <td>15 dias úteis</td>
+          <td style="font-size: 12px; color: #334155; min-width: 200px; max-width: 230px; line-height: 1.45; white-space: normal;">Tambor e gaveta de sabão limpos, com a máquina aberta</td>
+          <td style="font-size: 12px; white-space: normal; min-width: 100px; max-width: 120px;">Anúncio Airbnb: máquina de lavar</td>
+          <td style="color: #9AA5B0;">a medir</td>
+          <td style="color: #9AA5B0;">a medir</td>
+          <td><span style="font-size: 11px; font-weight: 700; border-radius: 999px; padding: 2px 9px; background: rgba(148, 163, 184, 0.18); color: #64748B;">Rascunho</span></td>
+        </tr>
+        <tr>
+          <td><span style="display: inline-flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#0055FF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 20V9l7-5 7 5v11"/><path d="M10 20v-6h4v6"/></svg>Dedetização</span></td>
+          <td><span style="font-size: 11px; font-weight: 700; border-radius: 999px; padding: 2px 9px; background: rgba(34, 197, 94, 0.12); color: #15803D;">Cobrado</span></td>
+          <td style="font-weight: 600;">Outubro</td>
+          <td>Anual</td>
+          <td>15 dias úteis</td>
+          <td style="font-size: 12px; color: #334155; min-width: 200px; max-width: 230px; line-height: 1.45; white-space: normal;">A aplicação em andamento no imóvel<div style="font-size: 11px; color: #B26A00; font-weight: 600; margin-top: 3px;">+ certificado com CNPJ, responsável técnico e praga alvo</div></td>
+          <td style="font-size: 12px; white-space: normal; min-width: 100px; max-width: 120px; color: #9AA5B0;">a definir</td>
+          <td style="color: #9AA5B0;">a medir</td>
+          <td style="color: #9AA5B0;">a medir</td>
+          <td><span style="font-size: 11px; font-weight: 700; border-radius: 999px; padding: 2px 9px; background: rgba(148, 163, 184, 0.18); color: #64748B;">Rascunho</span></td>
+        </tr>
+        <tr>
+          <td><span style="display: inline-flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#0055FF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16"/><path d="M7 4v16"/><path d="M12 4v16"/><path d="M17 4v16"/></svg>Lavagem de cortinas</span></td>
+          <td><span style="font-size: 11px; font-weight: 700; border-radius: 999px; padding: 2px 9px; background: rgba(34, 197, 94, 0.12); color: #15803D;">Cobrado</span></td>
+          <td style="font-weight: 600;">Novembro</td>
+          <td>Anual</td>
+          <td>15 dias úteis</td>
+          <td style="font-size: 12px; color: #334155; min-width: 200px; max-width: 230px; line-height: 1.45; white-space: normal;">A cortina de volta no trilho depois da lavagem<div style="font-size: 11px; color: #B26A00; font-weight: 600; margin-top: 3px;">+ nota do serviço, quando terceirizado</div></td>
+          <td style="font-size: 12px; white-space: normal; min-width: 100px; max-width: 120px; color: #9AA5B0;">a definir</td>
+          <td style="color: #9AA5B0;">a medir</td>
+          <td style="color: #9AA5B0;">a medir</td>
+          <td><span style="font-size: 11px; font-weight: 700; border-radius: 999px; padding: 2px 9px; background: rgba(148, 163, 184, 0.18); color: #64748B;">Rascunho</span></td>
+        </tr>
+        <tr style="background: #FAFAFA;">
+          <td><span style="display: inline-flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#9AA5B0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>Senha de fechadura eletrônica</span><div style="font-size: 11.5px; color: #64748b; font-weight: 500; margin-top: 2px; white-space: normal; max-width: 210px;">card com evidência ou checklist de check-out?</div></td>
+          <td><span style="font-size: 11px; font-weight: 700; border-radius: 999px; padding: 2px 9px; background: rgba(245, 166, 35, 0.16); color: #B26A00;">Pendente</span></td>
+          <td style="font-weight: 600;">—</td>
+          <td>A cada check-out</td>
+          <td style="color: #9AA5B0;">sem prazo</td>
+          <td style="font-size: 12px; color: #334155; min-width: 200px; max-width: 230px; line-height: 1.45; white-space: normal;">—</td>
+          <td style="font-size: 12px; white-space: normal; min-width: 100px; max-width: 120px; color: #B26A00;">decisão 5</td>
+          <td style="color: #9AA5B0;">—</td>
+          <td style="color: #9AA5B0;">—</td>
+          <td><span style="font-size: 11px; font-weight: 700; border-radius: 999px; padding: 2px 9px; background: rgba(148, 163, 184, 0.18); color: #64748B;">Rascunho</span></td>
+        </tr>
+        <tr style="background: #FAFAFA;">
+          <td><span style="display: inline-flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#9AA5B0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="8" width="16" height="8" rx="2"/><path d="M22 11v2"/></svg>Troca de pilhas</span><div style="font-size: 11.5px; color: #64748b; font-weight: 500; margin-top: 2px; white-space: normal; max-width: 210px;">de onde vem o alerta de bateria?</div></td>
+          <td><span style="font-size: 11px; font-weight: 700; border-radius: 999px; padding: 2px 9px; background: rgba(245, 166, 35, 0.16); color: #B26A00;">Pendente</span></td>
+          <td style="font-weight: 600;">—</td>
+          <td>Por alerta de bateria</td>
+          <td style="color: #9AA5B0;">sem prazo</td>
+          <td style="font-size: 12px; color: #334155; min-width: 200px; max-width: 230px; line-height: 1.45; white-space: normal;">—</td>
+          <td style="font-size: 12px; white-space: normal; min-width: 100px; max-width: 120px; color: #B26A00;">decisão 6</td>
+          <td style="color: #9AA5B0;">—</td>
+          <td style="color: #9AA5B0;">—</td>
+          <td><span style="font-size: 11px; font-weight: 700; border-radius: 999px; padding: 2px 9px; background: rgba(148, 163, 184, 0.18); color: #64748B;">Rascunho</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div style="margin-top: 12px; font-size: 12.5px; color: #64748b; display: flex; gap: 8px; align-items: flex-start; background: #e8f0fe; border: 1px solid rgba(0, 85, 255, 0.15); border-radius: 8px; padding: 10px 14px;">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#0055FF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0; margin-top: 1px;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+    <span><strong style="color: #151B26; font-weight: 700;">Evidência:</strong> uma foto do serviço basta, no próprio card; fora do card não conta. Só dedetização e caixa d'água exigem certificado com CNPJ e responsável técnico (RDC 52/2009 · Portaria nº 5/2017). <strong style="color: #151B26; font-weight: 700;">*</strong> Filtro de água e caixa d'água aparecem duas vezes no ano, o que não fecha com "anual": ficam Pendente até a retro decidir entre semestral ou revisão + troca (decisão 1). <strong style="color: #151B26; font-weight: 700;">Elegibilidade</strong> vem do anúncio do Airbnb, não da ficha de amenities do Sapron (78% das fichas nascem com tudo falso). Só o ar-condicionado tem baseline; os outros itens são medidos um por retro. A Coordenação ajusta cadência e datas só na retro de 15 dias, nunca no meio de um ciclo.</span>
+  </div>
+
+</div>
+</x-dc>
+</body>
+</html>

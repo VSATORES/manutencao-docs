@@ -1,0 +1,241 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Processo Recorrente Ar-condicionado</title>
+<style>{{css}}</style></head><body><main>
+
+<h1>Manutenção Recorrente · Ar-condicionado</h1>
+<p class="sub">Canvas do processo, com prints do Sapron</p>
+
+<blockquote><b>v2.3 · 30/09/2026</b> · primeiro ciclo: higienização do ar-condicionado, com disparo à <b>23h de qua 30/09/2026</b> (horário de Brasília) · base: processo v2.1 de 17/09 + validação da Ray de 30/09 · dono: Vinicius (Manutenção) · valida: Ray (BackOffice Franquias)</blockquote>
+
+<blockquote class="atencao"><b>Sistema pronto para 01/10 (seção 11).</b> Conferido na API de produção em 30/09, às 13h23 de Brasília (código em produção v1.117.6): os ajustes 1 e 4 estão no ar, só existe a regra do ar-condicionado e a contagem deu <b>1.147 cards</b>, dentro da faixa aceitável de <b>1.050 a 1.250</b>. O roteiro do disparo está na seção 12.</blockquote>
+
+<h2>📌 1. Identificação</h2>
+<div class="tabela"><table>
+<tr><th>Processo</th><td>Manutenção Recorrente, que faz parte do processo de Gestão de Manutenção</td></tr>
+<tr><th>Ciclo</th><td>Ar-condicionado + Split (é um item só, com um card por imóvel) · anual</td></tr>
+<tr><th>Onde roda</th><td>Sapron → Central de Manutenção → aba <b>Recorrentes</b> (as regras) e aba <b>Central de Cards</b>, coluna "Manutenção recorrente" (os cards)</td></tr>
+<tr><th>Dono</th><td>Vinicius Satores (Manutenção), dono de toda a manutenção desde 23/09</td></tr>
+<tr><th>Validação do processo</th><td>Ray (BackOffice Franquias) · o report vai para Ray e Carol</td></tr>
+</table></div>
+
+<h2>🎯 2. Objetivo</h2>
+<p>Higienizar o ar-condicionado de todo imóvel que precisa, <b>uma vez por ano</b>, antes do verão, sem cobrar de novo o que a franquia já fez.</p>
+
+<h2>📝 3. Escopo</h2>
+<div class="tabela"><table>
+<tr><th>Dentro</th><td>Higienização do ar-condicionado e do split nos imóveis que passam pelas 4 perguntas (seção 6.2)</td></tr>
+<tr><th>Fora</th><td>Conserto de ar-condicionado, que segue como manutenção corretiva · <b>filtro do exaustor e os itens de outubro do v2.1 (dedetização e caixa d'água), adiados para depois deste ciclo</b> · imóveis com menos de 1 ano de operação</td></tr>
+<tr><th>Interfaces</th><td>Franquia (executa e manda a evidência) · Financeiro (despesa lançada) · agentes de IA de evidência (validador e auditor)</td></tr>
+</table></div>
+
+<h2>📖 4. Definições</h2>
+<div class="tabela"><table>
+<tr><th>Termo</th><th>O que é</th></tr>
+<tr><td><b>Regra</b></td><td>A linha do item na aba Recorrentes, com periodicidade, elegibilidade e status (Rascunho ou Ativa)</td></tr>
+<tr><td><b>Contagem</b></td><td>Quantos cards a regra abriria agora. Não cria nada</td></tr>
+<tr><td><b>Disparo</b></td><td>O clique que abre os cards. É o único jeito de abrir card: não existe mais rotina diária que abra card sozinha. Antes de abrir, o sistema reconta e pede confirmação do número</td></tr>
+<tr><td><b>Card recorrente</b></td><td>Um card por imóvel, com o título "Ar-condicionado: Higienização". Cada card abre um chamado próprio com a franquia, com a mensagem de abertura e o prazo</td></tr>
+<tr><td><b>Evidência</b></td><td>O que prova o serviço, anexado no próprio card (seção 7.1)</td></tr>
+<tr><td><b>Ciclo</b></td><td>Da abertura dos cards até o último card fechado, com limite em 30/11</td></tr>
+</table></div>
+
+<h2>👥 5. Responsáveis e papéis</h2>
+<div class="tabela"><table>
+<tr><th>Quem</th><th>Faz</th></tr>
+<tr><td><b>Manutenção (Vinicius)</b></td><td>Ativa a regra, confere as contagens, dispara os cards, valida os casos que os agentes não fecham e faz o report</td></tr>
+<tr><td><b>BackOffice Franquias (Ray)</b></td><td>Comunica as franquias, aciona o gestor da franquia no D+14 e valida o processo</td></tr>
+<tr><td><b>Franquia</b></td><td>Contrata o prestador, executa o serviço e anexa a evidência no card</td></tr>
+<tr><td><b>Agentes de IA</b></td><td>O validador lê a evidência e dá o parecer, e o auditor confere esse parecer. Finalizam sozinhos quando os dois concordam e todo item está comprovado. Estão em produção</td></tr>
+<tr><td><b>Pessoa da Manutenção</b></td><td>Decide o que os agentes não fecham</td></tr>
+<tr><td><b>Sapron</b></td><td>Conta, abre, cobra toda semana, cobra o atraso e registra. Não toma decisão</td></tr>
+</table></div>
+
+<h2>🔄 6. Fluxo, em 8 etapas</h2>
+<ol class="etapas">
+<li><b>Chegar o mês:</b> o calendário diz qual é o item</li>
+<li><b>Filtrar os imóveis:</b> 4 perguntas antes de cobrar</li>
+<li><b>Comunicar:</b> comunicado e lembrete</li>
+<li><b>Disparar:</b> três contagens, confirmar o número e abrir os cards uma vez só</li>
+<li><b>Executar:</b> a franquia tem 15 dias úteis</li>
+<li><b>Validar:</b> evidência aprovada ou devolvida</li>
+<li><b>Finalizar:</b> o card fecha e o imóvel sai da conta do ciclo</li>
+<li><b>Monitorar:</b> report toda sexta</li>
+</ol>
+
+<h3>6.1 Chegar o mês</h3>
+<p>No calendário anual, o ar-condicionado passa a ser de <b>outubro</b> (decisão de 30/09). Este é o primeiro ciclo e abre na <b>quarta, 30/09, às 23h</b>, e não na 1ª segunda útil do mês (seg 05/10) como diz o v2.1: <b>exceção do 1º ciclo</b>. O próximo ciclo é em 01/10/2027.</p>
+<figure><img src="{{img:rec-01-regras}}" alt="Aba Recorrentes com as regras em rascunho">
+<figcaption>Aba Recorrentes, print de 28/09 às 06h, <b>antes da limpeza das regras</b>: ainda mostra 17 regras em rascunho e duas de ar-condicionado. Situação em 30/09 (API de produção, 13h23): só existe a regra <b>id 2 "Ar-condicionado · Higienização"</b>, em rascunho. As outras 16, o Split entre elas, foram excluídas em 28/09.</figcaption></figure>
+
+<h3>6.2 Filtrar os imóveis</h3>
+<p>As 4 perguntas, nesta ordem. O imóvel que passa pelas quatro recebe um card aberto. A regra de cada pergunta e o funil de 30/09 estão em <b>3-regras-das-4-perguntas.html</b>.</p>
+<div class="tabela"><table>
+<tr><th>#</th><th>Pergunta</th><th>Barra quem</th><th>Contagem 30/09, 13h23</th></tr>
+<tr><td>1</td><td>O imóvel está ativo há mais de 12 meses?</td><td>Imóvel ativado depois de 30/09/2025</td><td>1.794 fora (+1 sem data de ativação)</td></tr>
+<tr><td>2</td><td>O imóvel tem ar-condicionado?</td><td>Anúncio sem ar-condicionado</td><td>0 · desligada (elegibilidade "todos")</td></tr>
+<tr><td>3</td><td>Há despesa de ar-condicionado lançada no ciclo?</td><td>Despesa aprovada ou paga entre 30/09/2025 e 30/09/2026</td><td>426 fora · recebem card já concluído</td></tr>
+<tr><td>4</td><td>Há manutenção de ar registrada, mesmo sem despesa?</td><td>Card concluído de qualquer origem que fale de ar + limpeza, higienização ou filtro. Card corretivo ainda aberto não barra</td><td>191 fora</td></tr>
+</table></div>
+<p>De 3.559 imóveis ativos, <b>1.147</b> recebem card aberto (API de produção, 30/09, 13h23).</p>
+
+<h3>6.3 Comunicar</h3>
+<div class="tabela"><table>
+<tr><th>Quando</th><th>O quê</th><th>Quem</th></tr>
+<tr><td>Ter 29/09</td><td>Comunicado às franquias (texto em <b>4-comunicado-franquias.md</b>) · <span class="tag ok">feito</span> enviado por WhatsApp, confirmado pelo Vinicius em 30/09</td><td>BackOffice</td></tr>
+<tr><td>Qua 30/09</td><td>Lembrete curto. O v2.1 previa reforço na quinta e alerta no sábado: neste ciclo são só estes dois</td><td>BackOffice</td></tr>
+<tr><td>Qua 30/09, 23h</td><td>Disparo. Cada card abre um chamado com a mensagem de abertura e o prazo de 22/10. Quem já pagou recebe o card já concluído, com mensagem ✅</td><td>Manutenção · Sapron</td></tr>
+<tr><td>Qua 07/10, 11h</td><td>Cobrança semanal: o sistema posta de novo em cada card recorrente aberto. Repete toda quarta</td><td>Sapron</td></tr>
+</table></div>
+
+<h3>6.4 Disparar</h3>
+<p>Três contagens, conferir a faixa, clicar em ▶ e confirmar o número <b>uma vez só</b>. O passo a passo está na seção 12.</p>
+<figure><img src="{{img:rec-03-confirmar}}" alt="Tela de confirmação do disparo">
+<figcaption>Tela de confirmação, print de 28/09 <b>antes dos ajustes</b>, quando mostrava 1.757. Esse número não vale mais. Contagem de 30/09, 13h23: <b>1.147</b>. Faixa aceitável: <b>1.050 a 1.250</b>; fora dela, não dispara. O número confirmado vira teto: o sistema não abre mais cards do que ele.</figcaption></figure>
+
+<h3>6.5 Executar</h3>
+<p>Os cards entram na coluna "Manutenção recorrente", agrupados por franquia. O prazo é de <b>15 dias úteis: qui 22/10/2026</b>, gravado pelo sistema em cada card. O dia do disparo (30/09) não conta, fins de semana e feriados nacionais também não (12/10 descontado). <b>Feriado estadual ou municipal não entra na conta, de propósito.</b></p>
+<figure><img src="{{img:rec-04-quadro}}" alt="Coluna Manutenção recorrente agrupada por franquia">
+<figcaption>Central de Cards com a coluna "Manutenção recorrente" agrupada por franquia. Os cards e imóveis deste print são de teste. O limite de 500 cards no quadro não vale mais para a coluna recorrente (em produção desde a versão 1.143.3 do front).</figcaption></figure>
+<figure><img src="{{img:rec-05-card}}" alt="Card recorrente recém-aberto">
+<figcaption>Card recorrente, print de <b>antes do ajuste 4</b>, quando nascia sem prazo e sem descrição. Desde 28/09 (produção) o card nasce com o prazo de 22/10 e a instrução da evidência.</figcaption></figure>
+
+<h3>6.6 Validar</h3>
+<p>A franquia anexa a evidência no card, e o card vai sozinho para "Aguardando aprovação". O validador e o auditor de IA leem a evidência. Se os dois concordam e todo item está comprovado, o card é finalizado. Se não, uma pessoa decide em até <b>2 dias úteis</b>.</p>
+<p>Auditor em produção: <b>146 cards auditados, 46 finalizados sozinho, discordância de 0,7%</b> (painel de produção, 30/09, 13h08 de Brasília).</p>
+<p><b>Contestação da franquia</b> ("o condomínio proíbe", "já foi feito", "não tem como fazer"): hoje segura o card para uma pessoa. A régua nova do auditor (PR #5019, <b>ainda não está em produção</b>) deixa de segurar esses casos. O que depende do proprietário continua com uma pessoa.</p>
+<figure><img src="{{img:rec-07-aprovacao}}" alt="Card em aguardando aprovação com Finalizar e Pedir nova evidência">
+<figcaption>Card com evidência recebida. A pessoa escolhe entre <b>Finalizar</b> e <b>Pedir nova evidência</b>. Se a evidência for devolvida, a franquia tem no mínimo 3 dias úteis para reenviar, e o prazo original não muda. O card volta para a coluna de onde veio (Recorrente), e a franquia recebe "🔁 Evidência considerada insuficiente" com o motivo (decisão de 30/09). Card de teste.</figcaption></figure>
+
+<h3>6.7 Finalizar</h3>
+<p>O card fecha pela evidência aprovada (agentes ou pessoa) ou por baixa com motivo. <b>Despesa lançada depois da abertura não fecha o card sozinha</b>: o sistema só confere despesa na abertura, e o agente "Despesa prova o card" está desligado em produção. O detalhe está em <b>2-finalizacao.html</b>.</p>
+
+<h3>6.8 Monitorar</h3>
+<p>Report toda sexta, às 09h, para Ray e Carol, com cards abertos, com evidência, finalizados e atrasados, por franquia. A retro é a cada 15 dias. <b>Regra de ouro:</b> o processo não muda no meio do ciclo.</p>
+
+<h2>📋 7. Regras de negócio</h2>
+<h3>7.1 A evidência que fecha o card</h3>
+<p><span class="tag ok">decidido 30/09</span> Vale qualquer uma destas (decisão do Vinicius):</p>
+<ul>
+<li>foto de <b>cada aparelho aberto, com o filtro limpo</b>; ou</li>
+<li><b>uma foto do serviço feito</b>; ou</li>
+<li><b>nota, recibo ou ordem de serviço</b> do prestador dizendo que foi feito.</li>
+</ul>
+<p>O texto do card com as três opções está no PR #5023 (na develop em 30/09, 16h26, em promoção para produção antes do disparo). Não fecha: "feito" sem nada anexado, orçamento, foto de outro serviço.</p>
+<h3>7.2 Um card por imóvel</h3>
+<p>Ar-condicionado e split formam um card só. Se o imóvel tem vários aparelhos, todos ficam no mesmo card. O sistema tem trava por imóvel contra card duplicado.</p>
+<h3>7.3 Já foi feito</h3>
+<p>Se a limpeza foi feita nos últimos 12 meses, inclusive quando o proprietário pagou por conta própria, a franquia responde no card com a nota ou a foto do serviço e o card é finalizado.</p>
+<h3>7.4 Não se aplica</h3>
+<p>Quando o imóvel não tem ar-condicionado ou saiu da carteira, o card é excluído com o motivo, e o cadastro é corrigido.</p>
+<h3>7.5 Atraso</h3>
+<p>Os dias abaixo são corridos, contados a partir do vencimento (22/10). A cobrança semanal de quarta continua junto.</p>
+<div class="tabela"><table>
+<tr><th>Marco</th><th>Data</th><th>O que acontece</th></tr>
+<tr><td>D+7</td><td>qui 29/10</td><td>Lembrete automático no chat do card</td></tr>
+<tr><td>D+14</td><td>qui 05/11</td><td>Lembrete automático · BackOffice aciona o gestor da franquia pelo nome</td></tr>
+<tr><td>D+21</td><td>qui 12/11</td><td>Lembrete automático. Ninguém assume: o card segue aberto, os lembretes continuam a cada 7 dias e o atraso conta no lead time da franquia (decisão de 30/09)</td></tr>
+<tr><td>Depois</td><td>a cada 7 dias (19/11, 26/11…)</td><td>O lembrete automático se repete enquanto o card estiver aberto, como no v2.1</td></tr>
+</table></div>
+
+<h2>🔑 8. Sistemas</h2>
+<div class="tabela"><table>
+<tr><td><b>Sapron · Recorrentes</b></td><td>A regra, a contagem e o disparo</td></tr>
+<tr><td><b>Sapron · Central de Cards</b></td><td>Os cards, o chamado com a franquia, a evidência e a finalização</td></tr>
+<tr><td><b>Sapron · Agentes de IA</b></td><td>O validador e o auditor da evidência (em produção). O agente "Despesa prova o card" existe, mas está desligado em produção</td></tr>
+<tr><td><b>Anúncio do Airbnb (data lake)</b></td><td>A fonte de "tem ar-condicionado". A ficha de amenities do Sapron está 78% vazia (medição de 16/09). Neste ciclo a pergunta 2 está desligada</td></tr>
+</table></div>
+
+<h2>⏳ 9. Prazos</h2>
+<div class="tabela"><table>
+<tr><th>Etapa</th><th>Prazo</th></tr>
+<tr><td>Franquia executar e mandar a evidência</td><td>15 dias úteis a partir de 01/10 · <b>qui 22/10</b> (gravado no card)</td></tr>
+<tr><td>Manutenção validar a evidência</td><td>2 dias úteis a partir do envio. Se estourar, o relógio da franquia NÃO congela; quem atrasou ajusta o prazo daquele card à mão (decisão de 30/09)</td></tr>
+<tr><td>Franquia reenviar a evidência devolvida</td><td>3 dias úteis no mínimo, sem mudar o prazo original</td></tr>
+<tr><td>Ciclo fechado</td><td><b>seg 30/11</b>, antes do bloqueio de dezembro a março</td></tr>
+</table></div>
+
+<h2>📊 10. Indicadores do ciclo</h2>
+<div class="tabela"><table>
+<tr><th>Indicador</th><th>Conta</th></tr>
+<tr><td>Cobertura</td><td>Cards finalizados ÷ cards abertos</td></tr>
+<tr><td>No prazo</td><td>Cards com evidência até 22/10 ÷ cards abertos</td></tr>
+<tr><td>Aprovada de primeira</td><td>Cards finalizados sem devolução ÷ cards finalizados</td></tr>
+<tr><td>Finalizados pelos agentes</td><td>Cards fechados pelo validador e pelo auditor ÷ cards finalizados</td></tr>
+</table></div>
+<p>Os ~426 cards que já nascem concluídos (pergunta 3) ficam fora dessas contas.</p>
+
+<h2>✅ 11. Situação do sistema para 01/10</h2>
+<p>Conferido em 30/09/2026: API de produção às 13h23 de Brasília (16h23 UTC), código em produção v1.117.6 e painel de produção dos agentes.</p>
+<div class="tabela"><table>
+<tr><th>#</th><th>Ponto</th><th>Situação</th><th>O que vale</th></tr>
+<tr><td>1</td><td>Disparo pelo calendário, e não pelo aniversário de ativação</td><td><span class="tag ok">em produção</span></td><td>PR #4967, promovido pela #4976. O disparo abre os mesmos imóveis que a contagem mostra</td></tr>
+<tr><td>2</td><td>Uma regra só de ar-condicionado</td><td><span class="tag ok">resolvido</span></td><td>Só existe a regra id 2 "Ar-condicionado · Higienização": 12 meses, rascunho, elegibilidade "todos". O Split foi <b>excluído</b></td></tr>
+<tr><td>3</td><td>Itens de despesa na regra (pergunta 3)</td><td><span class="tag ok">resolvido</span></td><td>Itens 298 e 405 e as palavras "ar condicionado", "ar-condicionado" e "split". Barra 426 imóveis</td></tr>
+<tr><td>4</td><td>Prazo e instrução gravados na abertura</td><td><span class="tag ok">em produção</span></td><td>O card aberto em 30/09 grava <b>qui 22/10/2026</b> e a instrução da evidência</td></tr>
+<tr><td>5</td><td>Elegibilidade "todos os imóveis" (pergunta 2 desligada)</td><td><span class="tag info">fica assim</span></td><td>Cerca de 20 imóveis sem ar recebem card (medição de 16/09). A franquia avisa no card e ele é encerrado</td></tr>
+<tr><td>6</td><td>Pergunta 4 enxergar manutenção feita fora da regra</td><td><span class="tag ok">resolvido</span></td><td>Enxerga card concluído de qualquer origem que fale de ar + limpeza, higienização ou filtro. Barra 191. Card corretivo ainda aberto não barra</td></tr>
+<tr><td>7</td><td>Limite de 500 cards no quadro</td><td><span class="tag ok">resolvido</span></td><td>Não vale mais para a recorrente: front #3592, em produção na versão 1.143.3 (via #3595)</td></tr>
+<tr><td>8</td><td>Chamado individual por card</td><td><span class="tag ok">ligado</span></td><td>Cada card aberto ganha chamado próprio com mensagem de abertura e prazo. Quem já pagou recebe card concluído com mensagem ✅</td></tr>
+<tr><td>9</td><td>Rotina diária abrindo card</td><td><span class="tag ok">não existe mais</span></td><td>Só abre card quando alguém dispara. Pausar a regra em 01/12 deixa de ser obrigatório. Cobrança semanal e régua de atraso continuam para os cards abertos, inclusive no bloqueio</td></tr>
+<tr><td>10</td><td>Fechamento por despesa lançada depois</td><td><span class="tag meio">manual</span></td><td>Não fecha sozinho enquanto o agente "Despesa prova o card" estiver desligado. Fecham os agentes de evidência ou uma pessoa</td></tr>
+<tr><td>11</td><td>Régua nova do auditor para contestação</td><td><span class="tag meio">fora de produção</span></td><td>PR #5019. Até entrar, contestação vai para uma pessoa</td></tr>
+</table></div>
+
+<h2>🚀 12. Roteiro do disparo de 01/10</h2>
+<div class="tabela"><table>
+<tr><th>Quando</th><th>O quê</th></tr>
+<tr><td>Antes das 22h45 de 30/09</td><td>Ativar a regra id 2 (hoje em rascunho)</td></tr>
+<tr><td>22h45, 22h50 e 22h55 de 30/09</td><td>Contagem na aba Recorrentes. Anotar os três números</td></tr>
+<tr><td><b>23h de 30/09</b> (Brasília)</td><td>Dispara <b>só se</b> o número estiver entre <b>1.050 e 1.250</b> e as três contagens diferirem no máximo <b>20</b> entre si. Quem dispara é o script <code>disparo-01-10.py</code>, <b>uma vez só</b> (ele ativa a regra às 22h40, conta às 22h45, 22h50 e 22h55 e grava tudo em <code>disparo-01-10.log</code>)</td></tr>
+<tr><td>Fora da faixa ou números desencontrados</td><td><b>Não dispara.</b> Registra os números e decide com o Vinicius antes de tentar de novo</td></tr>
+<tr><td>Logo depois</td><td>Conferir o <code>last_sweep_stats</code> da regra: cards abertos iguais ao número confirmado, ~426 concluídos pela pergunta 3, sem erro. Abrir um card e ver o prazo 22/10 e a mensagem no chamado</td></tr>
+</table></div>
+<p><b>Travas do sistema:</b> o número confirmado vira teto (não abre mais cards que isso) · trava de 4h contra disparo duplo · trava por imóvel contra card duplicado.</p>
+
+<h2>⚠️ 13. Riscos conhecidos</h2>
+<div class="tabela"><table>
+<tr><th>Risco</th><th>O que esperar</th></tr>
+<tr><td><b>~1.570 mensagens</b> no disparo</td><td>Cerca de 1.147 aberturas + ~426 mensagens ✅ de card concluído, todas por volta da 23h de 30/09. As franquias recebem tudo de uma vez</td></tr>
+<tr><td>Cobrança de qua 07/10, 11h</td><td>Segunda mensagem em cada card recorrente aberto, 6 dias depois da abertura. Decisão do Vinicius: a cobrança continua</td></tr>
+<tr><td>Despesa lançada depois não fecha o card</td><td>A franquia que pagar e só lançar a despesa continua com o card aberto e recebendo cobrança. Precisa anexar a nota no card ou uma pessoa finaliza</td></tr>
+<tr><td>Pico de validação perto de 22/10</td><td>A maior parte das evidências deve chegar entre 19 e 30/10. Os agentes fecham o que as duas leituras concordam; o resto (estimativa de 250 a 300 cards) o Vinicius revisa em lote pelo Claude. Por isso a qualidade do validador precisa ser acompanhada nos primeiros cards do ciclo</td></tr>
+<tr><td>Contestação segura o card</td><td>Até o PR #5019 entrar em produção, "condomínio proíbe", "já foi feito" e "não tem como" vão para uma pessoa</td></tr>
+<tr><td>Card indevido</td><td>~20 imóveis sem ar (pergunta 2 desligada) e imóveis com corretiva de ar ainda aberta recebem card. Encerrar com motivo</td></tr>
+<tr><td>Feriado municipal</td><td>Não entra no prazo, de propósito. Franquia em praça com feriado local tem um dia a menos</td></tr>
+</table></div>
+
+<h2>🧭 14. Validação da Ray (30/09): o que foi resolvido e o que está aberto</h2>
+<p>A Ray conferiu o plano contra o v2.1 e o guia v2.2 em 30/09, sem acesso à produção. Os pontos abaixo foram conferidos na produção em 30/09, às 13h23.</p>
+<div class="tabela"><table>
+<tr><th>Tema</th><th>Situação</th><th>Como ficou</th></tr>
+<tr><td>Ajustes 1 e 4 publicados</td><td><span class="tag ok">resolvido</span></td><td>Em produção (PR #4967 via #4976). Prazo 22/10 gravado</td></tr>
+<tr><td>Só a regra do ar ativa, com os itens de despesa</td><td><span class="tag ok">resolvido</span></td><td>Split excluído (não fica em rascunho). Itens 298 e 405 cadastrados</td></tr>
+<tr><td>Faixa em vez de número</td><td><span class="tag ok">resolvido</span></td><td>1.050 a 1.250. Contagem 1.147. A estimativa de ~1.188 da Ray partia de uma pergunta 4 que só via a própria regra: hoje ela vê qualquer origem e barra 191</td></tr>
+<tr><td>Limite de 500 cards</td><td><span class="tag ok">resolvido</span></td><td>Não vale mais para a recorrente (1.143.3)</td></tr>
+<tr><td>Texto da evidência</td><td><span class="tag ok">resolvido</span></td><td>Seção 7.1 (decisão de 30/09)</td></tr>
+<tr><td>De onde o prazo conta</td><td><span class="tag ok">resolvido</span></td><td>Disparo às 23h de 30/09: o dia do disparo não conta e o prazo cai em qui 22/10 (decisão de 30/09, 16h50). Feriado municipal fica fora, de propósito</td></tr>
+<tr><td>Fechamento por despesa</td><td><span class="tag ok">resolvido</span></td><td>Vale "só na abertura". Depois, agentes de evidência ou pessoa</td></tr>
+<tr><td>Bloqueio de dezembro</td><td><span class="tag ok">resolvido</span></td><td>Sem rotina diária, pausar em 01/12 não é obrigatório. Régua e cobrança seguem nos cards abertos</td></tr>
+<tr><td>Depois do D+21</td><td><span class="tag ok">resolvido</span></td><td>Não há dono depois do D+21: o lembrete se repete a cada 7 dias e o atraso conta no lead time da franquia (decisão de 30/09)</td></tr>
+<tr><td>Abertura numa quinta</td><td><span class="tag ok">resolvido</span></td><td>Exceção do 1º ciclo. Aprovado pelo Vinicius em 30/09</td></tr>
+<tr><td>Comunicação</td><td><span class="tag ok">resolvido</span></td><td>Franquias avisadas por WhatsApp (confirmado pelo Vinicius em 30/09), sem reforço de quinta nem alerta de sábado</td></tr>
+<tr><td>Filtro do exaustor e itens de outubro</td><td><span class="tag ok">resolvido</span> <span class="tag meio">aviso depois</span></td><td>Adiados para depois deste ciclo (Aprovado pelo Vinicius em 30/09). O aviso às franquias de que dedetização e caixa d'água não abrem em 05/10 fica para depois: o foco agora é só o ar</td></tr>
+<tr><td>Quem valida</td><td><span class="tag ok">resolvido</span></td><td>Validador + auditor de IA finalizam sozinhos quando concordam; card com dúvida vai para uma pessoa. Aprovado pelo Vinicius em 30/09</td></tr>
+<tr><td>Devolução da evidência</td><td><span class="tag ok">resolvido</span></td><td>Vale o que o sistema faz: o card volta para a coluna de onde veio (Recorrente), com o motivo e o prazo mantido. Substitui o "Programada" do v2.1 (decisão de 30/09)</td></tr>
+<tr><td>SLA de validação estourado</td><td><span class="tag ok">resolvido</span></td><td>Não congela neste ciclo. Se a validação atrasar, o prazo daquele card é ajustado à mão (decisão de 30/09)</td></tr>
+<tr><td>Dono do processo</td><td><span class="tag ok">resolvido</span></td><td>Vinicius, dono de toda a manutenção desde 23/09</td></tr>
+<tr><td>Calendário anual</td><td><span class="tag ok">resolvido</span> <span class="tag meio">outros itens depois</span></td><td>O ar-condicionado passa a ser de OUTUBRO (decisão de 30/09). O lugar de dedetização, caixa d'água e filtro de água no calendário fica para a discussão desses itens</td></tr>
+<tr><td>Próximo ciclo</td><td><span class="tag ok">resolvido</span></td><td>Fica em outubro: próximo ciclo em 01/10/2027, que é o que o sistema já agenda (decisão de 30/09)</td></tr>
+<tr><td>Capacidade de validação</td><td><span class="tag ok">resolvido</span></td><td>O Vinicius revisa em lote pelo Claude o que os agentes não fecham. Requisito: validador acertando, conferido nos primeiros cards</td></tr>
+</table></div>
+
+<h2>🗂 15. Histórico</h2>
+<div class="tabela"><table>
+<tr><td>v2.1 · 17/09/2026</td><td>Auditoria da Ray aplicada, com 7 decisões abertas</td></tr>
+<tr><td>v2.2 · 28/09/2026</td><td>Primeiro ciclo definido (ar-condicionado, com abertura em 01/10), prints do Sapron e lista de ajustes do sistema. No mesmo dia: correções em produção (1.117.4) e 16 regras excluídas</td></tr>
+<tr><td>v2.3 · 30/09/2026</td><td><b>Decisões do Vinicius (30/09, tarde) sobre os pontos abertos:</b> exceções do 1º ciclo aprovadas; agentes de IA finalizando sozinhos aprovados; "Pedir nova evidência" volta para Recorrente; prazo não congela; sem dono depois do D+21 (conta no lead time da franquia); pico de validação revisado pelo Vinicius via Claude; ar-condicionado passa a ser de outubro. Aviso sobre dedetização e caixa d'água fica para depois. Validação da Ray (30/09) incorporada: pontos resolvidos com a produção e pontos abertos listados (seção 14). Números de 30/09 (1.147 cards, faixa 1.050–1.250). Evidência decidida. Prazo 22/10 com o dia da abertura fora da conta. Limite de 500 resolvido. Roteiro do disparo às 23h (seção 12) e riscos (seção 13). Cobrança semanal mantida. Despesa tardia não fecha o card. Régua nova do auditor (PR #5019) registrada como fora de produção</td></tr>
+</table></div>
+
+<footer>Fontes: API de produção do Sapron em 30/09/2026, 13h23 de Brasília (16h23 UTC) · código em produção v1.117.6 · painel de produção dos agentes em 30/09/2026, 13h08 · validação da Ray, 30/09/2026 · processo v2.1 de 17/09/2026. Os prints são de 28/09, tirados no ambiente de teste com o código de produção daquele dia: números e telas deles são de antes dos ajustes.</footer>
+</main></body></html>

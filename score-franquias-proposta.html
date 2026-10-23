@@ -1,0 +1,277 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Score da Franquia</title>
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F6F7F9; --card:#FFFFFF; --ink:#151B26; --muted:#5B6474; --line:#E2E5EA;
+  --green:#41B592; --green-soft:#E6F6F0; --amber:#F5A623; --amber-soft:#FEF4E2;
+  --coral:#DD4530; --coral-soft:#FBE9E6; --blue:#3B6FD8; --blue-soft:#E8EEFB;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0F131A; --card:#181E28; --ink:#E8ECF2; --muted:#9AA4B4; --line:#2A3240;
+    --green-soft:#16332A; --amber-soft:#3A2E14; --coral-soft:#3A1C17; --blue-soft:#1B2A47;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0F131A; --card:#181E28; --ink:#E8ECF2; --muted:#9AA4B4; --line:#2A3240;
+  --green-soft:#16332A; --amber-soft:#3A2E14; --coral-soft:#3A1C17; --blue-soft:#1B2A47;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:Quicksand,system-ui,sans-serif;font-size:16px;line-height:1.55}
+main{max-width:860px;margin:0 auto;padding:32px 16px 120px}
+h1{font-size:28px;margin:0 0 4px}
+h2{font-size:20px;margin:0 0 12px}
+.sub{color:var(--muted);margin:0 0 28px}
+section{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:22px;margin:0 0 18px}
+table{width:100%;border-collapse:collapse;font-size:15px}
+th,td{text-align:left;padding:8px 6px;border-bottom:1px solid var(--line);vertical-align:top}
+th{color:var(--muted);font-weight:600}
+.pill{display:inline-block;padding:2px 10px;border-radius:99px;font-weight:600;font-size:14px}
+.g{background:var(--green-soft);color:var(--green)} .a{background:var(--amber-soft);color:var(--amber)}
+.c{background:var(--coral-soft);color:var(--coral)} .b{background:var(--blue-soft);color:var(--blue)}
+.q{border-left:4px solid var(--green);background:var(--green-soft);border-radius:10px;padding:14px 16px;margin:16px 0 0}
+.q b.n{color:var(--green)}
+.q p{margin:0 0 8px}
+.opts label{display:block;margin:4px 0;cursor:pointer}
+textarea{width:100%;min-height:60px;margin-top:8px;padding:8px;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--ink);font:inherit}
+.note{color:var(--muted);font-size:14px}
+.bar{position:fixed;left:0;right:0;bottom:0;background:var(--card);border-top:1px solid var(--line);padding:12px 16px;display:flex;gap:12px;align-items:center;justify-content:center;flex-wrap:wrap}
+button{font:inherit;font-weight:700;border:0;border-radius:10px;padding:10px 18px;background:var(--green);color:#fff;cursor:pointer}
+#status{color:var(--muted);font-size:14px}
+.scroll{overflow-x:auto}
+</style>
+</head>
+<body>
+<main>
+<h1>Score da Franquia</h1>
+<p class="sub">Lead time × SLA × Reincidência, integrado com Ocorrências · Central de Manutenção · proposta de 05/10/2026<br>
+Leia cada parte e responda as perguntas em verde. No fim, clique em <b>Copiar respostas</b> e cole no Claude.</p>
+
+<section>
+<h2>1. Para que serve</h2>
+<p>Uma nota de 0 a 100 por franquia que diz o quanto ela é boa em manutenção. A nota ordena a triagem semanal de Recuperação de Franquias (processo v1.3, 28/09) e passa a ser visível na Central de Manutenção.</p>
+<div class="q" data-q="1">
+<p><b class="n">P1.</b> De onde veio o pedido?</p>
+<div class="opts">
+<label><input type="radio" name="q1" value="Card no TaskDex"> Card no TaskDex</label>
+<label><input type="radio" name="q1" value="Pedido da Ray"> Pedido da Ray</label>
+<label><input type="radio" name="q1" value="Pedido da Carol"> Pedido da Carol</label>
+<label><input type="radio" name="q1" value="Ideia minha"> Ideia minha</label>
+</div>
+<textarea placeholder="Outro / comentário"></textarea>
+</div>
+<div class="q" data-q="2">
+<p><b class="n">P2.</b> Onde a nota precisa aparecer?</p>
+<div class="opts">
+<label><input type="radio" name="q2" value="Só ranking semanal na triagem"> Só no ranking semanal da triagem (relatório)</label>
+<label><input type="radio" name="q2" value="Tela da Central de Manutenção"> Na tela da Central de Manutenção</label>
+<label><input type="radio" name="q2" value="Os dois (relatório primeiro, tela depois)"> Os dois: relatório primeiro, tela depois (recomendado)</label>
+</div>
+<textarea placeholder="Comentário"></textarea>
+</div>
+</section>
+
+<section>
+<h2>2. A fórmula</h2>
+<div class="scroll"><table>
+<tr><th>Parte</th><th>Peso</th><th>Como vira nota</th><th>De onde vem</th></tr>
+<tr><td><b>SLA</b><br>% de cards fechados no prazo</td><td>40%</td><td>O próprio % (90% no prazo dá 90)</td><td>Card no Sapron + prazo</td></tr>
+<tr><td><b>Lead time</b><br>tempo mediano da franquia</td><td>30%</td><td>Até 3 dias vale 100, 21 dias ou mais vale 0, e no meio a nota cai proporcionalmente</td><td>Do envio à franquia até ela mandar a evidência</td></tr>
+<tr><td><b>Reincidência</b><br>% de cards que "voltaram"</td><td>30%</td><td>0% vale 100, 20% ou mais vale 0</td><td>Card novo no mesmo imóvel ou ocorrência da Central de Qualidade</td></tr>
+</table></div>
+<p class="note">Exemplo: SLA 80%, mediana de 7 dias e 10% de reincidência dão 0,4×80 + 0,3×78 + 0,3×50 = 70, ou seja, Atenção.</p>
+<div class="q" data-q="3">
+<p><b class="n">P3.</b> Os pesos 40 / 30 / 30 fazem sentido?</p>
+<div class="opts">
+<label><input type="radio" name="q3" value="Sim, 40/30/30"> Sim</label>
+<label><input type="radio" name="q3" value="Reincidência deveria pesar mais"> Reincidência deveria pesar mais (serviço mal feito é o pior)</label>
+<label><input type="radio" name="q3" value="SLA deveria pesar mais"> SLA deveria pesar mais</label>
+</div>
+<textarea placeholder="Se quiser outros pesos, escreva aqui"></textarea>
+</div>
+<div class="q" data-q="4">
+<p><b class="n">P4.</b> A régua do lead time (3 dias = ótimo, 21 dias = zero) está boa?</p>
+<div class="opts">
+<label><input type="radio" name="q4" value="Sim, 3 a 21 dias"> Sim</label>
+<label><input type="radio" name="q4" value="Mais apertada"> Mais apertada</label>
+<label><input type="radio" name="q4" value="Mais folgada"> Mais folgada</label>
+</div>
+<textarea placeholder="Comentário"></textarea>
+</div>
+</section>
+
+<section>
+<h2>3. Lead time justo</h2>
+<p>O relógio da franquia para quando ela manda a evidência (<code>evidence_received_at</code>), e não quando a Seazone aprova. Assim, o tempo de aprovação do nosso lado não pesa contra ela.</p>
+<p class="note">Limite: o card não guarda o histórico de etapas, então não dá para descontar outras pausas no meio (ex.: card parado esperando peça).</p>
+<div class="q" data-q="5">
+<p><b class="n">P5.</b> Concorda em parar o relógio na evidência?</p>
+<div class="opts">
+<label><input type="radio" name="q5" value="Sim, para na evidência"> Sim</label>
+<label><input type="radio" name="q5" value="Não, contar até concluir"> Não, contar até o card ser concluído</label>
+</div>
+<textarea placeholder="Comentário"></textarea>
+</div>
+</section>
+
+<section>
+<h2>4. Prazo do SLA</h2>
+<p>Hoje o Sapron carimba <b>7 dias corridos para todo card</b> (<code>PRAZO_PADRAO_DIAS</code> em <code>charge.py</code>, conferido em 15/09/2026). Os prazos por urgência (N1 a N4) não estão no código.</p>
+<div class="q" data-q="6">
+<p><b class="n">P6.</b> Qual prazo o score deve usar?</p>
+<div class="opts">
+<label><input type="radio" name="q6" value="7 dias corridos para tudo (o que roda hoje)"> 7 dias corridos para tudo, como roda hoje (dá para começar já)</label>
+<label><input type="radio" name="q6" value="Prazo por urgência"> Prazo por urgência (urgente menor, não urgente maior)</label>
+</div>
+<textarea placeholder="Se for por urgência, quais prazos?"></textarea>
+</div>
+</section>
+
+<section>
+<h2>5. Reincidência e Ocorrências</h2>
+<p>Um card concluído "volta" quando, em até <b>30 dias</b>, no mesmo imóvel:</p>
+<ul>
+<li>abre um card novo da mesma família (ar-condicionado, hidráulica, elétrica…), <b>ou</b></li>
+<li>entra uma ocorrência na tabela <code>ocorrencias</code> da Central de Qualidade (Supabase compartilhado com o Hub de Serviços).</li>
+</ul>
+<p class="note">Ainda não conferido: se a tabela <code>ocorrencias</code> tem o imóvel ou a franquia em cada linha. Sem isso, não dá para casar ocorrência com card. É a primeira checagem a fazer.</p>
+<div class="q" data-q="7">
+<p><b class="n">P7.</b> A janela de 30 dias está boa?</p>
+<div class="opts">
+<label><input type="radio" name="q7" value="30 dias"> 30 dias</label>
+<label><input type="radio" name="q7" value="15 dias"> 15 dias</label>
+<label><input type="radio" name="q7" value="60 dias"> 60 dias</label>
+</div>
+<textarea placeholder="Comentário"></textarea>
+</div>
+<div class="q" data-q="8">
+<p><b class="n">P8.</b> Qualquer ocorrência no imóvel conta, ou só a ocorrência ligada a manutenção?</p>
+<div class="opts">
+<label><input type="radio" name="q8" value="Só ocorrência de manutenção"> Só a de manutenção (recomendado: limpeza ruim não é culpa do serviço)</label>
+<label><input type="radio" name="q8" value="Qualquer ocorrência"> Qualquer ocorrência</label>
+</div>
+<textarea placeholder="Comentário"></textarea>
+</div>
+<div class="q" data-q="9">
+<p><b class="n">P9.</b> A integração é de mão dupla, ou seja, a nota também volta para a Central de Qualidade?</p>
+<div class="opts">
+<label><input type="radio" name="q9" value="Mão dupla"> Sim, a nota aparece lá também</label>
+<label><input type="radio" name="q9" value="Só leitura"> Não, só lemos as ocorrências</label>
+<label><input type="radio" name="q9" value="Não sei"> Não sei, preciso perguntar</label>
+</div>
+<textarea placeholder="Comentário"></textarea>
+</div>
+</section>
+
+<section>
+<h2>6. Janela e volume mínimo</h2>
+<p>Últimos <b>90 dias</b>, sem contar cancelados. Franquia com <b>menos de 5 cards</b> fica "sem nota" (Observação), para que um único card não derrube ninguém.</p>
+<div class="q" data-q="10">
+<p><b class="n">P10.</b> 90 dias e mínimo de 5 cards estão bons?</p>
+<div class="opts">
+<label><input type="radio" name="q10" value="Sim, 90 dias / 5 cards"> Sim</label>
+<label><input type="radio" name="q10" value="Outro"> Quero outro corte (escreva abaixo)</label>
+</div>
+<textarea placeholder="Comentário"></textarea>
+</div>
+</section>
+
+<section>
+<h2>7. Faixas</h2>
+<p>As mesmas da triagem, para não criar uma régua nova:</p>
+<p><span class="pill g">80+ Referência</span> <span class="pill b">60–79 Atenção</span> <span class="pill a">40–59 Recuperação</span> <span class="pill c">&lt; 40 Crítica</span> que entra na call e pode ir para a UTI</p>
+<div class="q" data-q="11">
+<p><b class="n">P11.</b> As faixas estão boas?</p>
+<div class="opts">
+<label><input type="radio" name="q11" value="Sim"> Sim</label>
+<label><input type="radio" name="q11" value="Ajustar"> Ajustar (escreva abaixo)</label>
+</div>
+<textarea placeholder="Comentário"></textarea>
+</div>
+</section>
+
+<section>
+<h2>8. Ritual e transparência</h2>
+<ul>
+<li><b>Segunda:</b> a nota é recalculada sozinha.</li>
+<li><b>Terça:</b> a triagem sai ordenada pelo score, e as piores entram no Plano · Ação · Resultado.</li>
+<li><b>Para a franquia:</b> ela vê a própria nota e quais cards puxaram para baixo, e tem 48h para contestar (hóspede no imóvel, peça em falta).</li>
+</ul>
+<div class="q" data-q="12">
+<p><b class="n">P12.</b> A franquia vê a própria nota?</p>
+<div class="opts">
+<label><input type="radio" name="q12" value="Sim, com contestação em 48h"> Sim, com contestação em 48h</label>
+<label><input type="radio" name="q12" value="Sim, sem contestação"> Sim, sem contestação</label>
+<label><input type="radio" name="q12" value="Não, só uso interno por enquanto"> Não, só uso interno por enquanto</label>
+</div>
+<textarea placeholder="Comentário"></textarea>
+</div>
+</section>
+
+<section>
+<h2>9. Como colocar no ar</h2>
+<ol>
+<li><b>Semana 1:</b> a conta roda dentro da skill de triagem, sem mexer em tela.</li>
+<li><b>Semanas 2–3:</b> calibrar pesos e cortes com a Ray, comparando com a percepção dela.</li>
+<li><b>Depois:</b> coluna ou aba na Central de Manutenção (back e front) e envio para a Central de Qualidade.</li>
+</ol>
+<div class="q" data-q="13">
+<p><b class="n">P13.</b> Quem calibra comigo?</p>
+<div class="opts">
+<label><input type="radio" name="q13" value="Ray"> Ray</label>
+<label><input type="radio" name="q13" value="Carol"> Carol</label>
+<label><input type="radio" name="q13" value="Ray e Carol"> As duas</label>
+</div>
+<textarea placeholder="Comentário"></textarea>
+</div>
+<div class="q" data-q="14">
+<p><b class="n">P14.</b> Posso já conferir a tabela de Ocorrências e rodar a conta com os dados reais do Sapron?</p>
+<div class="opts">
+<label><input type="radio" name="q14" value="Pode"> Pode</label>
+<label><input type="radio" name="q14" value="Ainda não"> Ainda não</label>
+</div>
+<textarea placeholder="Comentário"></textarea>
+</div>
+</section>
+</main>
+
+<div class="bar">
+<button id="copy">Copiar respostas</button>
+<span id="status">As respostas ficam salvas neste navegador.</span>
+</div>
+
+<script>
+const KEY='score-franquia-respostas';
+const qs=[...document.querySelectorAll('.q')];
+function collect(){
+  const o={};
+  qs.forEach(q=>{const n=q.dataset.q;const r=q.querySelector('input:checked');o[n]={op:r?r.value:'',txt:q.querySelector('textarea').value};});
+  return o;
+}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(collect()));}catch(e){}}
+function load(){
+  let o=null;try{o=JSON.parse(localStorage.getItem(KEY)||'null');}catch(e){}
+  if(!o)return;
+  qs.forEach(q=>{const a=o[q.dataset.q];if(!a)return;
+    q.querySelectorAll('input').forEach(i=>{if(i.value===a.op)i.checked=true;});
+    q.querySelector('textarea').value=a.txt||'';});
+}
+document.addEventListener('input',save);document.addEventListener('change',save);
+load();
+document.getElementById('copy').onclick=async()=>{
+  const o=collect();
+  const lines=['Respostas — Score da Franquia'];
+  qs.forEach(q=>{const n=q.dataset.q;const t=q.querySelector('p').innerText.replace(/^P\d+\.\s*/,'');
+    const a=o[n];lines.push(`P${n}. ${t}\n→ ${a.op||'(sem opção)'}${a.txt?' | '+a.txt:''}`);});
+  const txt=lines.join('\n\n');
+  try{await navigator.clipboard.writeText(txt);document.getElementById('status').textContent='Copiado. Cole no Claude.';}
+  catch(e){const ta=document.createElement('textarea');ta.value=txt;document.body.appendChild(ta);ta.select();document.execCommand('copy');ta.remove();document.getElementById('status').textContent='Copiado. Cole no Claude.';}
+};
+</script>
+</body>
+</html>

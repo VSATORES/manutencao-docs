@@ -1,0 +1,270 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Aba antifraude · construída</title>
+<style>
+  :root{
+    --tinta:#0f172a; --texto:#334155; --fraco:#64748b; --fraquinho:#94a3b8;
+    --linha:#e2e8f0; --fundo:#f1f5f9; --papel:#ffffff; --azul:#0055ff; --azul-f:rgba(0,85,255,.07);
+    --ambar-b:#e8d3b0; --ambar-f:#fdfaf5; --ambar-t:#7a4800;
+    --verde-b:#bbe5d5; --verde-f:#f3faf7; --verde-t:#1f7a5c;
+    --verm-b:#f5c2c2; --verm-f:#fef5f5; --verm-t:#b91c1c; --cinza-f:#f8fafc;
+    --foto-a:#cbd5e1; --foto-b:#94a3b8;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{--tinta:#f1f5f9;--texto:#cbd5e1;--fraco:#94a3b8;--fraquinho:#64748b;--linha:#1e293b;--fundo:#0b1220;--papel:#111a2e;
+      --cinza-f:#0f172a;--azul:#6f9bff;--azul-f:rgba(111,155,255,.12);--ambar-f:#2a2110;--ambar-b:#5a4620;--ambar-t:#f3cf8a;
+      --verde-f:#0f2a22;--verde-b:#1f5a46;--verde-t:#7fd9b4;--verm-f:#2a1212;--verm-b:#6b2a2a;--verm-t:#fca5a5;--foto-a:#334155;--foto-b:#475569}
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--fundo);color:var(--texto);font:14px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+  .folha{max-width:1120px;margin:0 auto;padding:36px 16px 80px}
+  h1{font-size:26px;line-height:1.2;color:var(--tinta);margin:0 0 6px;font-weight:800}
+  .sub{color:var(--fraco);font-size:14px;margin:0 0 4px;max-width:76ch}
+  .data{color:var(--fraquinho);font-size:12px;margin:0 0 20px}
+  h2{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--fraco);font-weight:700;margin:40px 0 12px;padding-bottom:8px;border-bottom:1px solid var(--linha)}
+  p{margin:0 0 12px;max-width:80ch}
+  code{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12px;background:var(--cinza-f);padding:1px 5px;border-radius:4px;border:1px solid var(--linha);color:var(--tinta)}
+  .aviso{border:1px solid var(--ambar-b);background:var(--ambar-f);color:var(--ambar-t);border-radius:10px;padding:10px 14px;font-size:13px;margin:0 0 18px;max-width:84ch}
+  .nota{font-size:12.5px;color:var(--fraco);max-width:84ch}
+
+  .tela{background:var(--papel);border:1px solid var(--linha);border-radius:12px;overflow:hidden;margin:14px 0 6px;box-shadow:0 1px 2px rgba(15,23,42,.05)}
+  .tela-barra{display:flex;align-items:center;gap:8px;padding:8px 14px;background:var(--cinza-f);border-bottom:1px solid var(--linha);font-size:11.5px;color:var(--fraquinho)}
+  .bolinhas{display:flex;gap:5px}.bolinhas i{width:9px;height:9px;border-radius:50%;background:var(--linha);display:block}
+  .tela-corpo{padding:16px}
+
+  .layout{display:grid;grid-template-columns:220px minmax(0,1fr);gap:16px;align-items:start}
+  @media (max-width:820px){.layout{grid-template-columns:minmax(0,1fr)}}
+  .rail{border:1px solid var(--linha);border-radius:10px;padding:9px;display:flex;flex-direction:column;gap:3px;background:var(--papel)}
+  @media (max-width:820px){.rail{flex-direction:row;overflow-x:auto}.rail-titulo{display:none}.rail-item{flex:none}}
+  .rail-titulo{font-size:10.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--fraquinho);padding:4px 8px 8px}
+  .rail-item{display:flex;align-items:center;gap:9px;padding:8px 9px;border-radius:8px;font-size:12.5px;color:var(--texto);background:none;border:0;text-align:left;font-family:inherit;width:100%}
+  .rail-item.on{background:var(--azul-f);color:var(--azul);font-weight:700}
+  .rail-txt{display:flex;flex-direction:column;line-height:1.28;min-width:0;flex:1}
+  .rail-est{font-size:10.5px;font-weight:500;color:var(--fraco)}
+  .ponto{width:8px;height:8px;border-radius:50%;flex:none}
+  .p-ok{background:#22c55e}.p-at{background:#f59e0b}.p-off{background:#94a3b8}
+  .novo{font-size:9.5px;font-weight:800;background:var(--azul);color:#fff;border-radius:4px;padding:0 5px;margin-left:4px}
+  .contador{flex:none;min-width:20px;height:20px;padding:0 6px;border-radius:999px;background:#fee2e2;color:#b91c1c;font-size:11px;font-weight:800;display:inline-flex;align-items:center;justify-content:center}
+
+  .painel{border:1px solid var(--linha);border-radius:10px;padding:16px;background:var(--papel)}
+  .cab{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+  .cab h4{margin:0;font-size:17px;font-weight:800;color:var(--tinta)}
+  .pergunta{font-size:13px;color:var(--fraco);margin:2px 0 14px}.pergunta b{color:var(--tinta)}
+  .selo{display:inline-flex;align-items:center;gap:6px;font-size:11.5px;font-weight:700;padding:3px 10px;border-radius:999px}
+  .s-som{background:rgba(245,158,11,.14);color:#b45309}
+  .cad{font-size:11.5px;color:var(--fraco)}
+  .saude{display:flex;gap:12px;border-radius:10px;padding:12px 14px;margin:0 0 14px;font-size:13px;border:1px solid var(--ambar-b);background:var(--ambar-f);color:var(--ambar-t)}
+  .saude b{display:block;font-size:13.5px}.saude .passos{font-size:12.5px;margin-top:4px}
+
+  .numeros{display:grid;grid-template-columns:repeat(auto-fit,minmax(138px,1fr));gap:1px;background:var(--linha);border:1px solid var(--linha);border-radius:8px;overflow:hidden}
+  .num{background:var(--papel);padding:11px 13px}
+  .rot{font-size:10.5px;font-weight:600;letter-spacing:.03em;text-transform:uppercase;color:var(--fraco);margin-bottom:4px}
+  .val{font-size:22px;font-weight:800;color:var(--tinta);line-height:1.15;font-variant-numeric:tabular-nums}
+  .val.verm{color:var(--verm-t)}.val.amb{color:#b45309}.val.bom{color:var(--verde-t)}
+  .pe{font-size:11px;color:var(--fraco);margin-top:3px;line-height:1.4}
+
+  .secao{margin-top:22px}
+  .secao-tit{font-size:11.5px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;color:var(--fraco);margin:0 0 10px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .secao-tit .conta{background:#fee2e2;color:#b91c1c;border-radius:999px;padding:1px 8px;font-size:11px}
+  .secao-tit .dica{font-weight:500;text-transform:none;letter-spacing:0;color:var(--fraquinho);font-size:11.5px}
+
+  .filtros{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+  .pilula{font:inherit;font-size:12px;border:1px solid var(--linha);background:var(--papel);color:var(--texto);border-radius:999px;padding:4px 11px;cursor:pointer}
+  .pilula.on{border-color:var(--azul);color:var(--azul);background:var(--azul-f);font-weight:700}
+
+  .caso{border:1px solid var(--linha);border-radius:10px;padding:12px 14px;margin-bottom:10px;transition:opacity .25s}
+  .caso.feito{opacity:.5}
+  .caso-topo{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:6px}
+  .nivel{font-size:10.5px;font-weight:800;letter-spacing:.04em;padding:2px 8px;border-radius:5px}
+  .n-forte{background:#fee2e2;color:#b91c1c}.n-susp{background:#fef3c7;color:#92400e}.n-info{background:var(--linha);color:var(--fraco)}
+  .caso .t{font-weight:700;color:var(--tinta);font-size:13px}
+  .caso .m{font-size:12px;color:var(--fraco)}
+  .comparar{display:grid;grid-template-columns:1fr auto 1fr;gap:10px;align-items:center;margin:10px 0}
+  @media (max-width:640px){.comparar{grid-template-columns:1fr}}
+  .lado{border:1px solid var(--linha);border-radius:8px;overflow:hidden;background:var(--cinza-f)}
+  .foto{height:96px;background:linear-gradient(135deg,var(--foto-a),var(--foto-b));display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--tinta);opacity:.8}
+  .lado .leg{padding:6px 9px;font-size:11.5px;color:var(--fraco);line-height:1.4}
+  .lado .leg b{color:var(--tinta)}
+  .dist{text-align:center;font-size:11px;color:var(--fraco)}
+  .dist b{display:block;font-size:18px;color:var(--tinta);font-variant-numeric:tabular-nums}
+  .porque{font-size:12px;color:var(--texto);margin:2px 0 8px}
+  .acoes{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+  .bt{font:inherit;font-size:12px;font-weight:700;border-radius:7px;padding:6px 11px;cursor:pointer;border:1px solid var(--linha);background:var(--papel);color:var(--texto)}
+  .bt:hover{border-color:var(--fraquinho)}
+  .bt.perigo{color:var(--verm-t);border-color:var(--verm-b)}
+  .bt.ok{color:var(--verde-t);border-color:var(--verde-b)}
+  select.motivo{font:inherit;font-size:12px;border:1px solid var(--linha);background:var(--papel);color:var(--texto);border-radius:7px;padding:5px 8px}
+  .resultado{font-size:12px;font-weight:700;color:var(--verde-t)}
+
+  .nunca{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:8px}
+  .nunca div{border:1px solid var(--linha);border-radius:8px;padding:9px 12px;font-size:12.5px;background:var(--cinza-f)}
+  .nunca b{color:var(--tinta);display:block;font-size:12.5px}
+  .rodape-aba{margin-top:18px;font-size:11.5px;color:var(--fraquinho)}
+
+  /* selo no card */
+  .cardmock{border:1px solid var(--linha);border-radius:10px;padding:14px;background:var(--papel);max-width:560px}
+  .cardmock h5{margin:0 0 4px;font-size:14px;color:var(--tinta)}
+  .selos{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0}
+  .selo2{font-size:11.5px;font-weight:700;padding:3px 9px;border-radius:999px;border:1px solid var(--linha);color:var(--texto);background:var(--cinza-f)}
+  .selo2.f{border-color:var(--verm-b);background:var(--verm-f);color:var(--verm-t)}
+  .selo2.v{border-color:var(--verde-b);background:var(--verde-f);color:var(--verde-t)}
+  .detalhe{font-size:12px;color:var(--fraco);border-top:1px solid var(--linha);padding-top:8px;margin-top:8px}
+
+  .s-at{background:rgba(245,158,11,.14);color:#b45309}
+  .nivel{font-size:11px;font-weight:800;padding:2px 9px;border-radius:999px;text-transform:lowercase}
+  .n-forte{color:#dc2626;background:rgba(239,68,68,.1)}
+  .n-susp{color:#b45309;background:rgba(245,158,11,.12)}
+  .caso a.tit{font-size:13px;font-weight:700;color:var(--tinta);text-decoration:none}
+  .caso a.tit:hover{text-decoration:underline}
+  .sinais{margin:6px 0 10px;padding-left:18px;font-size:12.3px;color:var(--texto)}
+  .sinais li{margin:2px 0}
+  .bt.prim{background:var(--tinta);color:var(--papel);border-color:var(--tinta)}
+  .trava{display:inline-flex;align-items:center;gap:6px;font-size:11.5px;color:var(--fraco);margin-left:auto}
+  .hist{width:100%;border-collapse:collapse;font-size:12px}
+  .hist th{text-align:left;font-size:10.5px;text-transform:uppercase;letter-spacing:.04em;color:var(--fraco);font-weight:700;padding:6px 8px;border-bottom:1px solid var(--linha)}
+  .hist td{padding:7px 8px;border-bottom:1px solid var(--linha);color:var(--texto)}
+  .tab-wrap{overflow-x:auto}
+  .chip{font-size:11px;font-weight:700;padding:1px 8px;border-radius:999px}
+  .c-conf{color:var(--verm-t);background:var(--verm-f);border:1px solid var(--verm-b)}
+  .c-desc{color:var(--verde-t);background:var(--verde-f);border:1px solid var(--verde-b)}
+  .legenda{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:8px;margin-top:10px}
+  .legenda div{border:1px solid var(--linha);border-radius:8px;padding:9px 12px;font-size:12.5px;background:var(--cinza-f)}
+  .legenda b{display:block;color:var(--tinta)}
+</style>
+</head>
+<body>
+<div class="folha">
+  <h1>Antifraude de evidência na aba Agentes de IA</h1>
+  <p class="sub">Como a tela ficou nos PRs <code>sapron-backend#5234</code> e <code>sapron-frontend#3688</code>. Só Admin vê esta aba. Os botões funcionam nesta página, para você sentir o fluxo.</p>
+  <p class="data">13/10/2026 · dados de exemplo (cards, imóveis e franquias fictícios)</p>
+
+  <div class="aviso">O antifraude só <b>sinaliza</b>. Não muda coluna, não fala com a franquia e não devolve card. A única consequência automática: o auditor não finaliza card forte ou suspeito até alguém decidir.</div>
+
+  <h2>A aba</h2>
+  <div class="tela">
+    <div class="tela-barra"><span class="bolinhas"><i></i><i></i><i></i></span>sapron.com.br/central-manutencao?aba=agentes&amp;agente=antifraude_evidencia</div>
+    <div class="tela-corpo">
+      <div class="layout">
+        <div class="rail" role="tablist">
+          <div class="rail-titulo">Agentes</div>
+          <button class="rail-item"><span class="ponto p-ok"></span><span class="rail-txt">Classificador de urgência<span class="rail-est">Rodando</span></span></button>
+          <button class="rail-item"><span class="ponto p-ok"></span><span class="rail-txt">Verificador de duplicata<span class="rail-est">Rodando</span></span></button>
+          <button class="rail-item"><span class="ponto p-ok"></span><span class="rail-txt">Triagem automática<span class="rail-est">Rodando</span></span></button>
+          <button class="rail-item"><span class="ponto p-at"></span><span class="rail-txt">Validador de evidência<span class="rail-est">Com cards presos</span></span></button>
+          <button class="rail-item on"><span class="ponto p-at"></span><span class="rail-txt">Antifraude de evidência <span class="novo">NOVO</span><span class="rail-est" id="railEst">Com cards presos</span></span></button>
+          <button class="rail-item"><span class="ponto p-at"></span><span class="rail-txt">Auditor do parecer<span class="rail-est">Com cards presos</span></span></button>
+          <button class="rail-item"><span class="ponto p-at"></span><span class="rail-txt">Despesa prova o card<span class="rail-est">Com cards presos</span></span></button>
+        </div>
+
+        <div class="painel">
+          <div class="cab"><h4>Antifraude de evidência</h4><span class="selo s-at">Com cards presos</span><span class="cad">a cada 15 min · última execução há 6 min</span></div>
+          <p class="pergunta">Compara cada foto de evidência com as fotos de outros cards e com a data em que foi tirada, e marca foto reaproveitada. <b>Só sinaliza.</b></p>
+
+          <div class="numeros">
+            <div class="num"><div class="rot">Fila</div><div class="val">4</div><div class="pe">cards com evidência nova</div></div>
+            <div class="num"><div class="rot">Espera do mais antigo</div><div class="val">0,4h</div><div class="pe">alerta a partir de 4h</div></div>
+            <div class="num"><div class="rot">Sinalizados</div><div class="val">5</div><div class="pe">2 forte · 3 suspeito · 11 informativo</div></div>
+            <div class="num"><div class="rot">Para decidir</div><div class="val verm" id="numDecidir">3</div><div class="pe">o auditor não fecha estes cards até alguém decidir</div></div>
+            <div class="num"><div class="rot">Descartados por gente</div><div class="val" id="numPct">50%</div><div class="pe" id="numPctPe">1 descartado · 1 confirmado</div></div>
+          </div>
+
+          <div class="secao">
+            <div class="secao-tit">Sinais para decidir <span class="conta" id="conta">3</span></div>
+            <div id="casos"></div>
+          </div>
+
+          <div class="secao">
+            <div class="secao-tit">Últimas decisões</div>
+            <div class="tab-wrap"><table class="hist"><thead><tr><th>Card</th><th>Nível</th><th>Decisão</th><th>Motivo</th><th>Quem</th><th>Quando</th></tr></thead><tbody id="hist">
+              <tr><td>#7702</td><td>suspeito</td><td><span class="chip c-desc">descartado</span></td><td>Etiqueta</td><td>Vinicius Satores</td><td>12/10 16:40</td></tr>
+              <tr><td>#7655</td><td>forte</td><td><span class="chip c-conf">confirmado</span></td><td>—</td><td>Vinicius Satores</td><td>11/10 10:12</td></tr>
+            </tbody></table></div>
+          </div>
+
+          <p class="rodape-aba">Só sinaliza: não muda coluna, não fala com a franquia e não devolve card. A única consequência automática é segurar a baixa do auditor em card forte ou suspeito, que segue na fila de gente. Visível só para Admin.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h2>Como ler cada sinal</h2>
+  <div class="legenda">
+    <div><b>Mesma foto em outro imóvel</b>a mesma imagem já apareceu num card de outro imóvel. Leva a <b>forte</b>.</div>
+    <div><b>Mesma foto já enviada neste imóvel</b>reuso no mesmo imóvel: até 30 dias é <b>forte</b>, até 180 é <b>suspeito</b>.</div>
+    <div><b>Foto tirada antes do pedido</b>a data gravada na foto é mais de 7 dias anterior ao envio do card. Leva a <b>suspeito</b>.</div>
+    <div><b>Parte dos arquivos ficou fora</b>HEIC, vídeo ou arquivo que não abriu. Checagem parcial nunca é "limpo".</div>
+  </div>
+
+  <h2>As duas decisões</h2>
+  <div class="nunca">
+    <div><b>Confirmar reuso</b>Só registra. Não cria ocorrência, não mexe no card e não fala com a franquia. O card continua segurado para o auditor.</div>
+    <div><b>Descartar (foto legítima)</b>Exige o motivo: mesmo prédio, certificado, etiqueta, foto genérica, reenvio da franquia ou outro. Libera a baixa do auditor.</div>
+    <div><b>Uma decisão por sinal</b>A segunda é recusada. Trocar depois faria a taxa de descarte medir o último clique, e não o acerto do bot.</div>
+  </div>
+</div>
+
+<script>
+const CASOS = [
+  {id:7951, titulo:'Ar-condicionado: Higienização', imovel:'ABC0101', franquia:'Franquia Exemplo Sul', nivel:'forte',
+    sinais:['Mesma foto em outro imóvel (card #7412, 4 dias de diferença)','Mesma foto em outro imóvel (card #7420, 4 dias de diferença)']},
+  {id:7938, titulo:'Toalha de banho, Lençol/Virol Casal', imovel:'XYZ0207', franquia:'Franquia Exemplo Norte', nivel:'suspeito',
+    sinais:['Foto tirada em 26/08/2026, antes do pedido']},
+  {id:7930, titulo:'Chuveiro sem aquecer', imovel:'LMN0003', franquia:'Franquia Exemplo Leste', nivel:'suspeito',
+    sinais:['Mesma foto já enviada neste imóvel (card #6120, 64 dias de diferença)','Parte dos arquivos ficou fora da checagem (heic)']},
+];
+const MOTIVOS = {mesmo_predio:'Mesmo prédio',certificado:'Certificado',etiqueta:'Etiqueta',foto_generica:'Foto genérica',reenvio:'Reenvio da franquia',outro:'Outro'};
+let pend = CASOS.length, conf = 1, desc = 1;
+const el = document.getElementById('casos');
+function placar(){
+  document.getElementById('conta').textContent = pend;
+  document.getElementById('numDecidir').textContent = pend;
+  document.getElementById('numDecidir').className = 'val' + (pend ? ' verm' : '');
+  const t = conf + desc;
+  document.getElementById('numPct').textContent = (t ? Math.round(1000*desc/t)/10 : 0).toString().replace('.',',') + '%';
+  document.getElementById('numPctPe').textContent = desc + ' descartado' + (desc===1?'':'s') + ' · ' + conf + ' confirmado' + (conf===1?'':'s');
+  if (!pend && !el.children.length) el.innerHTML = '<p class="nota">Nenhum card com sinal forte ou suspeito esperando decisão.</p>';
+}
+function hist(c, decisao, motivo){
+  const tr = document.createElement('tr');
+  tr.innerHTML = `<td>#${c.id}</td><td>${c.nivel}</td><td><span class="chip ${decisao==='confirmado'?'c-conf':'c-desc'}">${decisao}</span></td><td>${motivo?MOTIVOS[motivo]:'—'}</td><td>Você</td><td>agora</td>`;
+  document.getElementById('hist').prepend(tr);
+}
+CASOS.forEach(c => {
+  const d = document.createElement('div');
+  d.className = 'caso';
+  d.innerHTML = `
+    <div class="caso-topo"><span class="nivel ${c.nivel==='forte'?'n-forte':'n-susp'}">${c.nivel}</span>
+      <a class="tit" href="#">#${c.id} · ${c.titulo}</a><span class="m">${c.imovel} · ${c.franquia}</span>
+      <span class="trava">🔒 auditor não fecha</span></div>
+    <ul class="sinais">${c.sinais.map(s=>`<li>${s}</li>`).join('')}</ul>
+    <div class="acoes">
+      <button class="bt prim" data-a="c">Confirmar reuso</button>
+      <select class="motivo" aria-label="Motivo do descarte"><option value="">Motivo do descarte…</option>${Object.entries(MOTIVOS).map(([k,v])=>`<option value="${k}">${v}</option>`).join('')}</select>
+      <button class="bt" data-a="d">Descartar (foto legítima)</button>
+      <span class="resultado"></span>
+    </div>`;
+  const res = d.querySelector('.resultado');
+  d.querySelector('[data-a=c]').onclick = () => fim('confirmado', '');
+  d.querySelector('[data-a=d]').onclick = () => {
+    const m = d.querySelector('select').value;
+    if (!m) { res.style.color='var(--verm-t)'; res.textContent='Escolha o motivo: é ele que diz por que o bot errou.'; return; }
+    fim('descartado', m);
+  };
+  function fim(decisao, motivo){
+    d.classList.add('feito');
+    d.querySelectorAll('button,select').forEach(b=>b.disabled=true);
+    res.style.color='var(--verde-t)';
+    res.textContent = decisao==='confirmado' ? 'Reuso confirmado. Nada muda no card.' : 'Descartado: a baixa do card fica liberada.';
+    decisao==='confirmado' ? conf++ : desc++;
+    pend--; hist(c, decisao, motivo);
+    setTimeout(()=>{ d.remove(); placar(); }, 1400);
+    placar();
+  }
+  el.appendChild(d);
+});
+</script>
+</body>
+</html>

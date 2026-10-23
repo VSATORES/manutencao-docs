@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Antifraude · entrega</title>
+<style>
+  :root{
+    --tinta:#0f172a; --texto:#334155; --fraco:#64748b; --fraquinho:#94a3b8;
+    --linha:#e2e8f0; --fundo:#f1f5f9; --papel:#ffffff; --azul:#0055ff; --azul-f:rgba(0,85,255,.07);
+    --ambar-b:#e8d3b0; --ambar-f:#fdfaf5; --ambar-t:#7a4800;
+    --verde-b:#bbe5d5; --verde-f:#f3faf7; --verde-t:#1f7a5c;
+    --verm-b:#f5c2c2; --verm-f:#fef5f5; --verm-t:#b91c1c; --cinza-f:#f8fafc;
+    --foto-a:#cbd5e1; --foto-b:#94a3b8;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{--tinta:#f1f5f9;--texto:#cbd5e1;--fraco:#94a3b8;--fraquinho:#64748b;--linha:#1e293b;--fundo:#0b1220;--papel:#111a2e;
+      --cinza-f:#0f172a;--azul:#6f9bff;--azul-f:rgba(111,155,255,.12);--ambar-f:#2a2110;--ambar-b:#5a4620;--ambar-t:#f3cf8a;
+      --verde-f:#0f2a22;--verde-b:#1f5a46;--verde-t:#7fd9b4;--verm-f:#2a1212;--verm-b:#6b2a2a;--verm-t:#fca5a5;--foto-a:#334155;--foto-b:#475569}
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--fundo);color:var(--texto);font:14px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+  .folha{max-width:1120px;margin:0 auto;padding:36px 16px 80px}
+  h1{font-size:26px;line-height:1.2;color:var(--tinta);margin:0 0 6px;font-weight:800}
+  .sub{color:var(--fraco);font-size:14px;margin:0 0 4px;max-width:76ch}
+  .data{color:var(--fraquinho);font-size:12px;margin:0 0 20px}
+  h2{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--fraco);font-weight:700;margin:40px 0 12px;padding-bottom:8px;border-bottom:1px solid var(--linha)}
+  p{margin:0 0 12px;max-width:80ch}
+  code{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12px;background:var(--cinza-f);padding:1px 5px;border-radius:4px;border:1px solid var(--linha);color:var(--tinta)}
+  .aviso{border:1px solid var(--ambar-b);background:var(--ambar-f);color:var(--ambar-t);border-radius:10px;padding:10px 14px;font-size:13px;margin:0 0 18px;max-width:84ch}
+  .nota{font-size:12.5px;color:var(--fraco);max-width:84ch}
+
+  .tela{background:var(--papel);border:1px solid var(--linha);border-radius:12px;overflow:hidden;margin:14px 0 6px;box-shadow:0 1px 2px rgba(15,23,42,.05)}
+  .tela-barra{display:flex;align-items:center;gap:8px;padding:8px 14px;background:var(--cinza-f);border-bottom:1px solid var(--linha);font-size:11.5px;color:var(--fraquinho)}
+  .bolinhas{display:flex;gap:5px}.bolinhas i{width:9px;height:9px;border-radius:50%;background:var(--linha);display:block}
+  .tela-corpo{padding:16px}
+
+  .layout{display:grid;grid-template-columns:220px minmax(0,1fr);gap:16px;align-items:start}
+  @media (max-width:820px){.layout{grid-template-columns:minmax(0,1fr)}}
+  .rail{border:1px solid var(--linha);border-radius:10px;padding:9px;display:flex;flex-direction:column;gap:3px;background:var(--papel)}
+  @media (max-width:820px){.rail{flex-direction:row;overflow-x:auto}.rail-titulo{display:none}.rail-item{flex:none}}
+  .rail-titulo{font-size:10.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--fraquinho);padding:4px 8px 8px}
+  .rail-item{display:flex;align-items:center;gap:9px;padding:8px 9px;border-radius:8px;font-size:12.5px;color:var(--texto);background:none;border:0;text-align:left;font-family:inherit;width:100%}
+  .rail-item.on{background:var(--azul-f);color:var(--azul);font-weight:700}
+  .rail-txt{display:flex;flex-direction:column;line-height:1.28;min-width:0;flex:1}
+  .rail-est{font-size:10.5px;font-weight:500;color:var(--fraco)}
+  .ponto{width:8px;height:8px;border-radius:50%;flex:none}
+  .p-ok{background:#22c55e}.p-at{background:#f59e0b}.p-off{background:#94a3b8}
+  .novo{font-size:9.5px;font-weight:800;background:var(--azul);color:#fff;border-radius:4px;padding:0 5px;margin-left:4px}
+  .contador{flex:none;min-width:20px;height:20px;padding:0 6px;border-radius:999px;background:#fee2e2;color:#b91c1c;font-size:11px;font-weight:800;display:inline-flex;align-items:center;justify-content:center}
+
+  .painel{border:1px solid var(--linha);border-radius:10px;padding:16px;background:var(--papel)}
+  .cab{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+  .cab h4{margin:0;font-size:17px;font-weight:800;color:var(--tinta)}
+  .pergunta{font-size:13px;color:var(--fraco);margin:2px 0 14px}.pergunta b{color:var(--tinta)}
+  .selo{display:inline-flex;align-items:center;gap:6px;font-size:11.5px;font-weight:700;padding:3px 10px;border-radius:999px}
+  .s-som{background:rgba(245,158,11,.14);color:#b45309}
+  .cad{font-size:11.5px;color:var(--fraco)}
+  .saude{display:flex;gap:12px;border-radius:10px;padding:12px 14px;margin:0 0 14px;font-size:13px;border:1px solid var(--ambar-b);background:var(--ambar-f);color:var(--ambar-t)}
+  .saude b{display:block;font-size:13.5px}.saude .passos{font-size:12.5px;margin-top:4px}
+
+  .numeros{display:grid;grid-template-columns:repeat(auto-fit,minmax(138px,1fr));gap:1px;background:var(--linha);border:1px solid var(--linha);border-radius:8px;overflow:hidden}
+  .num{background:var(--papel);padding:11px 13px}
+  .rot{font-size:10.5px;font-weight:600;letter-spacing:.03em;text-transform:uppercase;color:var(--fraco);margin-bottom:4px}
+  .val{font-size:22px;font-weight:800;color:var(--tinta);line-height:1.15;font-variant-numeric:tabular-nums}
+  .val.verm{color:var(--verm-t)}.val.amb{color:#b45309}.val.bom{color:var(--verde-t)}
+  .pe{font-size:11px;color:var(--fraco);margin-top:3px;line-height:1.4}
+
+  .secao{margin-top:22px}
+  .secao-tit{font-size:11.5px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;color:var(--fraco);margin:0 0 10px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .secao-tit .conta{background:#fee2e2;color:#b91c1c;border-radius:999px;padding:1px 8px;font-size:11px}
+  .secao-tit .dica{font-weight:500;text-transform:none;letter-spacing:0;color:var(--fraquinho);font-size:11.5px}
+
+  .filtros{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+  .pilula{font:inherit;font-size:12px;border:1px solid var(--linha);background:var(--papel);color:var(--texto);border-radius:999px;padding:4px 11px;cursor:pointer}
+  .pilula.on{border-color:var(--azul);color:var(--azul);background:var(--azul-f);font-weight:700}
+
+  .caso{border:1px solid var(--linha);border-radius:10px;padding:12px 14px;margin-bottom:10px;transition:opacity .25s}
+  .caso.feito{opacity:.5}
+  .caso-topo{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:6px}
+  .nivel{font-size:10.5px;font-weight:800;letter-spacing:.04em;padding:2px 8px;border-radius:5px}
+  .n-forte{background:#fee2e2;color:#b91c1c}.n-susp{background:#fef3c7;color:#92400e}.n-info{background:var(--linha);color:var(--fraco)}
+  .caso .t{font-weight:700;color:var(--tinta);font-size:13px}
+  .caso .m{font-size:12px;color:var(--fraco)}
+  .comparar{display:grid;grid-template-columns:1fr auto 1fr;gap:10px;align-items:center;margin:10px 0}
+  @media (max-width:640px){.comparar{grid-template-columns:1fr}}
+  .lado{border:1px solid var(--linha);border-radius:8px;overflow:hidden;background:var(--cinza-f)}
+  .foto{height:96px;background:linear-gradient(135deg,var(--foto-a),var(--foto-b));display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--tinta);opacity:.8}
+  .lado .leg{padding:6px 9px;font-size:11.5px;color:var(--fraco);line-height:1.4}
+  .lado .leg b{color:var(--tinta)}
+  .dist{text-align:center;font-size:11px;color:var(--fraco)}
+  .dist b{display:block;font-size:18px;color:var(--tinta);font-variant-numeric:tabular-nums}
+  .porque{font-size:12px;color:var(--texto);margin:2px 0 8px}
+  .acoes{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+  .bt{font:inherit;font-size:12px;font-weight:700;border-radius:7px;padding:6px 11px;cursor:pointer;border:1px solid var(--linha);background:var(--papel);color:var(--texto)}
+  .bt:hover{border-color:var(--fraquinho)}
+  .bt.perigo{color:var(--verm-t);border-color:var(--verm-b)}
+  .bt.ok{color:var(--verde-t);border-color:var(--verde-b)}
+  select.motivo{font:inherit;font-size:12px;border:1px solid var(--linha);background:var(--papel);color:var(--texto);border-radius:7px;padding:5px 8px}
+  .resultado{font-size:12px;font-weight:700;color:var(--verde-t)}
+
+  .nunca{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:8px}
+  .nunca div{border:1px solid var(--linha);border-radius:8px;padding:9px 12px;font-size:12.5px;background:var(--cinza-f)}
+  .nunca b{color:var(--tinta);display:block;font-size:12.5px}
+  .rodape-aba{margin-top:18px;font-size:11.5px;color:var(--fraquinho)}
+
+  /* selo no card */
+  .cardmock{border:1px solid var(--linha);border-radius:10px;padding:14px;background:var(--papel);max-width:560px}
+  .cardmock h5{margin:0 0 4px;font-size:14px;color:var(--tinta)}
+  .selos{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0}
+  .selo2{font-size:11.5px;font-weight:700;padding:3px 9px;border-radius:999px;border:1px solid var(--linha);color:var(--texto);background:var(--cinza-f)}
+  .selo2.f{border-color:var(--verm-b);background:var(--verm-f);color:var(--verm-t)}
+  .selo2.v{border-color:var(--verde-b);background:var(--verde-f);color:var(--verde-t)}
+  .detalhe{font-size:12px;color:var(--fraco);border-top:1px solid var(--linha);padding-top:8px;margin-top:8px}
+
+  .fluxo{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:8px;margin:10px 0 6px}
+  .passo{border:1px solid var(--linha);border-radius:10px;padding:11px 13px;background:var(--papel);position:relative}
+  .passo .n{font-size:10.5px;font-weight:800;color:var(--azul);letter-spacing:.05em;text-transform:uppercase}
+  .passo b{display:block;color:var(--tinta);font-size:13.5px;margin:2px 0 3px}
+  .passo span{font-size:12.3px;color:var(--fraco)}
+  .passo.chave{border-color:var(--ambar-b);background:var(--ambar-f)}
+  table.t{width:100%;border-collapse:collapse;font-size:13px;background:var(--papel);border:1px solid var(--linha);border-radius:10px;overflow:hidden}
+  table.t th{text-align:left;font-size:10.5px;text-transform:uppercase;letter-spacing:.05em;color:var(--fraco);padding:8px 12px;border-bottom:1px solid var(--linha);background:var(--cinza-f)}
+  table.t td{padding:9px 12px;border-bottom:1px solid var(--linha);vertical-align:top}
+  table.t tr:last-child td{border-bottom:0}
+  .tw{overflow-x:auto}
+  .ok{color:var(--verde-t);font-weight:700}.pend{color:#b45309;font-weight:700}.ruim{color:var(--verm-t);font-weight:700}
+  .alerta{border:1px solid var(--verm-b);background:var(--verm-f);color:var(--verm-t);border-radius:10px;padding:12px 14px;font-size:13px;margin:0 0 14px;max-width:84ch}
+  .alerta b{display:block;font-size:13.5px;margin-bottom:2px}
+  ol.passos{margin:0;padding-left:20px;max-width:80ch}
+  ol.passos li{margin:4px 0}
+  a{color:var(--azul)}
+  .botao-link{display:inline-block;margin-top:6px;font-weight:700;font-size:13px;border:1px solid var(--azul);color:var(--azul);background:var(--azul-f);padding:7px 13px;border-radius:8px;text-decoration:none}
+</style>
+</head>
+<body>
+<div class="folha">
+  <h1>Antifraude de evidência: revisão de gente e trava do auditor</h1>
+  <p class="sub">O agente que marca foto reaproveitada já gravava o sinal, mas ninguém via nem decidia, e o sinal não tinha efeito nenhum. Agora ele aparece na aba Agentes de IA (só Admin), alguém confirma ou descarta, e o auditor não fecha card suspeito enquanto isso.</p>
+  <p class="data">13/10/2026 · Vinicius Satores · Central de Manutenção</p>
+
+  <div class="alerta"><b>Antes de ligar: a produção está com um incidente aberto.</b>Nenhum card de manutenção é criado desde 08/10 às 23h53 (banco de produção, 13/10). A causa provável é que os servidores rodam um código anterior ao antifraude com o banco já migrado. Pelo mesmo motivo, a tarefa do antifraude nunca rodou, mesmo com a flag ligada às 9h15 de 13/10. Para confirmar e resolver, é preciso reconectar o EKS.</div>
+
+  <a class="botao-link" href="mockup-aba-antifraude-construida.html">Abrir o mockup da aba (interativo) →</a>
+
+  <h2>Como funciona, do começo ao fim</h2>
+  <div class="fluxo">
+    <div class="passo"><div class="n">1 · franquia</div><b>Manda a evidência</b><span>Fotos no chamado do card, que vai para "Aguardando aprovação".</span></div>
+    <div class="passo"><div class="n">2 · antifraude</div><b>Compara as fotos</b><span>Com as de outros cards e com a data gravada na foto. A cada 15 min, sem custo de IA.</span></div>
+    <div class="passo chave"><div class="n">3 · trava</div><b>Auditor não fecha</b><span>Se o nível for forte ou suspeito, ou se a foto nova ainda não foi checada.</span></div>
+    <div class="passo"><div class="n">4 · Admin</div><b>Confirma ou descarta</b><span>Na aba Agentes de IA. Descartar pede o motivo e libera a baixa.</span></div>
+  </div>
+  <p class="nota">O agente nunca muda coluna, nunca fala com a franquia e nunca devolve card. Consequência para a franquia (ocorrência, nota) só existe por clique de gente, fora deste agente.</p>
+
+  <h2>O que foi construído</h2>
+  <div class="tw"><table class="t">
+    <thead><tr><th>Regra</th><th>O que faz</th><th>Onde</th></tr></thead>
+    <tbody>
+      <tr><td><b>R35</b> · trava</td><td>O auditor não finaliza card forte ou suspeito que ainda não foi descartado, nem card com evidência nova ainda não checada. Com o antifraude desligado, não segura nada. Card que passou do limite de checagens não fica preso.</td><td>back #5234</td></tr>
+      <tr><td><b>R36–R38</b> · decisão</td><td>Confirmar reuso (só registra) ou descartar com motivo de lista: mesmo prédio, certificado, etiqueta, foto genérica, reenvio, outro. Grava quem, quando e por quê. Uma decisão por sinal.</td><td>back #5234 · front #3688</td></tr>
+      <tr><td><b>R44</b> · monitor</td><td>Fila, espera do mais antigo (alerta em 4h), checados em 24h, contagem por nível, decisões e taxa de descarte. Fica "Parado" quando há fila e nenhuma checagem gravada, como em produção hoje.</td><td>back #5234 · front #3688</td></tr>
+      <tr><td><b>R34</b> · aba</td><td>Cartão próprio na aba Agentes de IA, entre o validador e o auditor, com a fila "Sinais para decidir". Só Admin.</td><td>front #3688</td></tr>
+    </tbody>
+  </table></div>
+
+  <h2>Estado em 13/10/2026</h2>
+  <div class="tw"><table class="t">
+    <thead><tr><th>Item</th><th>Estado</th></tr></thead>
+    <tbody>
+      <tr><td>Flag <code>ff_sapron_backend_enable_maintenance_evidence_fraud</code> em produção</td><td class="ok">ligada às 9h15</td></tr>
+      <tr><td>Tarefa do antifraude rodando em produção</td><td class="ruim">não: 0 cards checados, a flag nunca foi consultada</td></tr>
+      <tr><td>PR do back <code>sapron-backend#5234</code></td><td class="pend">aberto, esperando merge na develop</td></tr>
+      <tr><td>PR do front <code>sapron-frontend#3688</code></td><td class="pend">aberto, esperando merge na develop (ir junto com o #5234)</td></tr>
+      <tr><td>Testes</td><td class="ok">back: 156 + 59 do monitor · front: 25 · lint e tipos limpos</td></tr>
+    </tbody>
+  </table></div>
+
+  <h2>Próximos passos, em ordem</h2>
+  <ol class="passos">
+    <li>Reconectar o EKS (<code>/mcp</code> → Seazone EKS), confirmar a versão no ar e subir a atual da main. Isso resolve os cards parados e faz o antifraude rodar.</li>
+    <li>Merge do #5234 e do #3688 na develop, depois staging e produção.</li>
+    <li>Olhar a primeira semana de sinais na aba: quantos forte e suspeito aparecem, e quantos são descartados.</li>
+    <li>Com a taxa de descarte medida, decidir se a trava do auditor fica como está.</li>
+  </ol>
+
+  <h2>Ficou de fora</h2>
+  <div class="nunca">
+    <div><b>Selo no card (R34)</b>Precisa expor os campos do antifraude no detalhe do card só para Admin. Vai em um PR próprio.</div>
+    <div><b>Mesmo prédio (R21)</b>Certificado de dedetização ou de caixa d'água vale para o prédio todo. Ainda falta definir como reconhecer que dois imóveis são do mesmo prédio.</div>
+    <div><b>Vídeo (R6)</b>Hoje só imagens (jpg, png, webp). Vídeo e HEIC contam como "ficou fora da checagem".</div>
+  </div>
+</div>
+</body>
+</html>

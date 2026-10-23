@@ -1,0 +1,625 @@
+<title>Entrega da Central de Manutenção</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500&family=Source+Sans+3:wght@400;600&display=swap">
+<style>
+  :root {
+    --ground: #F4F6F9;
+    --surface: #FFFFFF;
+    --line: #DDE3EB;
+    --line-soft: #E9EEF4;
+    --ink: #101826;
+    --ink-2: #44546A;
+    --ink-3: #7A8799;
+    --accent: #0055FF;
+    --ok-fg: #15803D;
+    --ok-bg: rgba(34, 197, 94, 0.12);
+    --warn-fg: #B45309;
+    --warn-bg: rgba(245, 158, 11, 0.13);
+    --bad-fg: #DC2626;
+    --bad-bg: rgba(239, 68, 68, 0.11);
+    --code-bg: #EEF2F7;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ground: #0C1017;
+      --surface: #141A24;
+      --line: #263141;
+      --line-soft: #1E2733;
+      --ink: #E8EDF4;
+      --ink-2: #A8B5C6;
+      --ink-3: #6F7E92;
+      --accent: #5B8CFF;
+      --ok-fg: #4ADE80;
+      --ok-bg: rgba(34, 197, 94, 0.15);
+      --warn-fg: #FBBF24;
+      --warn-bg: rgba(245, 158, 11, 0.15);
+      --bad-fg: #F87171;
+      --bad-bg: rgba(239, 68, 68, 0.15);
+      --code-bg: #1B232F;
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --ground: #0C1017;
+    --surface: #141A24;
+    --line: #263141;
+    --line-soft: #1E2733;
+    --ink: #E8EDF4;
+    --ink-2: #A8B5C6;
+    --ink-3: #6F7E92;
+    --accent: #5B8CFF;
+    --ok-fg: #4ADE80;
+    --ok-bg: rgba(34, 197, 94, 0.15);
+    --warn-fg: #FBBF24;
+    --warn-bg: rgba(245, 158, 11, 0.15);
+    --bad-fg: #F87171;
+    --bad-bg: rgba(239, 68, 68, 0.15);
+    --code-bg: #1B232F;
+  }
+
+  body {
+    background: var(--ground);
+    color: var(--ink);
+    font-family: 'Source Sans 3', system-ui, -apple-system, sans-serif;
+    font-size: 15.5px;
+    line-height: 1.55;
+  }
+
+  .wrap {
+    max-width: 960px;
+    margin: 0 auto;
+    padding-inline: 20px;
+    padding-block: 40px 64px;
+  }
+
+  h1, h2, h3, .num, .chip, .eyebrow {
+    font-family: Archivo, system-ui, sans-serif;
+  }
+
+  code, .mono {
+    font-family: 'IBM Plex Mono', ui-monospace, SFMono-Regular, monospace;
+    font-variant-numeric: tabular-nums;
+  }
+
+  code {
+    background: var(--code-bg);
+    padding: 1px 5px;
+    border-radius: 4px;
+    font-size: 0.87em;
+  }
+
+  .eyebrow {
+    font-size: 11.5px;
+    font-weight: 600;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+  }
+
+  h1 {
+    font-size: clamp(27px, 5.2vw, 38px);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.12;
+    margin: 6px 0 10px;
+    text-wrap: balance;
+  }
+
+  .dek {
+    color: var(--ink-2);
+    max-width: 62ch;
+    margin: 0;
+  }
+
+  h2 {
+    font-size: 19px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    margin: 0 0 4px;
+  }
+
+  section { margin-top: 44px; }
+
+  .sub {
+    color: var(--ink-2);
+    margin: 0 0 18px;
+    max-width: 66ch;
+  }
+
+  /* ---- faixa de ambientes ---- */
+  .envs {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+    gap: 12px;
+    margin-top: 26px;
+  }
+
+  .env {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 15px 16px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+  }
+
+  .env-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+  }
+
+  .env-name {
+    font-family: Archivo, system-ui, sans-serif;
+    font-weight: 600;
+    font-size: 14px;
+  }
+
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11.5px;
+    font-weight: 700;
+    padding: 3px 9px;
+    border-radius: 999px;
+    white-space: nowrap;
+  }
+
+  .chip.ok   { background: var(--ok-bg);   color: var(--ok-fg); }
+  .chip.warn { background: var(--warn-bg); color: var(--warn-fg); }
+  .chip.bad  { background: var(--bad-bg);  color: var(--bad-fg); }
+
+  .dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: currentColor;
+    flex: none;
+  }
+
+  .env-ver {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 17px;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+  }
+
+  .env-note {
+    font-size: 12.5px;
+    color: var(--ink-3);
+  }
+
+  /* ---- alerta ---- */
+  .alerta {
+    margin-top: 22px;
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--bad-fg);
+    background: var(--surface);
+    border-radius: 8px;
+    padding: 14px 16px;
+  }
+
+  .alerta p { margin: 0; color: var(--ink-2); }
+  .alerta strong { color: var(--ink); }
+
+  /* ---- linha do tempo ---- */
+  .tl {
+    border-top: 1px solid var(--line-soft);
+  }
+
+  .tl-row {
+    display: grid;
+    grid-template-columns: 78px 1fr auto;
+    gap: 14px;
+    align-items: baseline;
+    padding: 11px 0;
+    border-bottom: 1px solid var(--line-soft);
+  }
+
+  .tl-time {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12.5px;
+    color: var(--ink-3);
+  }
+
+  .tl-what strong { font-weight: 600; }
+  .tl-what span { color: var(--ink-2); }
+
+  .tl-tag {
+    font-size: 11.5px;
+    font-weight: 600;
+    color: var(--ink-3);
+    font-family: Archivo, system-ui, sans-serif;
+    white-space: nowrap;
+  }
+
+  .tl-row.marco .tl-what strong { color: var(--accent); }
+
+  /* ---- provas ---- */
+  .provas {
+    display: grid;
+    gap: 10px;
+  }
+
+  .prova {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 9px;
+    padding: 13px 15px;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 10px;
+    align-items: center;
+  }
+
+  .prova-q { margin: 0; }
+  .prova-q b { font-weight: 600; }
+  .prova-r {
+    margin: 3px 0 0;
+    font-size: 13px;
+    color: var(--ink-2);
+  }
+
+  /* ---- tabela ---- */
+  .tabela-wrap { overflow-x: auto; }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14.5px;
+  }
+
+  th {
+    text-align: left;
+    font-family: Archivo, system-ui, sans-serif;
+    font-size: 11.5px;
+    font-weight: 600;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    padding: 0 12px 8px 0;
+    border-bottom: 1px solid var(--line);
+  }
+
+  td {
+    padding: 10px 12px 10px 0;
+    border-bottom: 1px solid var(--line-soft);
+    vertical-align: top;
+  }
+
+  td.n {
+    font-family: 'IBM Plex Mono', monospace;
+    white-space: nowrap;
+  }
+
+  /* ---- pendências ---- */
+  .pend {
+    display: grid;
+    gap: 2px;
+    border-top: 1px solid var(--line-soft);
+  }
+
+  .pend-item {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 12px;
+    align-items: baseline;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--line-soft);
+  }
+
+  .pend-item p { margin: 3px 0 0; color: var(--ink-2); font-size: 13.5px; }
+  .pend-item h3 { margin: 0; font-size: 15px; font-weight: 600; }
+
+  .quem {
+    font-size: 11.5px;
+    font-weight: 600;
+    font-family: Archivo, system-ui, sans-serif;
+    padding: 3px 9px;
+    border-radius: 999px;
+    border: 1px solid var(--line);
+    color: var(--ink-3);
+    white-space: nowrap;
+  }
+
+  footer {
+    margin-top: 48px;
+    padding-top: 18px;
+    border-top: 1px solid var(--line);
+    color: var(--ink-3);
+    font-size: 13px;
+  }
+
+  @media (max-width: 560px) {
+    .tl-row { grid-template-columns: 66px 1fr; }
+    .tl-tag { grid-column: 2; }
+    .prova, .pend-item { grid-template-columns: 1fr; }
+  }
+</style>
+
+<div class="wrap">
+
+  <p class="eyebrow">Central de Manutenção · Sapron</p>
+  <h1>Onde a entrega está</h1>
+  <p class="dek">
+    Cinco PRs foram escritas, mergeadas e promovidas em 18/09. Tudo chegou ao staging e foi
+    conferido no bundle servido. Agora o staging inteiro está fora do ar, e nada disso está
+    em produção ainda.
+  </p>
+
+  <div class="envs">
+    <div class="env">
+      <div class="env-top">
+        <span class="env-name">Staging · front</span>
+        <span class="chip bad"><span class="dot"></span>503</span>
+      </div>
+      <div class="env-ver">—</div>
+      <div class="env-note">stg.sapron.com.br responde <span class="mono">no available server</span></div>
+    </div>
+    <div class="env">
+      <div class="env-top">
+        <span class="env-name">Staging · API</span>
+        <span class="chip bad"><span class="dot"></span>503</span>
+      </div>
+      <div class="env-ver">—</div>
+      <div class="env-note">Última versão vista no ar: <span class="mono">1.115.10-rc.0</span></div>
+    </div>
+    <div class="env">
+      <div class="env-top">
+        <span class="env-name">Produção · API</span>
+        <span class="chip ok"><span class="dot"></span>healthy</span>
+      </div>
+      <div class="env-ver">1.115.9</div>
+      <div class="env-note">Banco e cache respondendo. Sem as mudanças novas.</div>
+    </div>
+  </div>
+
+  <div class="alerta">
+    <p>
+      <strong>O 503 não é do nosso deploy.</strong> Os dois lados do staging devolvem a mesma
+      mensagem de ausência de servidor, o que indica ambiente sem pod de pé — não build quebrado.
+      A última verificação com o ambiente vivo, em 18/09 às 20:04&nbsp;UTC, encontrou tudo no lugar.
+    </p>
+  </div>
+
+  <section>
+    <h2>O que subiu, na ordem</h2>
+    <p class="sub">
+      Horários em UTC. Merge em <code>develop</code> é squash; promoção para <code>staging</code> é
+      merge commit — a regra do repositório, seguida sem exceção.
+    </p>
+
+    <div class="tl">
+      <div class="tl-row">
+        <span class="tl-time">18:21:30</span>
+        <span class="tl-what"><strong>#4828</strong> <span>monitor de agentes abre para Seazoner sob flag</span></span>
+        <span class="tl-tag">backend → develop</span>
+      </div>
+      <div class="tl-row">
+        <span class="tl-time">18:22:43</span>
+        <span class="tl-what"><strong>#4829</strong> <span>dimensionamento das regras de recorrência — o bot de contagem</span></span>
+        <span class="tl-tag">backend → develop</span>
+      </div>
+      <div class="tl-row">
+        <span class="tl-time">18:23:55</span>
+        <span class="tl-what"><strong>#4839</strong> <span>“outros” deixa de ser categoria principal quando há outra</span></span>
+        <span class="tl-tag">backend → develop</span>
+      </div>
+      <div class="tl-row">
+        <span class="tl-time">18:25:06</span>
+        <span class="tl-what"><strong>#4842</strong> <span>busca acha o card pelo prefixo do prédio</span></span>
+        <span class="tl-tag">backend → develop</span>
+      </div>
+      <div class="tl-row marco">
+        <span class="tl-time">19:00:25</span>
+        <span class="tl-what"><strong>#4837</strong> <span>promoção do backend, aberta por outra pessoa do time</span></span>
+        <span class="tl-tag">develop → staging</span>
+      </div>
+      <div class="tl-row">
+        <span class="tl-time">19:00:54</span>
+        <span class="tl-what"><strong>sapron-api v1.115.10-rc.0</strong> <span>build verde</span></span>
+        <span class="tl-tag">imagem</span>
+      </div>
+      <div class="tl-row">
+        <span class="tl-time">19:23:50</span>
+        <span class="tl-what"><strong>#3536</strong> <span>aba de agentes sob flag, barra de abas rolável, aba ativa à vista</span></span>
+        <span class="tl-tag">front → develop</span>
+      </div>
+      <div class="tl-row marco">
+        <span class="tl-time">19:41:12</span>
+        <span class="tl-what"><strong>#3546</strong> <span>promoção do front, com merge commit</span></span>
+        <span class="tl-tag">develop → staging</span>
+      </div>
+      <div class="tl-row">
+        <span class="tl-time">20:04:57</span>
+        <span class="tl-what"><strong>sapron-frontend v1.141.0-rc.1</strong> <span>bundle novo passa a ser servido</span></span>
+        <span class="tl-tag">no ar</span>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Como foi conferido</h2>
+    <p class="sub">
+      Anteontem eu conclui errado que a aba não tinha subido, porque olhei o bundle principal e a
+      página da Central é um chunk carregado sob demanda. Desta vez cada afirmação foi verificada
+      no arquivo servido.
+    </p>
+
+    <div class="provas">
+      <div class="prova">
+        <div>
+          <p class="prova-q"><b>A API trocou de versão mesmo?</b></p>
+          <p class="prova-r">Endpoint de health do staging, lido depois do rollout.</p>
+        </div>
+        <span class="chip ok mono">1.115.10-rc.0</span>
+      </div>
+      <div class="prova">
+        <div>
+          <p class="prova-q"><b>O bundle novo está sendo servido?</b></p>
+          <p class="prova-r">O hash do <span class="mono">index</span> mudou às 20:04:57.</p>
+        </div>
+        <span class="chip ok mono">index-C_OjFnjI.js</span>
+      </div>
+      <div class="prova">
+        <div>
+          <p class="prova-q"><b>O código novo está dentro do chunk certo?</b></p>
+          <p class="prova-r">
+            No chunk da Central (<span class="mono">index-D6TytFrI.js</span>, 127&nbsp;KB):
+            <span class="mono">scrollIntoView</span> ×1, <span class="mono">webkit-scrollbar</span> ×12,
+            “Agentes de IA” ×3.
+          </p>
+        </div>
+        <span class="chip ok"><span class="dot"></span>achado</span>
+      </div>
+      <div class="prova">
+        <div>
+          <p class="prova-q"><b>A flag responde para quem pergunta?</b></p>
+          <p class="prova-r">
+            Chamada igual à do backend, com <span class="mono">distinct_id&nbsp;=&nbsp;STAGING</span>,
+            contra o projeto Sapron Staging.
+          </p>
+        </div>
+        <span class="chip ok mono">True</span>
+      </div>
+      <div class="prova">
+        <div>
+          <p class="prova-q"><b>Produção continua restrita a Admin?</b></p>
+          <p class="prova-r">
+            A trava é a flag <em>não existir</em> lá. Busca por <span class="mono">agentes_seazoner</span>
+            no projeto Sapron Production.
+          </p>
+        </div>
+        <span class="chip ok">0 resultados</span>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>A flag</h2>
+    <p class="sub">
+      Criada pela API do PostHog, copiando a configuração da flag do classificador de urgência, que
+      já funciona no mesmo projeto.
+    </p>
+    <div class="tabela-wrap">
+      <table>
+        <thead>
+          <tr><th>Campo</th><th>Valor</th><th>Por quê</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>chave</td>
+            <td class="n">ff_manutencao_agentes_seazoner</td>
+            <td>Sem o prefixo <code>ff_sapron_backend_</code>: o front lê a mesma string.</td>
+          </tr>
+          <tr>
+            <td>projeto</td>
+            <td class="n">Sapron Staging · 125066</td>
+            <td>O mesmo projeto guarda as flags do front e as do back.</td>
+          </tr>
+          <tr>
+            <td>liberação</td>
+            <td class="n">100%, sem filtro</td>
+            <td>O back manda a string do ambiente como identidade, sem propriedade nenhuma — filtro por propriedade nunca casaria.</td>
+          </tr>
+          <tr>
+            <td>produção</td>
+            <td class="n">não existe</td>
+            <td>Ausência é a trava. Leitura é fail-closed: falta de flag ou erro cai em “só Admin”.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <h2>O que muda quando o staging voltar</h2>
+    <div class="tabela-wrap">
+      <table>
+        <thead>
+          <tr><th>Teste</th><th>Antes</th><th>Depois</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Buscar <code>POR</code> no board</td>
+            <td class="n">0 cards</td>
+            <td class="n">59 cards, 4 imóveis</td>
+          </tr>
+          <tr>
+            <td>Aba “Agentes de IA” para Seazoner não-Admin</td>
+            <td class="n">escondida</td>
+            <td class="n">visível</td>
+          </tr>
+          <tr>
+            <td>Última aba em janela estreita</td>
+            <td class="n">fora da tela, sem sinal</td>
+            <td class="n">barra rolável</td>
+          </tr>
+          <tr>
+            <td>Abrir <code>?aba=agentes</code> por link</td>
+            <td class="n">aba ativa fora da tela</td>
+            <td class="n">rola até ela</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <h2>Pendente</h2>
+    <p class="sub">Nada aqui está esperando código. São decisões e acessos.</p>
+
+    <div class="pend">
+      <div class="pend-item">
+        <div>
+          <h3>Promoção para produção</h3>
+          <p>
+            <code>staging → main</code> exige aprovação de um Seazoner, e o fluxo proíbe forçar por
+            permissão de admin. Produção segue em <span class="mono">1.115.9</span>.
+          </p>
+        </div>
+        <span class="quem">decisão do time</span>
+      </div>
+      <div class="pend-item">
+        <div>
+          <h3>Republicar o processo recorrente v2.1</h3>
+          <p>
+            A versão com a seção que responde a auditoria da Ray está pronta na máquina e nunca foi
+            publicada. O link antigo morreu na troca de conta.
+          </p>
+        </div>
+        <span class="quem">sua decisão</span>
+      </div>
+      <div class="pend-item">
+        <div>
+          <h3>Agente de validação de evidência</h3>
+          <p>
+            Medido: cerca de 1.900 anexos por mês no chamado individual, 22% vindos do WhatsApp e só
+            8% como original de câmera — EXIF não serve de régua. Dezesseis franquias já usam câmera
+            que carimba data e endereço no arquivo.
+          </p>
+        </div>
+        <span class="quem">desenho a decidir</span>
+      </div>
+      <div class="pend-item">
+        <div>
+          <h3>Escopo da chave do PostHog</h3>
+          <p>
+            A chave funciona na API, mas o servidor MCP recusa por falta de
+            <span class="mono">user:read</span>.
+          </p>
+        </div>
+        <span class="quem">ajuste rápido</span>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    Estado lido em 19/09/2026, 23:31&nbsp;UTC. Versões, hashes e horários vêm das respostas dos
+    próprios ambientes e do histórico dos repositórios — nenhum número foi estimado.
+  </footer>
+
+</div>

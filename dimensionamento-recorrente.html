@@ -1,0 +1,250 @@
+<title>Dimensionamento da Recorrente</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;600;700&family=Inter:wght@400;500;600&display=swap">
+<style>
+  :root {
+    --ground: #F3F6F9; --surface: #FFFFFF; --surface-2: #EBF0F5;
+    --ink: #151B26; --ink-2: #51626F; --ink-3: #888E9B;
+    --rule: #E1E7ED; --rule-2: #C0CDDD;
+    --blue: #0055FF; --blue-soft: #E8F0FE; --blue-line: rgba(0,85,255,.18);
+    --red-fg: #DC2626; --red-bg: rgba(239,68,68,.10); --red-line: rgba(239,68,68,.30);
+    --amber-fg: #B45309; --amber-bg: rgba(245,158,11,.12); --amber-line: rgba(245,158,11,.32);
+    --green-fg: #15803D; --green-bg: rgba(34,197,94,.12);
+    --code-bg: #EFF2F6;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ground: #151B26; --surface: #1B212C; --surface-2: #232B38;
+      --ink: #F3F6F9; --ink-2: #B2BBC3; --ink-3: #888E9B;
+      --rule: #2E3644; --rule-2: #3D4756;
+      --blue: #3CC3EE; --blue-soft: #132A46; --blue-line: rgba(60,195,238,.28);
+      --red-fg: #F87171; --red-bg: rgba(239,68,68,.16); --red-line: rgba(248,113,113,.35);
+      --amber-fg: #FBBF24; --amber-bg: rgba(245,158,11,.16); --amber-line: rgba(251,191,36,.35);
+      --green-fg: #54DBB2; --green-bg: rgba(84,219,178,.14);
+      --code-bg: #232B38;
+    }
+  }
+  :root[data-theme="dark"] {
+    --ground: #151B26; --surface: #1B212C; --surface-2: #232B38;
+    --ink: #F3F6F9; --ink-2: #B2BBC3; --ink-3: #888E9B;
+    --rule: #2E3644; --rule-2: #3D4756;
+    --blue: #3CC3EE; --blue-soft: #132A46; --blue-line: rgba(60,195,238,.28);
+    --red-fg: #F87171; --red-bg: rgba(239,68,68,.16); --red-line: rgba(248,113,113,.35);
+    --amber-fg: #FBBF24; --amber-bg: rgba(245,158,11,.16); --amber-line: rgba(251,191,36,.35);
+    --green-fg: #54DBB2; --green-bg: rgba(84,219,178,.14);
+    --code-bg: #232B38;
+  }
+
+  body {
+    background: var(--ground); color: var(--ink);
+    font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-size: 14.5px; line-height: 1.6; margin: 0;
+    padding-inline: 20px; padding-block: 0 56px;
+  }
+  .wrap { max-width: 880px; margin: 0 auto; }
+  h1, h2, h3, .big { font-family: Quicksand, "Trebuchet MS", sans-serif; margin: 0; line-height: 1.18; text-wrap: balance; font-weight: 700; }
+
+  header { padding-block: 36px 22px; border-bottom: 3px solid var(--blue); display: flex; flex-direction: column; gap: 10px; }
+  .kicker { font-size: 11px; font-weight: 600; letter-spacing: .15em; text-transform: uppercase; color: var(--blue); }
+  h1 { font-size: clamp(26px, 5vw, 36px); letter-spacing: -.02em; }
+  .deck { color: var(--ink-2); max-width: 60ch; }
+
+  section { padding-block: 30px 6px; }
+  section + section { border-top: 1px solid var(--rule); }
+  h2 { font-size: 20px; letter-spacing: -.014em; margin-bottom: 6px; }
+  .sub { color: var(--ink-2); font-size: 14px; max-width: 66ch; }
+
+  .hero { margin-top: 20px; background: var(--surface); border: 1px solid var(--red-line); border-radius: 12px; padding: 22px 24px; display: flex; gap: 22px; align-items: baseline; flex-wrap: wrap; }
+  .hero .big { font-size: clamp(42px, 10vw, 64px); color: var(--red-fg); font-variant-numeric: tabular-nums; letter-spacing: -.03em; }
+  .hero .leg { font-size: 14px; color: var(--ink-2); max-width: 46ch; }
+  .hero .leg b { color: var(--ink); font-weight: 600; }
+
+  .tabwrap { overflow-x: auto; margin-top: 18px; border: 1px solid var(--rule); border-radius: 10px; background: var(--surface); }
+  table { border-collapse: collapse; width: 100%; min-width: 660px; }
+  th { background: var(--surface-2); text-align: right; font-size: 11.5px; font-weight: 600; color: var(--ink-2); padding: 10px 12px; border-bottom: 1px solid var(--rule); white-space: nowrap; }
+  th:first-child, td:first-child { text-align: left; }
+  td { padding: 9px 12px; font-size: 13px; border-bottom: 1px solid var(--rule); text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
+  tr:last-child td { border-bottom: none; }
+  .item { font-weight: 600; }
+  .per { font-size: 11.5px; color: var(--ink-3); font-weight: 500; }
+  .zero { color: var(--ink-3); }
+  .alvo { font-weight: 700; color: var(--red-fg); }
+  .alerta td { background: var(--red-bg); }
+  .tag { font-size: 10px; font-weight: 700; border-radius: 999px; padding: 1px 7px; letter-spacing: .02em; }
+  .tag.lembrete { background: var(--amber-bg); color: var(--amber-fg); }
+  .tag.fora { background: var(--surface-2); color: var(--ink-3); }
+
+  .achados { display: flex; flex-direction: column; gap: 12px; margin-top: 18px; }
+  .ach { background: var(--surface); border: 1px solid var(--rule); border-left: 4px solid var(--rule-2); border-radius: 8px; padding: 14px 17px; }
+  .ach.um { border-left-color: var(--red-fg); }
+  .ach.dois { border-left-color: var(--amber-fg); }
+  .ach.tres { border-left-color: var(--blue); }
+  .ach h3 { font-size: 15px; margin-bottom: 5px; }
+  .ach p { margin: 0; font-size: 13.5px; color: var(--ink-2); }
+  .ach p + p { margin-top: 7px; }
+  .ach b { color: var(--ink); font-weight: 600; }
+
+  .cmp { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-top: 12px; }
+  .cmp div { background: var(--surface-2); border-radius: 8px; padding: 10px 12px; }
+  .cmp .n { font-family: Quicksand, sans-serif; font-weight: 700; font-size: 15px; }
+  .cmp .l { font-size: 11.5px; color: var(--ink-2); }
+
+  code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: .88em; background: var(--code-bg); padding: 1px 5px; border-radius: 4px; }
+  .nota { margin-top: 16px; background: var(--blue-soft); border: 1px solid var(--blue-line); border-radius: 8px; padding: 13px 16px; font-size: 13.5px; color: var(--ink-2); }
+  .nota b { color: var(--ink); font-weight: 600; }
+  footer { margin-top: 30px; padding-top: 14px; border-top: 1px solid var(--rule); font-size: 12px; color: var(--ink-3); }
+</style>
+
+<div class="wrap">
+
+  <header>
+    <span class="kicker">Central de Manutenção · prévia do endpoint</span>
+    <h1>Dimensionamento da Recorrente</h1>
+    <p class="deck">O que o <code>/recurrences/dimensionamento/</code> devolveria se rodasse agora, com as 18 regras e os 3.500 imóveis ativos de produção.</p>
+  </header>
+
+  <section>
+    <h2>Se as 18 regras fossem ligadas hoje</h2>
+    <div class="hero">
+      <span class="big">27.163</span>
+      <span class="leg">cards abertos na primeira varredura. Não é por ciclo nem por mês — é de uma vez, porque toda regra em rascunho tem a carteira inteira vencida no dia em que é ativada. O receio de <b>~1.500 por ciclo</b> estava certo em espírito e pequeno em escala.</span>
+    </div>
+    <p class="sub" style="margin-top:14px">Nenhuma regra foi ativada: a contagem simula as mesmas peneiras da varredura sem gerar nada. E nenhum card existente entra na conta — <code>cards_abertos_pulados</code> é zero em todas as 18, porque nunca rodou.</p>
+  </section>
+
+  <section>
+    <h2>Regra por regra</h2>
+    <p class="sub">Peneiras na ordem em que a varredura aplica. <code>Abriria</code> é o que sobra — e é teto, não estimativa: a camada de IA do dedup fica fora da contagem.</p>
+
+    <div class="tabwrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Item</th>
+            <th>Imaturos</th>
+            <th>Inelegíveis</th>
+            <th>Cadastro<br>incompleto</th>
+            <th>Elegíveis</th>
+            <th>Satisfeitos<br>por despesa</th>
+            <th>Abriria</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="alerta">
+            <td><span class="item">Senha da fechadura</span> <span class="tag lembrete">deveria ser lembrete</span><div class="per">a cada 1 mês</div></td>
+            <td>218</td><td class="zero">0</td><td class="zero">0</td><td>3.290</td><td class="zero">0</td><td class="alvo">3.290</td>
+          </tr>
+          <tr class="alerta">
+            <td><span class="item">Pilhas</span> <span class="tag lembrete">deveria ser lembrete</span><div class="per">a cada 3 meses</div></td>
+            <td>561</td><td class="zero">0</td><td class="zero">0</td><td>2.947</td><td class="zero">0</td><td class="alvo">2.947</td>
+          </tr>
+          <tr>
+            <td><span class="item">Filtro do exaustor</span><div class="per">a cada 3 meses</div></td>
+            <td>561</td><td class="zero">0</td><td class="zero">0</td><td>2.947</td><td class="zero">0</td><td class="alvo">2.947</td>
+          </tr>
+          <tr>
+            <td><span class="item">Ar-condicionado Split</span><div class="per">a cada 6 meses</div></td>
+            <td>962</td><td class="zero">0</td><td class="zero">0</td><td>2.546</td><td class="zero">0</td><td class="alvo">2.546</td>
+          </tr>
+          <tr>
+            <td><span class="item">Filtro de água</span><div class="per">a cada 6 meses</div></td>
+            <td>962</td><td class="zero">0</td><td class="zero">0</td><td>2.546</td><td class="zero">0</td><td class="alvo">2.546</td>
+          </tr>
+          <tr>
+            <td><span class="item">Ar-condicionado</span><div class="per">anual</div></td>
+            <td>1.787</td><td class="zero">0</td><td class="zero">0</td><td>1.721</td><td class="zero">0</td><td class="alvo">1.721</td>
+          </tr>
+          <tr>
+            <td><span class="item">Cortinas</span><div class="per">anual</div></td>
+            <td>1.787</td><td class="zero">0</td><td class="zero">0</td><td>1.721</td><td class="zero">0</td><td class="alvo">1.721</td>
+          </tr>
+          <tr>
+            <td><span class="item">Dedetização</span><div class="per">anual</div></td>
+            <td>1.787</td><td class="zero">0</td><td class="zero">0</td><td>1.721</td><td class="zero">0</td><td class="alvo">1.721</td>
+          </tr>
+          <tr>
+            <td><span class="item">Máquina de lavar</span><div class="per">anual</div></td>
+            <td>1.787</td><td class="zero">0</td><td class="zero">0</td><td>1.721</td><td class="zero">0</td><td class="alvo">1.721</td>
+          </tr>
+          <tr>
+            <td><span class="item">Sofás e estofados</span><div class="per">anual</div></td>
+            <td>1.787</td><td class="zero">0</td><td class="zero">0</td><td>1.721</td><td class="zero">0</td><td class="alvo">1.721</td>
+          </tr>
+          <tr>
+            <td><span class="item">Travesseiros</span><div class="per">anual · a única com item de dedup</div></td>
+            <td>1.787</td><td class="zero">0</td><td class="zero">0</td><td>1.721</td><td class="zero">0</td><td class="alvo">1.721</td>
+          </tr>
+          <tr>
+            <td><span class="item">Churrasqueira</span> <span class="tag fora">fora do plano v3</span><div class="per">a cada 3 meses · por amenity</div></td>
+            <td>561</td><td>2.170</td><td class="zero">0</td><td>777</td><td class="zero">0</td><td class="alvo">777</td>
+          </tr>
+          <tr>
+            <td><span class="item">Enxoval</span><div class="per">a cada 24 meses</div></td>
+            <td>2.747</td><td class="zero">0</td><td class="zero">0</td><td>761</td><td class="zero">0</td><td class="alvo">761</td>
+          </tr>
+          <tr>
+            <td><span class="item">Paredes e teto</span><div class="per">a cada 24 meses · pintura</div></td>
+            <td>2.747</td><td class="zero">0</td><td class="zero">0</td><td>761</td><td class="zero">0</td><td class="alvo">761</td>
+          </tr>
+          <tr>
+            <td><span class="item">Caixa d'água</span><div class="per">anual · só tipo "House"</div></td>
+            <td>1.787</td><td>1.597</td><td class="zero">0</td><td>124</td><td class="zero">0</td><td class="alvo">124</td>
+          </tr>
+          <tr>
+            <td><span class="item">Lareira e chaminé</span> <span class="tag fora">fora do plano v3</span><div class="per">anual · por amenity</div></td>
+            <td>1.787</td><td>1.642</td><td class="zero">0</td><td>79</td><td class="zero">0</td><td class="alvo">79</td>
+          </tr>
+          <tr>
+            <td><span class="item">Piscina</span> <span class="tag fora">fora do plano v3</span><div class="per">a cada 3 meses · por amenity</div></td>
+            <td>561</td><td>2.888</td><td class="zero">0</td><td>59</td><td class="zero">0</td><td class="alvo">59</td>
+          </tr>
+          <tr>
+            <td><span class="item">Jardim</span> <span class="tag fora">fora do plano v3</span><div class="per">mensal · por amenity</div></td>
+            <td>218</td><td>3.290</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <h2>Três coisas que a prévia revela</h2>
+
+    <div class="achados">
+      <div class="ach um">
+        <h3>Senha e pilhas abririam 6.237 cards para algo que não deveria abrir card</h3>
+        <p>O processo revisado com a Ray classifica os dois como <b>lembrete</b>: sem card, sem prazo. No banco, estão cadastrados como regra normal, com periodicidade de 1 e 3 meses. Ligadas assim, são <b>3.290 + 2.947 cards</b> — quase um quarto do total, cobrando franquia por troca de pilha.</p>
+        <p>É correção de cadastro, não de código: falta o conceito de "lembrete" na regra, que é justamente o campo <b>Cobrança</b> do mockup.</p>
+      </div>
+
+      <div class="ach dois">
+        <h3>Cadastro incompleto vem zero nas 18 — e isso é o defeito, não a saúde</h3>
+        <p>Só <b>14</b> dos 3.500 imóveis ativos não têm ficha de amenity. Os outros têm ficha criada e vazia, com todos os booleanos em <code>false</code> — e o classificador lê isso como <b>inelegível normal</b>, não como cadastro a corrigir.</p>
+        <p>Por isso Piscina mostra 59 elegíveis quando o anúncio do Airbnb diz 1.853, e Churrasqueira mostra 777 contra 1.292. A peneira está medindo o preenchimento da ficha, não o imóvel.</p>
+        <div class="cmp">
+          <div><div class="n">59 <span style="color:var(--ink-3);font-weight:500">·</span> 1.853</div><div class="l">Piscina: ficha · anúncio</div></div>
+          <div><div class="n">777 <span style="color:var(--ink-3);font-weight:500">·</span> 1.292</div><div class="l">Churrasqueira: ficha · anúncio</div></div>
+          <div><div class="n">79 <span style="color:var(--ink-3);font-weight:500">·</span> 124</div><div class="l">Lareira: ficha · anúncio</div></div>
+        </div>
+      </div>
+
+      <div class="ach tres">
+        <h3>Nada é satisfeito por despesa, porque 17 das 18 regras não têm item de dedup</h3>
+        <p>A coluna de satisfeitos é zero em toda a tabela. Não é que ninguém tenha pago manutenção — é que só <b>Travesseiros</b> tem itens financeiros preenchidos em <code>dedup_items</code>. Sem isso, a camada determinística não tem o que casar e a franquia é cobrada de novo por serviço que já fez.</p>
+        <p>Sabemos que o efeito é grande: no ar-condicionado, <b>819 imóveis</b> pagaram nos últimos 12 meses. Todos os 819 seriam cobrados outra vez.</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>O que isso muda no plano</h2>
+    <p class="sub">A prévia não desaconselha ligar a recorrente — ela diz o que precisa estar pronto antes, e em que ordem.</p>
+    <div class="nota">
+      <b>Preencher <code>dedup_items</code></b> nas 17 regras, para que despesa já lançada satisfaça o ciclo · <b>marcar senha e pilhas como lembrete</b>, ou desativá-las · <b>decidir a fonte de elegibilidade</b> das regras por amenity, hoje medindo a ficha e não o imóvel · <b>ligar uma regra por vez</b>, começando pela de menor volume, em vez das 18 juntas.
+    </div>
+  </section>
+
+  <footer>
+    Medido em 17/09/2026 no banco de produção, com as 18 regras como estão cadastradas (todas em rascunho) e 3.500 imóveis ativos. Um imóvel não tem <code>activation_date</code> e fica fora de todas as contagens. Os números do Airbnb vêm do snapshot de 25/08/2026 de <code>internal_airbnb_details</code>. <code>Abriria</code> é teto: a camada de IA do dedup não entra na contagem.
+  </footer>
+
+</div>

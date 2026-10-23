@@ -1,0 +1,183 @@
+<title>Card pelo Franqueado</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap">
+<style>
+/* Layout: uma coluna de leitura; no topo, a tela do portal reconstruída (lista + gaveta lado a lado, empilha no celular); embaixo, o que move o card e os 3 achados */
+:root{
+  --bg:#f5f6f4; --surface:#ffffff; --ink:#18211d; --muted:#5d6a63; --line:#dde3df;
+  --accent:#0f6b5c; --accent-soft:#e2f0ec; --warn:#a4530b; --warn-soft:#fbeedd; --bad:#b42318; --bad-soft:#fdecea; --info-soft:#e8eef8; --info:#2f4f86;
+  --f-display:"Fraunces",Georgia,serif; --f-body:"IBM Plex Sans",system-ui,sans-serif; --f-mono:"IBM Plex Mono",ui-monospace,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#121715; --surface:#1a211e; --ink:#e6ece9; --muted:#9aa8a1; --line:#2c3632;
+  --accent:#5cc2ad; --accent-soft:#183a33; --warn:#f0a85a; --warn-soft:#3a2914; --bad:#f2867b; --bad-soft:#3d1a17; --info-soft:#1c2738; --info:#9db8e8; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#121715; --surface:#1a211e; --ink:#e6ece9; --muted:#9aa8a1; --line:#2c3632;
+  --accent:#5cc2ad; --accent-soft:#183a33; --warn:#f0a85a; --warn-soft:#3a2914; --bad:#f2867b; --bad-soft:#3d1a17; --info-soft:#1c2738; --info:#9db8e8; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font:15px/1.55 var(--f-body);padding-inline:16px;padding-block:28px 56px}
+.wrap{max-width:1040px;margin:0 auto;display:flex;flex-direction:column;gap:36px}
+h1{font:600 clamp(26px,4vw,36px)/1.15 var(--f-display);margin:0;text-wrap:balance}
+h2{font:600 22px/1.25 var(--f-display);margin:0 0 12px;text-wrap:balance}
+p{margin:0;max-width:68ch}
+.lede{color:var(--muted);margin-top:8px}
+.note{font-size:13px;color:var(--muted);border-left:3px solid var(--line);padding-left:10px;margin-top:12px}
+.eyebrow{font:500 11px/1 var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+/* tela */
+.screen{background:var(--surface);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.bar{display:flex;gap:10px;align-items:center;padding:10px 14px;border-bottom:1px solid var(--line);font-size:13px;color:var(--muted);flex-wrap:wrap}
+.bar b{color:var(--ink)}
+.tabs{display:flex;gap:4px;margin-left:auto}
+.tab{padding:4px 10px;border-radius:6px;font-size:12px}
+.tab.on{background:var(--accent-soft);color:var(--accent);font-weight:600}
+.panes{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr)}
+@media (max-width:760px){.panes{grid-template-columns:1fr}}
+.list{border-right:1px solid var(--line);padding:14px;display:flex;flex-direction:column;gap:14px;min-width:0}
+@media (max-width:760px){.list{border-right:0;border-bottom:1px solid var(--line)}}
+.group h3{font:600 13px/1 var(--f-body);margin:0 0 8px;display:flex;gap:8px;align-items:center}
+.count{font:500 11px var(--f-mono);background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:2px 7px;color:var(--muted)}
+.row{display:flex;gap:10px;align-items:center;padding:8px;border:1px solid var(--line);border-radius:8px;font-size:13px;min-width:0}
+.row + .row{margin-top:6px}
+.row.sel{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent-soft)}
+.thumb{width:34px;height:34px;border-radius:6px;background:repeating-linear-gradient(45deg,var(--line) 0 4px,transparent 4px 8px);flex:none}
+.row .t{min-width:0;flex:1}
+.row .t div:first-child{font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.row .t div:last-child{color:var(--muted);font-size:12px}
+.code{font:500 11px var(--f-mono);background:var(--bg);padding:1px 6px;border-radius:4px}
+.drawer{padding:16px;display:flex;flex-direction:column;gap:14px;min-width:0}
+.dh{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.dh strong{font-size:16px;flex-basis:100%}
+.pill{font-size:11px;font-weight:600;padding:3px 8px;border-radius:999px}
+.p-urg{background:var(--bad-soft);color:var(--bad)}
+.p-org{background:var(--info-soft);color:var(--info)}
+.p-st{background:var(--warn-soft);color:var(--warn)}
+dl{display:grid;grid-template-columns:auto minmax(0,1fr);gap:6px 14px;margin:0;font-size:13px}
+dt{color:var(--muted)} dd{margin:0}
+.late{color:var(--bad);font-weight:600}
+.desc{font-size:13px;background:var(--bg);border-radius:8px;padding:10px}
+.chat{border:1px solid var(--line);border-radius:8px;padding:10px;display:flex;flex-direction:column;gap:6px;font-size:12.5px}
+.msg{background:var(--bg);border-radius:6px;padding:6px 8px}
+.msg span{color:var(--muted);font-size:11px;display:block}
+.link{color:var(--accent);font-weight:600;font-size:12.5px}
+.actions{display:flex;flex-wrap:wrap;gap:8px}
+.btn{font:600 13px var(--f-body);border-radius:8px;padding:8px 12px;border:1px solid var(--line);background:var(--surface);color:var(--ink);display:flex;gap:6px;align-items:center}
+.btn.pri{background:var(--accent);border-color:var(--accent);color:var(--surface)}
+.hidden-note{font-size:12px;color:var(--muted);border-top:1px dashed var(--line);padding-top:10px}
+/* fluxo */
+.flow{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+@media (max-width:760px){.flow{grid-template-columns:1fr}}
+.step{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px;display:flex;flex-direction:column;gap:6px;min-width:0}
+.step h4{margin:0;font-size:14px}
+.step p{font-size:13px;color:var(--muted)}
+.tag{align-self:flex-start;font:500 11px var(--f-mono);padding:2px 7px;border-radius:4px}
+.t-yes{background:var(--accent-soft);color:var(--accent)}
+.t-no{background:var(--bg);color:var(--muted);border:1px solid var(--line)}
+table{border-collapse:collapse;width:100%;font-size:13px}
+.tw{overflow-x:auto;background:var(--surface);border:1px solid var(--line);border-radius:10px}
+th,td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font:500 11px var(--f-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+tr:last-child td{border-bottom:0}
+/* achados */
+.finds{display:flex;flex-direction:column;gap:10px}
+.find{display:grid;grid-template-columns:auto minmax(0,1fr);gap:4px 12px;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px}
+.find .n{font:600 20px/1 var(--f-display);color:var(--warn);grid-row:span 2}
+.find h4{margin:0;font-size:14px}
+.find p{font-size:13px;color:var(--muted)}
+.src{font-size:12px;color:var(--muted)}
+.src code{font:12px var(--f-mono)}
+</style>
+
+<div class="wrap">
+<header>
+  <div class="eyebrow">Portal da Franquia · Manutenção</div>
+  <h1>Como o franqueado vê o card antes de mandar para aprovação</h1>
+  <p class="lede">O franqueado não entra no Sapron. Ele vê o card no Portal da Franquia, no menu Manutenção. A tela abaixo foi montada a partir do código de produção e não é um print. Os dados do card são de exemplo.</p>
+</header>
+
+<section>
+  <div class="screen" role="img" aria-label="Reconstrução da tela de Manutenção do Portal da Franquia">
+    <div class="bar"><b>Manutenção</b><span>Portal da Franquia</span>
+      <div class="tabs"><span class="tab on">Situação</span><span class="tab">Por imóvel</span></div>
+    </div>
+    <div class="panes">
+      <div class="list">
+        <div class="group"><h3>Aguardando você <span class="count">3</span></h3>
+          <div class="row sel"><div class="thumb"></div><div class="t"><div>Vazamento no registro do banheiro</div><div><span class="code">FLN0412</span> · prazo 17/10</div></div></div>
+          <div class="row"><div class="thumb"></div><div class="t"><div>Higienização do ar-condicionado</div><div><span class="code">CMH0202</span> · prazo 22/10</div></div></div>
+          <div class="row"><div class="thumb"></div><div class="t"><div>Trocar resistência do chuveiro</div><div><span class="code">VIG0011</span> · 3 dias em atraso</div></div></div>
+        </div>
+        <div class="group"><h3>Programadas <span class="count">1</span></h3>
+          <div class="row"><div class="thumb"></div><div class="t"><div>Pintura da parede da sala</div><div>programada para 20/10 · aguardando o proprietário</div></div></div>
+        </div>
+        <div class="group"><h3>Aguardando aprovação da Seazone <span class="count">2</span></h3>
+          <div class="row"><div class="thumb"></div><div class="t"><div>Fechadura emperrada</div><div><span class="code">ALA0006</span> · evidência enviada</div></div></div>
+        </div>
+        <div class="group"><h3>Concluídas <span class="count">14</span></h3></div>
+      </div>
+
+      <div class="drawer">
+        <div class="dh">
+          <strong>Vazamento no registro do banheiro</strong>
+          <span class="pill p-urg">Urgente</span><span class="pill p-org">Consultor</span>
+        </div>
+        <dl>
+          <dt>Imóvel</dt><dd><span class="code">FLN0412</span></dd>
+          <dt>Status</dt><dd><span class="pill p-st">Aguardando sua resposta</span></dd>
+          <dt>Categoria</dt><dd>Hidráulica</dd>
+          <dt>Aberta em</dt><dd>12/10/2026</dd>
+          <dt>Prazo</dt><dd>17/10/2026</dd>
+          <dt>Cobrada em</dt><dd>13/10/2026</dd>
+        </dl>
+        <div class="desc">Registro do chuveiro pingando sem parar. Hóspede relatou na vistoria. Foto anexada na abertura.</div>
+        <div class="chat">
+          <div class="eyebrow">Últimas mensagens (só leitura)</div>
+          <div class="msg"><span>Sistema</span>🔧 Nova manutenção, FLN0412. Recebemos uma solicitação sobre o seguinte problema…</div>
+          <div class="msg"><span>Sistema</span>🔧 Cobrança de manutenção: Vazamento no registro do banheiro. Prazo: 17/10/2026.</div>
+          <div class="link">Abrir conversa na Central de Atividades →</div>
+        </div>
+        <div class="actions">
+          <span class="btn">📎 Anexar evidência</span>
+          <span class="btn pri">✓ Enviar evidências para validação</span>
+          <span class="btn">Não consigo agora</span>
+        </div>
+        <div class="hidden-note">Fica de fora da tela: urgência e classificação da IA, parecer do validador, auditoria, antifraude e notas internas. Para escrever, só pela Central de Atividades: a gaveta não tem campo de texto.</div>
+      </div>
+    </div>
+  </div>
+  <p class="note">Com prazo vencido, o campo Prazo fica em vermelho com “N dias em atraso”. O botão “Não consigo agora” só aparece depois que o card foi cobrado. Ele vira “Alterar data” quando o card já está programado.</p>
+</section>
+
+<section>
+  <h2>O que manda o card para “Aguardando aprovação”</h2>
+  <div class="flow">
+    <div class="step"><span class="tag t-yes">move</span><h4>Clicar em “Enviar evidências para validação”</h4><p>Move de qualquer status em aberto, mesmo sem foto anexada. Aparece o aviso “Evidências enviadas para validação da Seazone”.</p></div>
+    <div class="step"><span class="tag t-yes">move</span><h4>Anexar a primeira foto</h4><p>Pelo botão do card ou pela conversa, quando o card está como não urgente, urgente ou recorrente. O texto “Como funciona” do portal avisa: “Anexar já manda o card para validação.”</p></div>
+    <div class="step"><span class="tag t-no">não move</span><h4>Mensagem só de texto, ou foto num card programado</h4><p>Texto sem anexo não conta. Foto em card programado ou em “solicitação recebida” registra a evidência, mas o status continua o mesmo.</p></div>
+  </div>
+</section>
+
+<section>
+  <h2>Como cada status aparece para ele</h2>
+  <div class="tw"><table>
+    <thead><tr><th>No Sapron</th><th>O franqueado vê</th><th>Grupo na lista</th></tr></thead>
+    <tbody>
+      <tr><td>Solicitação recebida (ainda não acionado)</td><td>Não aparece</td><td>–</td></tr>
+      <tr><td>Não urgente · Urgente · Recorrente (acionado)</td><td>Aguardando sua resposta. Urgente vira só o selo vermelho.</td><td>Aguardando você</td></tr>
+      <tr><td>Programada</td><td>Programada, com a data</td><td>Programadas</td></tr>
+      <tr><td>Aguardando aprovação</td><td>Aguardando aprovação da Seazone</td><td>Aguardando aprovação da Seazone</td></tr>
+      <tr><td>Concluído</td><td>Concluída</td><td>Concluídas</td></tr>
+      <tr><td>Cancelada</td><td>Solicitação recusada pela Seazone</td><td>Concluídas</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section>
+  <h2>Três pontos para corrigir</h2>
+  <div class="finds">
+    <div class="find"><span class="n">1</span><h4>Dá para mandar para aprovação sem foto nenhuma</h4><p>O botão “Enviar evidências para validação” funciona mesmo sem anexo, e o card chega vazio na aprovação.</p></div>
+    <div class="find"><span class="n">2</span><h4>Card devolvido mostra rótulos que não batem</h4><p>Se um card devolvido recebe foto, na lista ele aparece em “Aguardando aprovação”, mas ao abrir aparece “Em andamento”, e o botão de enviar continua lá. Isso foi deduzido do código e ainda não foi testado.</p></div>
+    <div class="find"><span class="n">3</span><h4>Dados internos chegam ao portal</h4><p>Os itens a cobrar e o motivo de duplicata apontado pela IA vão junto para o portal. A tela não mostra, mas aparece para quem olha os dados por trás da página.</p></div>
+  </div>
+  <p class="src">Fonte: código da branch main (produção) do Portal da Franquia e do back do Sapron, lido em 14/10/2026. Principais arquivos: <code>src/pages/manutencao/maintenance-detail-sheet.tsx</code>, <code>src/maintenance/actions/evidence_from_message.py</code>, <code>src/maintenance/apis/serializers.py</code>.</p>
+</section>
+</div>

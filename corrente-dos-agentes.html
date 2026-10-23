@@ -1,0 +1,604 @@
+<title>Corrente dos Agentes</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+  :root {
+    --ground: #e9ecef;
+    --surface: #ffffff;
+    --surface-2: #f3f5f7;
+    --ink: #14181d;
+    --ink-2: #3d4854;
+    --muted: #6a7682;
+    --line: #d2d8de;
+    --line-2: #e3e8ec;
+
+    --baixo: #4a6b78;
+    --atencao: #9a6a14;
+    --urgente: #bc4f1c;
+    --duro: #9c1f27;
+
+    --ok: #2f6b4f;
+    --falta: #9c1f27;
+    --neutro: #6a7682;
+
+    --serif: "Source Serif 4", Georgia, "Times New Roman", serif;
+    --sans: "Archivo", "Helvetica Neue", Arial, sans-serif;
+    --mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ground: #101418;
+      --surface: #171c22;
+      --surface-2: #1d242b;
+      --ink: #e9edf1;
+      --ink-2: #c2ccd5;
+      --muted: #8b98a4;
+      --line: #2b343d;
+      --line-2: #222a32;
+
+      --baixo: #7ea8b8;
+      --atencao: #d6a64a;
+      --urgente: #e8814a;
+      --duro: #e2626c;
+
+      --ok: #6fbd93;
+      --falta: #e2626c;
+      --neutro: #8b98a4;
+    }
+  }
+  :root[data-theme="dark"] {
+    --ground: #101418;
+    --surface: #171c22;
+    --surface-2: #1d242b;
+    --ink: #e9edf1;
+    --ink-2: #c2ccd5;
+    --muted: #8b98a4;
+    --line: #2b343d;
+    --line-2: #222a32;
+
+    --baixo: #7ea8b8;
+    --atencao: #d6a64a;
+    --urgente: #e8814a;
+    --duro: #e2626c;
+
+    --ok: #6fbd93;
+    --falta: #e2626c;
+    --neutro: #8b98a4;
+  }
+
+  body {
+    background: var(--ground);
+    color: var(--ink);
+    font-family: var(--serif);
+    font-size: 16px;
+    line-height: 1.6;
+  }
+  .wrap {
+    max-width: 62rem;
+    margin: 0 auto;
+    padding-inline: 18px;
+    padding-block: 2.5rem 4rem;
+  }
+  h1, h2, h3, .lab { font-family: var(--sans); }
+  h1 {
+    font-size: clamp(2rem, 6vw, 3.1rem);
+    line-height: 1.04;
+    font-weight: 700;
+    letter-spacing: -0.022em;
+    margin: 0.35rem 0 0;
+    text-wrap: balance;
+  }
+  h2 {
+    font-size: 1.28rem;
+    font-weight: 700;
+    letter-spacing: -0.012em;
+    margin: 0 0 0.2rem;
+  }
+  h3 {
+    font-size: 0.95rem;
+    font-weight: 600;
+    letter-spacing: -0.004em;
+    margin: 0;
+  }
+  p { margin: 0 0 0.9rem; }
+  p:last-child { margin-bottom: 0; }
+  a { color: inherit; }
+
+  .lab {
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .stand {
+    font-size: 1.12rem;
+    color: var(--ink-2);
+    max-width: 44ch;
+    margin-top: 0.9rem;
+  }
+  .stamp {
+    font-family: var(--mono);
+    font-size: 0.74rem;
+    color: var(--muted);
+    border-top: 1px solid var(--line);
+    padding-top: 0.7rem;
+    margin-top: 1.6rem;
+    line-height: 1.7;
+  }
+
+  section { margin-top: 3.2rem; }
+  .intro { color: var(--ink-2); max-width: 62ch; margin-top: 0.6rem; }
+
+  /* ---- a corrente ---- */
+  .corrente {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+    margin-top: 1.4rem;
+  }
+  @media (max-width: 720px) { .corrente { grid-template-columns: 1fr; } }
+  .elo {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    padding: 1.05rem 1.05rem 1.15rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.55rem;
+  }
+  .elo .passo {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    color: var(--muted);
+    letter-spacing: 0.08em;
+  }
+  .elo p { font-size: 0.93rem; color: var(--ink-2); margin: 0; }
+  .elo .meta {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    color: var(--muted);
+    border-top: 1px solid var(--line-2);
+    padding-top: 0.55rem;
+    margin-top: auto;
+    line-height: 1.65;
+    word-break: break-word;
+  }
+
+  /* ---- a régua ---- */
+  .regua { margin-top: 1.6rem; }
+  .trilho {
+    position: relative;
+    height: 26px;
+    display: flex;
+    border: 1px solid var(--line);
+    background: var(--surface);
+  }
+  .faixa {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .faixa span {
+    font-family: var(--mono);
+    font-size: 0.62rem;
+    letter-spacing: 0.06em;
+    color: #fff;
+    white-space: nowrap;
+    padding-inline: 4px;
+  }
+  .f-baixo   { width: 40%; background: var(--baixo); }
+  .f-atencao { width: 30%; background: var(--atencao); }
+  .f-urgente { width: 25%; background: var(--urgente); }
+  .f-duro    { width: 5%;  background: var(--duro); }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) .faixa span { color: #0e1216; }
+  }
+  :root[data-theme="dark"] .faixa span { color: #0e1216; }
+
+  .marcas { position: relative; height: 40px; margin-top: 2px; }
+  .marca { position: absolute; top: 0; transform: translateX(-50%); width: 44px; text-align: center; }
+  .marca .haste { width: 1px; height: 12px; background: var(--ink); margin: 0 auto 3px; }
+  .marca .nota {
+    font-family: var(--mono);
+    font-size: 0.98rem;
+    font-weight: 600;
+    line-height: 1.1;
+    white-space: nowrap;
+  }
+  .marca .nota small { font-size: 0.66rem; font-weight: 500; opacity: 0.8; margin-left: 1px; }
+  .m-15 { left: 15%; }
+  .m-30 { left: 30%; }
+  .m-55 { left: 55%; }
+  .m-95 { left: 95%; }
+  .n-baixo   { color: var(--baixo); }
+  .n-atencao { color: var(--atencao); }
+  .n-duro    { color: var(--duro); }
+
+  .cortes {
+    display: flex;
+    gap: 1.4rem;
+    flex-wrap: wrap;
+    font-family: var(--mono);
+    font-size: 0.74rem;
+    color: var(--muted);
+    border-top: 1px solid var(--line);
+    padding-top: 0.7rem;
+  }
+
+  /* ---- tabelas ---- */
+  .rolo { overflow-x: auto; margin-top: 1.3rem; border: 1px solid var(--line); background: var(--surface); }
+  table { border-collapse: collapse; width: 100%; font-size: 0.9rem; }
+  th, td {
+    text-align: left;
+    padding: 0.62rem 0.8rem;
+    border-bottom: 1px solid var(--line-2);
+    vertical-align: top;
+  }
+  th {
+    font-family: var(--mono);
+    font-size: 0.66rem;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 500;
+    white-space: nowrap;
+  }
+  tbody tr:last-child td { border-bottom: none; }
+  td.num { font-family: var(--mono); font-variant-numeric: tabular-nums; white-space: nowrap; }
+  td.conta { font-family: var(--mono); font-size: 0.78rem; color: var(--muted); white-space: nowrap; }
+  .pill {
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.04em;
+    padding: 0.12rem 0.42rem;
+    border: 1px solid currentColor;
+    white-space: nowrap;
+  }
+  .p-urg { color: var(--duro); }
+  .p-cor { color: var(--baixo); }
+
+  /* ---- monitor ---- */
+  .painéis { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 1.4rem; }
+  @media (max-width: 720px) { .painéis { grid-template-columns: 1fr; } }
+  .painel { background: var(--surface); border: 1px solid var(--line); padding: 1.05rem; }
+  .painel .topo { display: flex; align-items: baseline; justify-content: space-between; gap: 0.6rem; flex-wrap: wrap; }
+  .rodando {
+    font-family: var(--mono);
+    font-size: 0.66rem;
+    letter-spacing: 0.06em;
+    color: var(--ok);
+    border: 1px solid currentColor;
+    padding: 0.08rem 0.38rem;
+  }
+  .painel .cad { font-family: var(--mono); font-size: 0.7rem; color: var(--muted); margin-top: 0.3rem; }
+  .grade { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--line-2); margin-top: 0.95rem; }
+  .cel { background: var(--surface-2); padding: 0.6rem 0.65rem 0.7rem; }
+  .cel .k { font-family: var(--mono); font-size: 0.6rem; letter-spacing: 0.07em; text-transform: uppercase; color: var(--muted); display: block; }
+  .cel .v { font-family: var(--mono); font-size: 1.32rem; font-weight: 600; line-height: 1.25; display: block; font-variant-numeric: tabular-nums; }
+  .cel .n { font-size: 0.72rem; color: var(--muted); line-height: 1.35; display: block; }
+  .cel.grave .v { color: var(--duro); }
+  .painel .pe { font-size: 0.83rem; color: var(--muted); border-top: 1px solid var(--line-2); padding-top: 0.6rem; margin-top: 0.95rem; }
+
+  /* ---- estados ---- */
+  .est { font-family: var(--mono); font-size: 0.72rem; white-space: nowrap; }
+  .e-ok { color: var(--ok); }
+  .e-falta { color: var(--falta); }
+  .e-neutro { color: var(--neutro); }
+
+  .nota-lateral {
+    border-left: 2px solid var(--duro);
+    padding: 0.1rem 0 0.1rem 0.95rem;
+    margin-top: 1.4rem;
+    color: var(--ink-2);
+    max-width: 58ch;
+  }
+  .nota-lateral .lab { color: var(--duro); display: block; margin-bottom: 0.25rem; }
+
+  ul.solto { margin: 1rem 0 0; padding-left: 1.15rem; color: var(--ink-2); }
+  ul.solto li { margin-bottom: 0.5rem; max-width: 60ch; }
+  code {
+    font-family: var(--mono);
+    font-size: 0.86em;
+    background: var(--surface-2);
+    border: 1px solid var(--line-2);
+    padding: 0.04rem 0.26rem;
+  }
+  .fim {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    color: var(--muted);
+    border-top: 1px solid var(--line);
+    padding-top: 0.8rem;
+    margin-top: 3.2rem;
+    line-height: 1.7;
+  }
+</style>
+
+<div class="wrap">
+
+  <header>
+    <div class="lab">Central de Manutenção · Sapron</div>
+    <h1>Corrente dos Agentes</h1>
+    <p class="stand">Dois agentes em série: um dá nota ao chamado, o outro tira o card da triagem. Um terceiro painel olha os dois e conta quando uma pessoa discorda.</p>
+    <div class="stamp">
+      Números medidos em 21/09/2026 entre 15:23 e 15:35, no Sapron local, banco de desenvolvimento semeado.<br>
+      Notas produzidas pelo modelo <code>gemini-3.7-flash</code> via AI Hub — chamada real, não simulada.<br>
+      Três chamados rodados na mão; os dois últimos, pelo Celery beat, sem nenhum toque entre as etapas.
+    </div>
+  </header>
+
+  <section>
+    <div class="lab">A corrente</div>
+    <h2>Três peças, e cada uma pode ser desligada sozinha</h2>
+    <p class="intro">Cada agente tem a flag dele. Desligar o classificador para a nota; desligar a triagem para o movimento e deixa a nota. As duas flags são fail-closed: flag ausente ou PostHog fora significa agente parado, nunca agente solto.</p>
+
+    <div class="corrente">
+      <div class="elo">
+        <span class="passo">1 · a cada 15 min</span>
+        <h3>Classificador de urgência</h3>
+        <p>Lê o texto do card, devolve categorias e uma nota de 0 a 100. Não move card de coluna — só escreve a nota e a conta que levou a ela.</p>
+        <div class="meta">
+          <code>*/15</code> · :00 :15 :30 :45<br>
+          ff_…enable_maintenance_card_classifier
+        </div>
+      </div>
+      <div class="elo">
+        <span class="passo">2 · 5 min depois</span>
+        <h3>Triagem automática</h3>
+        <p>Pega o card que já tem nota e o tira da triagem: Urgente se a nota chegou a 70, Corretiva se não. Não mexe em card que uma pessoa já colocou numa coluna.</p>
+        <div class="meta">
+          <code>5,20,35,50</code> · 5 min depois do 1<br>
+          ff_…enable_maintenance_auto_triage
+        </div>
+      </div>
+      <div class="elo">
+        <span class="passo">3 · lê, não escreve</span>
+        <h3>Monitor de agentes</h3>
+        <p>Uma linha por agente, com a fila, a última execução e o que cada um decidiu. É o único lugar que responde “o agente rodou?” sem abrir o banco.</p>
+        <div class="meta">
+          aba Agentes de IA<br>
+          Admin sempre · Seazone com flag
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="lab">A régua</div>
+    <h2>A nota é uma soma, não um palpite</h2>
+    <p class="intro">Severidade de 0 a 80 vem da IA. Reincidência de 0 a 20 vem de SQL: quantos cards da mesma categoria o imóvel teve em 90 dias — 1 card vale 10, dois ou mais valem 20. As cinco notas do teste caíram aqui:</p>
+
+    <div class="regua">
+      <div class="trilho" role="img" aria-label="Régua de 0 a 100 com quatro faixas: baixo de 0 a 39, atenção de 40 a 69, urgente de 70 a 94, gatilho duro de 95 a 100">
+        <div class="faixa f-baixo"><span>BAIXO 0–39</span></div>
+        <div class="faixa f-atencao"><span>ATENÇÃO 40–69</span></div>
+        <div class="faixa f-urgente"><span>URGENTE 70–94</span></div>
+        <div class="faixa f-duro"><span></span></div>
+      </div>
+      <div class="marcas">
+        <div class="marca m-15"><div class="haste"></div><div class="nota n-baixo">15</div></div>
+        <div class="marca m-30"><div class="haste"></div><div class="nota n-baixo">30</div></div>
+        <div class="marca m-55"><div class="haste"></div><div class="nota n-atencao">55</div></div>
+        <div class="marca m-95"><div class="haste"></div><div class="nota n-duro">95<small>×2</small></div></div>
+      </div>
+      <div class="cortes">
+        <span>corte de urgente: 70</span>
+        <span>piso do gatilho duro: 95</span>
+        <span>reincidência: 0 · 10 · 20</span>
+        <span>as cinco notas do teste</span>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="lab">O teste</div>
+    <h2>Cinco chamados, escritos como a franquia escreve</h2>
+
+    <div class="rolo">
+      <table>
+        <thead>
+          <tr>
+            <th>Chamado</th>
+            <th>Nota</th>
+            <th>A conta</th>
+            <th>Foi para</th>
+            <th>Quem rodou</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Vazamento no teto do banheiro, pingando na cama</td>
+            <td class="num n-duro">95</td>
+            <td class="conta">75 sev + 20 reinc</td>
+            <td><span class="pill p-urg">Urgente</span></td>
+            <td class="conta">na mão</td>
+          </tr>
+          <tr>
+            <td>Ar-condicionado do quarto não gela, 34 °C na semana</td>
+            <td class="num n-atencao">55</td>
+            <td class="conta">55 sev + 0 reinc</td>
+            <td><span class="pill p-cor">Corretiva</span></td>
+            <td class="conta">na mão</td>
+          </tr>
+          <tr>
+            <td>Lâmpada da varanda queimada</td>
+            <td class="num n-baixo">15</td>
+            <td class="conta">15 sev + 0 reinc</td>
+            <td><span class="pill p-cor">Corretiva</span></td>
+            <td class="conta">na mão</td>
+          </tr>
+          <tr>
+            <td>Sem água no imóvel inteiro, hóspede com 4 noites</td>
+            <td class="num n-duro">95</td>
+            <td class="conta">75 sev + 20 reinc</td>
+            <td><span class="pill p-urg">Urgente</span></td>
+            <td class="conta">beat sozinho</td>
+          </tr>
+          <tr>
+            <td>Rodinha da porta do armário saiu do trilho</td>
+            <td class="num n-baixo">30</td>
+            <td class="conta">20 sev + 10 reinc</td>
+            <td><span class="pill p-cor">Corretiva</span></td>
+            <td class="conta">beat sozinho</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="nota-lateral">
+      <span class="lab">Uma decisão de negócio apareceu no teste</span>
+      <p>O ar-condicionado quebrado, com hóspede dentro e 34 °C previstos, tirou <strong>55</strong> e foi para corretiva — o corte de urgente é 70. A régua funcionou como está escrita. Se ar parado com hóspede na casa deveria ser urgente, o que muda é a régua, não o código.</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="lab">Autonomia</div>
+    <h2>Os dois últimos chamados ninguém tocou</h2>
+    <p class="intro">Os três primeiros eu chamei na mão, para ver a corrente inteira de uma vez. Os dois últimos foram do relógio: subi o Celery com o beat embutido, semeei os cards e saí. Os carimbos são a prova de que o deslocamento de 5 minutos entre os dois agentes é real, e não teoria de configuração.</p>
+
+    <div class="rolo">
+      <table>
+        <thead>
+          <tr>
+            <th>Relógio</th>
+            <th>Quem disparou</th>
+            <th>O que fez</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="num">15:25:35</td>
+            <td>beat sobe</td>
+            <td>agenda carregada; dois cards esperando na triagem, sem nota</td>
+          </tr>
+          <tr>
+            <td class="num">15:30:12</td>
+            <td class="conta">maintenance.classify_pending_cards</td>
+            <td>2 avaliados, 2 classificados, 0 falhas, 1 urgente — em 5,6 s</td>
+          </tr>
+          <tr>
+            <td class="num">15:35:07</td>
+            <td class="conta">maintenance.auto_triage_cards</td>
+            <td>2 avaliados, 2 movidos, 1 para urgente, 1 para corretiva — em 0,17 s</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p class="intro" style="margin-top:1.1rem">Entre a nota e o movimento passaram <strong>4 min 52 s</strong>. É o deslocamento existir para valer: o card que ganha nota às :30 sai da coluna às :35, e não na volta completa de 15 minutos. Também é o que impede as duas tarefas de disputarem a mesma fila no mesmo instante.</p>
+
+    <p class="intro">Detalhe que só aparece rodando: a rodinha do armário tirou <strong>30</strong>, e 10 desses 30 vieram da reincidência — o imóvel já teve 1 card da mesma categoria em 90 dias. A camada de SQL está pesando de verdade, não só a IA.</p>
+  </section>
+
+  <section>
+    <div class="lab">O monitor</div>
+    <h2>Duas linhas, e cada uma só desenha o que ela tem</h2>
+    <p class="intro">Até ontem o cartão do monitor era moldado no classificador: a triagem herdava cobertura, distribuição e modelos, tudo zerado, e um aviso no pé dizendo “a nota não move card de coluna” — o oposto do que ela faz. Agora cada agente desenha os blocos dele e assina o aviso dele.</p>
+
+    <div class="painéis">
+      <div class="painel">
+        <div class="topo">
+          <h3>Classificador de urgência</h3>
+          <span class="rodando">● Rodando</span>
+        </div>
+        <div class="cad">a cada 15 min · última execução às 15:30</div>
+        <div class="grade">
+          <div class="cel"><span class="k">Cobertura</span><span class="v">100%</span><span class="n">15 de 15 cards abertos</span></div>
+          <div class="cel"><span class="k">Na fila</span><span class="v">0</span><span class="n">esperando a próxima passada</span></div>
+          <div class="cel"><span class="k">Presos</span><span class="v">0</span><span class="n">nenhum atrasado na fila</span></div>
+          <div class="cel"><span class="k">Urgentes</span><span class="v">6</span><span class="n">5 por gatilho duro, não pela soma</span></div>
+          <div class="cel"><span class="k">Cat. divergente</span><span class="v">1</span><span class="n">a IA propôs uma, o card ficou com outra</span></div>
+          <div class="cel"><span class="k">Modelos</span><span class="v">2</span><span class="n">gemini-3.7-flash 10 · gemini-3-flash 5</span></div>
+        </div>
+        <p class="pe">A nota ordena a fila e não move card de coluna: quem move é a triagem, agente separado e com flag separada.</p>
+      </div>
+
+      <div class="painel">
+        <div class="topo">
+          <h3>Triagem automática</h3>
+          <span class="rodando">● Rodando</span>
+        </div>
+        <div class="cad">a cada 15 min, 5 min depois do classificador</div>
+        <div class="grade">
+          <div class="cel"><span class="k">Na fila</span><span class="v">0</span><span class="n">esperando a próxima passada</span></div>
+          <div class="cel"><span class="k">Presos</span><span class="v">0</span><span class="n">nenhum atrasado na fila</span></div>
+          <div class="cel"><span class="k">Movidos</span><span class="v">5</span><span class="n">5 nas últimas 24h</span></div>
+          <div class="cel"><span class="k">Para urgente</span><span class="v">2</span><span class="n">3 foram para corretiva</span></div>
+          <div class="cel grave"><span class="k">Coluna trocada</span><span class="v">1</span><span class="n">alguém discordou e moveu para a outra</span></div>
+          <div class="cel"><span class="k">Última</span><span class="v">15:35</span><span class="n">do carimbo <code>ai_triaged_at</code></span></div>
+        </div>
+        <p class="pe">Mover o card abre o chamado individual com a franquia — em card urgente, com o aviso de manutenção urgente. Desligar a flag não desfaz as conversas já começadas.</p>
+      </div>
+    </div>
+
+    <div class="nota-lateral">
+      <span class="lab">O teste que só este monitor permite</span>
+      <p>Arrastei à mão o card de nota 95 de volta para corretiva, como uma pessoa discordando. <strong>Coluna trocada</strong> foi para 1 e <strong>Para urgente</strong> continuou 1. A escolha do agente fica congelada em <code>ai_is_urgent</code>; o que o contador mede é quantas vezes alguém a desfez.</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="lab">Onde está ligado</div>
+    <h2>A mesma corrente, três ambientes, três estados</h2>
+
+    <div class="rolo">
+      <table>
+        <thead>
+          <tr>
+            <th>Peça</th>
+            <th>Local</th>
+            <th>Staging</th>
+            <th>Produção</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Classificador</td>
+            <td><span class="est e-ok">ligado</span></td>
+            <td><span class="est e-ok">ligado · 100%</span></td>
+            <td><span class="est e-falta">flag não existe</span></td>
+          </tr>
+          <tr>
+            <td>Triagem automática</td>
+            <td><span class="est e-ok">ligado</span></td>
+            <td><span class="est e-falta">flag não existe</span></td>
+            <td><span class="est e-falta">flag não existe</span></td>
+          </tr>
+          <tr>
+            <td>Classificar com as fotos</td>
+            <td><span class="est e-neutro">desligado</span></td>
+            <td><span class="est e-falta">flag não existe</span></td>
+            <td><span class="est e-falta">flag não existe</span></td>
+          </tr>
+          <tr>
+            <td>Monitor com as duas linhas</td>
+            <td><span class="est e-ok">no ar</span></td>
+            <td><span class="est e-neutro">mergeado, deploy pendente</span></td>
+            <td><span class="est e-neutro">não promovido</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p class="intro" style="margin-top:1.1rem">Flag ausente não é o mesmo que flag desligada, mas dá no mesmo resultado: os dois gates são fail-closed, então o agente fica parado. Em produção isso se mede — são 5.918 cards e <strong>zero</strong> com nota, porque o classificador nunca rodou lá.</p>
+
+    <p class="intro">O backend avalia a flag usando o nome do ambiente como identidade (<code>STAGING</code>, <code>PRODUCTION</code>), não uma pessoa. Por isso a condição precisa ser 100% de todos os usuários, <strong>sem filtro de propriedade</strong> — qualquer filtro derruba a avaliação e o agente volta a ficar parado.</p>
+  </section>
+
+  <section>
+    <div class="lab">O que falta</div>
+    <h2>Três coisas, e nenhuma é código</h2>
+    <ul class="solto">
+      <li><strong>Criar duas flags no PostHog de staging</strong> — <code>auto_triage</code> e <code>classify_with_images</code>. Sem a primeira, o card ganha nota e fica parado na coluna, o que parece bug e é flag ausente.</li>
+      <li><strong>Esperar o deploy do staging.</strong> O merge do monitor entrou às 14:59; o bundle no ar ainda é o anterior. O teste vale depois que a aba listar dois agentes em vez de um.</li>
+      <li><strong>Decidir o corte do ar-condicionado.</strong> Nota 55 com hóspede na casa é corretiva hoje. Isso é régua, e régua é decisão de operação.</li>
+    </ul>
+  </section>
+
+  <div class="fim">
+    Cadências e cortes lidos de <code>config/settings.py</code>, <code>actions/classify_card.py</code> e <code>actions/auto_triage.py</code> na branch <code>develop</code> em 21/09/2026.<br>
+    Contagens de produção de consulta ao banco em 21/09/2026. Estado das flags lido da API do PostHog nos projetos 125066 e 127887 na mesma data.
+  </div>
+
+</div>

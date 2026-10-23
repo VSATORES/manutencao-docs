@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Finalização da Recorrente</title>
+<style>{{css}}</style></head><body><main>
+
+<h1>Finalização da Manutenção Recorrente</h1>
+<p class="sub">Ciclo do ar-condicionado · outubro e novembro de 2026 · o que entra, as datas, o que sai e quando o ciclo termina · v2.3 de 30/09/2026</p>
+
+<div class="grade">
+<div><small>Disparo</small><div class="num">30/09</div><small>quarta, 23h (Brasília)</small></div>
+<div><small>Prazo da franquia</small><div class="num">22/10</div><small>15 dias úteis, gravado no card</small></div>
+<div><small>Cards abertos esperados</small><div class="num">1.147</div><small>contagem de 30/09, 13h23 · faixa 1.050–1.250</small></div>
+<div><small>Ciclo fecha</small><div class="num">30/11</div><small>antes do bloqueio dez–mar</small></div>
+</div>
+
+<h2>1. Entradas</h2>
+<p>O que precisa existir para o ciclo começar. Situação conferida na API de produção em 30/09, às 13h23.</p>
+<div class="tabela"><table>
+<tr><th>Entrada</th><th>De onde vem</th><th>Quem</th><th>Quando</th><th>Situação</th></tr>
+<tr><td><b>Ajustes de código 1 (disparo pelo calendário) e 4 (prazo e instrução na abertura)</b></td><td>PR #4967, promovido pela #4976</td><td>Manutenção · dev</td><td>28/09</td><td><span class="tag ok">em produção</span></td></tr>
+<tr><td><b>Regra id 2 "Ar-condicionado · Higienização" ativa</b>. É a única regra: o Split foi excluído</td><td>Sapron · aba Recorrentes</td><td>Manutenção</td><td>30/09, antes das 22h45</td><td><span class="tag meio">em rascunho</span></td></tr>
+<tr><td><b>Itens de despesa de ar na regra</b> (298, 405 e as palavras "ar condicionado", "ar-condicionado", "split"), para a pergunta 3 funcionar</td><td>Sapron · formulário da regra</td><td>Manutenção</td><td>28/09</td><td><span class="tag ok">feito</span></td></tr>
+<tr><td><b>Coluna recorrente sem o limite de 500 cards</b></td><td>Front #3592, versão 1.143.3 (via #3595)</td><td>dev</td><td>—</td><td><span class="tag ok">em produção</span></td></tr>
+<tr><td><b>Três contagens dentro de 1.050 a 1.250, com no máximo 20 de diferença entre elas</b></td><td>Aba Recorrentes, às 22h45, 22h50 e 22h55</td><td>Manutenção</td><td>qua 30/09, noite</td><td>—</td></tr>
+<tr><td><b>Comunicado às franquias</b></td><td>Texto pronto em 4-comunicado-franquias.md</td><td>BackOffice</td><td>ter 29/09 e lembrete qua 30/09</td><td><span class="tag ok">feito</span> enviado por WhatsApp (confirmado em 30/09)</td></tr>
+<tr><td><b>Número confirmado no disparo</b> (vira teto)</td><td>Tela de confirmação</td><td>Manutenção</td><td>qui 01/10, 00h</td><td>—</td></tr>
+</table></div>
+
+<h3>O que cada card leva ao nascer</h3>
+<div class="tabela"><table>
+<tr><th>Campo</th><th>Valor</th><th>O sistema grava?</th></tr>
+<tr><td>Título</td><td>Ar-condicionado: Higienização</td><td><span class="tag ok">sim</span></td></tr>
+<tr><td>Imóvel e franquia</td><td>Do cadastro do imóvel</td><td><span class="tag ok">sim</span></td></tr>
+<tr><td>Origem e coluna</td><td>Recorrente · Manutenção recorrente</td><td><span class="tag ok">sim</span></td></tr>
+<tr><td>Prazo</td><td>qui 22/10/2026 (15 dias úteis; o dia da abertura não conta; fim de semana e feriado nacional fora; feriado estadual ou municipal não entra, de propósito)</td><td><span class="tag ok">sim</span> desde 28/09</td></tr>
+<tr><td>Descrição</td><td>Higienizar todos os aparelhos, split incluído. Evidência: foto de cada aparelho aberto com o filtro limpo, <b>ou</b> uma foto do serviço feito, <b>ou</b> nota, recibo ou ordem de serviço do prestador</td><td><span class="tag ok">sim</span> desde 28/09 · <span class="tag meio">em ajuste</span> o código está sendo mudado para incluir "uma foto do serviço feito" (decisão de 30/09)</td></tr>
+<tr><td>Chamado com a franquia</td><td>Chamado próprio com a mensagem de abertura e o prazo de 22/10</td><td><span class="tag ok">sim</span> flag ligada em produção</td></tr>
+</table></div>
+<p>O imóvel que já pagou (pergunta 3, ~426 em 30/09) recebe o card <b>já concluído</b>, com mensagem ✅. Somando, o disparo manda <b>~1.570 mensagens</b>.</p>
+
+<h2>2. Datas</h2>
+<div class="tabela"><table>
+<tr><th>Data</th><th>Marco</th><th>Quem</th></tr>
+<tr><td>ter 29/09</td><td>Comunicado às franquias</td><td>BackOffice</td></tr>
+<tr><td>qua 30/09</td><td>Lembrete às franquias · ativar a regra · contagens às 22h45, 22h50 e 22h55</td><td>BackOffice · Manutenção</td></tr>
+<tr><td><b>qui 01/10, 00h</b></td><td><b>Disparo, uma vez só: os cards abrem com o prazo de 22/10</b></td><td>Manutenção</td></tr>
+<tr><td>qua 07/10, 11h</td><td>Cobrança semanal em cada card recorrente aberto (segunda mensagem). Repete toda quarta</td><td>Sapron</td></tr>
+<tr><td>sex 09/10</td><td>1º report, com quantos cards já têm evidência</td><td>Manutenção</td></tr>
+<tr><td>seg 12/10</td><td>Feriado, que não conta no prazo</td><td>—</td></tr>
+<tr><td>qui 15/10</td><td>1ª retro do ciclo</td><td>Coordenação</td></tr>
+<tr><td><b>qui 22/10</b></td><td><b>Vence o prazo da franquia</b></td><td>Franquia</td></tr>
+<tr><td>qui 29/10</td><td>D+7: lembrete automático nos cards sem evidência</td><td>Sapron</td></tr>
+<tr><td>qui 05/11</td><td>D+14: lembrete automático · BackOffice aciona o gestor de cada franquia com card atrasado</td><td>Sapron · BackOffice</td></tr>
+<tr><td>qui 12/11</td><td>D+21: lembrete automático. Sem dono: o card segue aberto e o atraso conta no lead time da franquia</td><td>Sapron · Coordenação</td></tr>
+<tr><td>20/11, 27/11…</td><td>Lembrete automático a cada 7 dias enquanto o card estiver aberto</td><td>Sapron</td></tr>
+<tr><td><b>seg 30/11</b></td><td><b>Fechamento do ciclo e report final</b></td><td>Manutenção</td></tr>
+<tr><td>01/12 a 31/03</td><td>Bloqueio: nenhum card novo abre, porque só abre card quem dispara. Pausar a regra não é obrigatório. Os cards ainda abertos continuam recebendo a cobrança semanal e a régua de atraso</td><td>—</td></tr>
+</table></div>
+
+<h2>3. Calendários</h2>
+<h3>Outubro de 2026</h3>
+{{cal:2026-10}}
+<h3>Novembro de 2026</h3>
+{{cal:2026-11}}
+<p><span class="tag info">comunicação</span> <span class="tag ok">abertura</span> <span class="tag nao">prazo e fechamento</span> <span class="tag meio">régua de atraso</span> · a cobrança semanal de quarta começa em 07/10 e se repete toda quarta</p>
+
+<h3>O ano da recorrente</h3>
+<p>O ar-condicionado passa a ser de outubro (decisão de 30/09). O filtro do exaustor e os itens de outubro (dedetização e caixa d'água) ficam para depois deste ciclo.</p>
+<p>Decisão de 30/09: o ar-condicionado fica em <b>outubro</b> daqui para frente. O lugar de dedetização, caixa d'água e filtro de água no calendário fica para quando esses itens forem discutidos.</p>
+<div class="ano">
+<div class="bloq"><b>Jan</b>bloqueio</div><div class="bloq"><b>Fev</b>bloqueio</div><div class="bloq"><b>Mar</b>bloqueio</div>
+<div><b>Abr</b>Filtro de água · Caixa d'água</div><div><b>Mai</b>Sofá · Colchão</div><div><b>Jun</b>—</div><div><b>Jul</b>—</div>
+<div><b>Ago</b>Máquina de lavar</div><div><b>Set</b>Filtro do exaustor (adiado em 2026)</div><div class="agora"><b>Out</b>Ar-condicionado (a partir de 2026) · dedetização e caixa d'água adiadas</div>
+<div><b>Nov</b>Cortinas · Travesseiro</div><div class="bloq"><b>Dez</b>bloqueio</div>
+</div>
+
+<h2>4. Saídas</h2>
+<p>Os jeitos de um card sair da coluna "Manutenção recorrente".</p>
+<div class="tabela"><table>
+<tr><th>O que aconteceu</th><th>Para onde o card vai</th><th>Quem move</th></tr>
+<tr><td>O imóvel já tinha despesa de ar no ciclo (pergunta 3)</td><td><b>Concluído</b> já na abertura, com mensagem ✅</td><td>Sapron, sozinho</td></tr>
+<tr><td>A franquia anexou a evidência no card</td><td>Aguardando aprovação</td><td>Sapron, sozinho</td></tr>
+<tr><td>A evidência prova o serviço (seção 5)</td><td><b>Finalizado</b></td><td>Agentes (validador e auditor concordam e todo item está comprovado) ou uma pessoa</td></tr>
+<tr><td>A evidência não serve</td><td>Volta para a coluna Recorrente e para a franquia, com o motivo; o prazo original continua valendo</td><td>Agentes ou uma pessoa, com "Pedir nova evidência"</td></tr>
+<tr><td>A despesa de ar foi lançada depois da abertura</td><td><span class="tag meio">não fecha sozinho</span> O sistema só confere a despesa na abertura, e o agente "Despesa prova o card" está desligado em produção. Fecha quando a franquia anexa a nota ou quando uma pessoa finaliza com o motivo</td><td>Agentes de evidência ou Manutenção</td></tr>
+<tr><td>Já foi feito nos últimos 12 meses, com nota ou foto do serviço</td><td><b>Finalizado</b>, com o motivo e a data do serviço</td><td>Agentes ou Manutenção</td></tr>
+<tr><td>A franquia contesta: condomínio ou administradora proíbe, já foi feito ou verificado, não tem como fazer</td><td>Hoje fica com uma pessoa. Com a régua nova do auditor (PR #5019, <b>ainda fora de produção</b>) deixa de segurar o card. O que depende do proprietário continua com uma pessoa</td><td>Manutenção</td></tr>
+<tr><td>O imóvel não tem ar-condicionado, saiu da carteira ou o card está duplicado</td><td>Excluído, com o motivo</td><td>Manutenção</td></tr>
+<tr><td>Venceu em 22/10 sem evidência</td><td>Continua aberto e entra na régua D+7, D+14, D+21 e depois a cada 7 dias</td><td>Sapron e BackOffice</td></tr>
+</table></div>
+
+<h2>5. Finalização</h2>
+<h3>Quando um card está finalizado</h3>
+<ul>
+<li>Existe uma destas evidências: foto de <b>cada aparelho</b> aberto com o filtro limpo, <b>ou</b> uma foto do serviço feito, <b>ou</b> nota, recibo ou ordem de serviço do prestador (decisão do Vinicius, 30/09) · <b>ou</b> uma baixa com motivo e data.</li>
+<li>O card está em "Concluído", com a data de conclusão gravada.</li>
+<li>"Feito" sem nada anexado não fecha, e orçamento não fecha.</li>
+</ul>
+<h3>Quando o ciclo está finalizado</h3>
+<ul>
+<li>Todos os cards do ciclo estão <b>concluídos ou excluídos com motivo</b>, <b>ou</b> chegou <b>30/11</b>.</li>
+<li>Os cards ainda abertos em 30/11 vão numa lista nominal, por franquia, para a Coordenação, e não entram no bloqueio sem dono.</li>
+<li>O report final traz: cards abertos, finalizados, no prazo, aprovados de primeira, finalizados pelos agentes e atrasados por franquia. Os cards que nasceram concluídos pela pergunta 3 aparecem à parte.</li>
+<li>A retro de fechamento registra o que muda para o próximo ciclo. <b>O processo não muda no meio do ciclo.</b></li>
+</ul>
+<h3>Depois de finalizar</h3>
+<ul>
+<li>O próximo ar-condicionado desse imóvel é em <b>outubro de 2027</b>.</li>
+<li>O sistema agenda o próximo para 12 meses depois da abertura (01/10/2027), que é o mês decidido.</li>
+</ul>
+
+<footer>Fontes: API de produção do Sapron em 30/09/2026, 13h23 de Brasília (16h23 UTC) · código em produção v1.117.6 · validação da Ray de 30/09/2026 · processo v2.1 de 17/09/2026. O prazo de 15 dias úteis conta a partir de 01/10 (o dia do disparo, 30/09, não conta) e desconta o feriado nacional de 12/10: cai em 22/10, que é a data gravada pelo sistema.</footer>
+</main></body></html>

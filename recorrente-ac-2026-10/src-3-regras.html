@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Regras das 4 Perguntas</title>
+<style>{{css}}</style></head><body><main>
+
+<h1>Quais imóveis entram: as 4 perguntas</h1>
+<p class="sub">Ciclo do ar-condicionado · abertura em 01/10/2026 · ordem ditada pela Ray em 15/09, com a pergunta mais barata primeiro · v2.3 de 30/09/2026</p>
+
+<blockquote>O imóvel que passa pelas quatro perguntas <b>recebe um card</b>. Se ele é barrado em qualquer uma, não recebe card neste ciclo. Todas as datas usam o dia do disparo como referência: <b>01/10/2026</b>.</blockquote>
+
+<h2>O funil</h2>
+<div class="tabela"><table>
+<tr><th>Etapa</th><th>Medição de 16/09 (pelo anúncio do Airbnb)</th><th>API de produção, 30/09, 13h23</th></tr>
+<tr><td>Imóveis ativos</td><td>3.496</td><td>3.559</td></tr>
+<tr><td>1 · Barrados por ter menos de 12 meses</td><td>−1.782</td><td>−1.794 (e 1 sem data de ativação)</td></tr>
+<tr><td>2 · Barrados por não ter ar</td><td>−20</td><td><span class="tag nao">0</span> a pergunta está desligada</td></tr>
+<tr><td>3 · Barrados por já ter despesa</td><td>−526</td><td>−426 (recebem card já concluído, com mensagem ✅)</td></tr>
+<tr><td>4 · Barrados por já ter manutenção registrada</td><td>−4</td><td>−191</td></tr>
+<tr><td>Sem anúncio para conferir</td><td>−73</td><td>entram no ciclo</td></tr>
+<tr><td><b>Recebem card aberto</b></td><td><b>1.091</b></td><td><b>1.147</b></td></tr>
+</table></div>
+<p>A diferença, de 56 cards, fecha assim: +50 imóveis maduros a mais (mais imóveis ativos, com o corte em 30/09/2025), +20 sem ar (pergunta 2 desligada), +73 sem anúncio (entram no ciclo), +100 pela diferença no critério de despesa e −187 pela pergunta 4, que hoje enxerga manutenção de qualquer origem.</p>
+<p><b>Faixa aceitável no disparo: 1.050 a 1.250</b> (decisão do Vinicius, 30/09). Fora dela, não dispara. A estimativa de ~1.188 da validação da Ray (30/09) supunha que a pergunta 4 só via os cards da própria regra; isso não vale mais.</p>
+
+<h2>Pergunta 1 · O imóvel está ativo há mais de 12 meses?</h2>
+<div class="tabela"><table>
+<tr><th>Regra</th><td>Entra o imóvel com status Ativo no dia do disparo e com data de ativação <b>até 01/10/2025</b></td></tr>
+<tr><th>Por quê</th><td>Imóvel com menos de um ano ainda está no primeiro ciclo de uso: o aparelho foi conferido na implantação</td></tr>
+<tr><th>Fonte</th><td>Data de ativação no cadastro do imóvel no Sapron</td></tr>
+<tr><th>Sistema hoje</th><td><span class="tag ok">funciona</span></td></tr>
+</table></div>
+<h3>Casos de borda</h3>
+<ul>
+<li><b>Ativado entre 02/10/2025 e 30/11/2025:</b> completa 12 meses durante o ciclo, mas não entra nele. Entra no ar-condicionado de setembro de 2027.</li>
+<li><b>Sem data de ativação</b> (1 imóvel em 30/09): fica fora, e a Manutenção confere o cadastro.</li>
+<li><b>Inativado depois de o card abrir:</b> o card é excluído com o motivo "imóvel saiu da carteira".</li>
+</ul>
+
+<h2>Pergunta 2 · O imóvel tem ar-condicionado?</h2>
+<div class="tabela"><table>
+<tr><th>Regra</th><td>Entra o imóvel cujo anúncio diz que tem ar-condicionado. Ar-condicionado e split são o mesmo item</td></tr>
+<tr><th>Fonte</th><td><b>Anúncio do Airbnb</b> (data lake). A ficha de amenities do Sapron não serve: 78% das fichas têm todos os campos falsos (medição de 16/09)</td></tr>
+<tr><th>Sistema hoje</th><td><span class="tag meio">desligada</span> A regra está como "Todos os imóveis", então todo imóvel maduro é tratado como se tivesse ar</td></tr>
+<tr><th>Efeito</th><td>Perto de 20 imóveis sem ar recebem card (medição de 16/09). Dá para rodar assim neste ciclo</td></tr>
+</table></div>
+<h3>Casos de borda</h3>
+<ul>
+<li><b>A franquia diz que o imóvel não tem ar:</b> o card é excluído com o motivo, e o cadastro é corrigido.</li>
+<li><b>Imóvel sem anúncio no Airbnb</b> (73 em 16/09): entra no ciclo, e a franquia confirma no card.</li>
+</ul>
+
+<h2>Pergunta 3 · Há despesa de ar-condicionado lançada no ciclo?</h2>
+<div class="tabela"><table>
+<tr><th>Regra</th><td>Fica fora o imóvel com despesa de higienização de ar-condicionado <b>aprovada ou paga</b>, com data entre <b>01/10/2025 e 01/10/2026</b></td></tr>
+<tr><th>Não conta</th><td>Despesa pendente ou recusada · despesa de conserto ou de peça de ar-condicionado, porque conserto não é limpeza</td></tr>
+<tr><th>Fonte</th><td>Despesas do Sapron, pelo item financeiro. Uma IA lê a descrição da despesa que não tem item</td></tr>
+<tr><th>Sistema hoje</th><td><span class="tag ok">funciona</span> Itens financeiros 298 e 405 e as palavras "ar condicionado", "ar-condicionado" e "split" cadastrados em 28/09. Barra 426 imóveis (30/09, 13h23)</td></tr>
+<tr><th>Atenção</th><td>O sistema só confere a despesa <b>na abertura</b>. Despesa lançada depois de 30/09 não fecha o card sozinha enquanto o agente "Despesa prova o card" estiver desligado em produção. Aí fecha pela evidência (agentes de IA ou pessoa)</td></tr>
+
+</table></div>
+
+<h2>Pergunta 4 · Há manutenção registrada, mesmo sem despesa?</h2>
+<div class="tabela"><table>
+<tr><th>Regra</th><td>Fica fora o imóvel com card <b>concluído</b> nos últimos 12 meses, de qualquer origem (corretiva, UTI, consultoria ou outra), que fale de ar-condicionado e de limpeza, higienização ou filtro. <b>Card corretivo ainda aberto não barra</b>: o imóvel recebe o card recorrente também</td></tr>
+<tr><th>Por quê</th><td>O proprietário pode ter pago por conta própria, e aí o serviço aparece como manutenção, e não como despesa</td></tr>
+<tr><th>Sistema hoje</th><td><span class="tag ok">funciona</span> Em produção desde 28/09</td></tr>
+<tr><th>Efeito</th><td>191 imóveis barrados (API de produção, 30/09, 13h23). Eram 4 na medição de 16/09, que olhava só a higienização registrada. Se escapar algum, a franquia responde no card com a nota ou a foto do serviço, e a Manutenção dá baixa</td></tr>
+</table></div>
+
+<h2>Depois das 4 perguntas</h2>
+<ul>
+<li><b>Um card por imóvel</b>, com todos os aparelhos dentro dele.</li>
+<li><b>Ninguém entra no meio do ciclo.</b> A lista é a do disparo, à 23h de 30/09, feito uma vez só. O imóvel que amadurecer depois espera o próximo ciclo.</li>
+<li><b>Mudança de regra só na retro.</b> Se aparecer um caso novo, ele é anotado e decidido na retro de 15/10, sem mudar a regra no meio do ciclo.</li>
+</ul>
+
+<footer>Fontes: medição do funil do ar-condicionado de 16/09/2026, com a lista imóvel a imóvel em /root/manutencao/lista-elegibilidade/elegibilidade-ar-condicionado.csv · contagem da regra "Ar-condicionado · Higienização" (id 2) na API de produção em 30/09/2026, 13h23 de Brasília (16h23 UTC) · código em produção v1.117.6 · validação da Ray de 30/09/2026.</footer>
+</main></body></html>

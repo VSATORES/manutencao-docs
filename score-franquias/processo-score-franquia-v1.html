@@ -1,0 +1,258 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Processo Score da Franquia</title>
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F6F7F9; --card:#FFFFFF; --ink:#151B26; --muted:#5B6474; --line:#D9DDE3;
+  --green:#41B592; --green-soft:#E6F6F0; --amber:#C98510; --amber-soft:#FEF4E2;
+  --coral:#DD4530; --coral-soft:#FBE9E6; --blue:#3B6FD8; --blue-soft:#E8EEFB;
+  --violet:#7A5AD6; --violet-soft:#F0EBFC; --grey-soft:#EEF0F3;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0F131A; --card:#181E28; --ink:#E8ECF2; --muted:#9AA4B4; --line:#323B4A;
+    --green-soft:#16332A; --amber:#F5A623; --amber-soft:#3A2E14; --coral-soft:#3A1C17;
+    --blue:#6E97EC; --blue-soft:#1B2A47; --violet:#A58BF0; --violet-soft:#2A2145; --grey-soft:#232A36;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0F131A; --card:#181E28; --ink:#E8ECF2; --muted:#9AA4B4; --line:#323B4A;
+  --green-soft:#16332A; --amber:#F5A623; --amber-soft:#3A2E14; --coral-soft:#3A1C17;
+  --blue:#6E97EC; --blue-soft:#1B2A47; --violet:#A58BF0; --violet-soft:#2A2145; --grey-soft:#232A36;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:Quicksand,system-ui,sans-serif;line-height:1.5}
+main{max-width:1100px;margin:0 auto;padding:32px 16px 64px}
+h1{font-size:30px;margin:0}
+h2{font-size:21px;margin:44px 0 6px;display:flex;align-items:center;gap:10px}
+h2 .n{width:30px;height:30px;border-radius:50%;background:var(--green);color:#fff;font-size:15px;display:inline-flex;align-items:center;justify-content:center;flex:none}
+h3{margin:0 0 6px;font-size:16px}
+.sub{color:var(--muted);margin:4px 0 0}
+.lead{color:var(--muted);margin:0 0 14px}
+.legend{display:flex;gap:14px;flex-wrap:wrap;margin:14px 0 0;font-size:14px;color:var(--muted)}
+.dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px;vertical-align:middle}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px}
+.grid{display:grid;gap:12px}
+.g2{grid-template-columns:repeat(2,1fr)} .g3{grid-template-columns:repeat(3,1fr)} .g4{grid-template-columns:repeat(4,1fr)}
+ul{margin:0;padding-left:18px} li{margin:3px 0}
+.small{font-size:14px;color:var(--muted)}
+.tag{display:inline-block;font-size:11.5px;font-weight:700;padding:1px 8px;border-radius:99px;margin-top:8px}
+.ok{background:var(--green-soft);color:var(--green)}
+.pr{background:var(--amber-soft);color:var(--amber)}
+.no{background:var(--coral-soft);color:var(--coral)}
+.vi{background:var(--violet-soft);color:var(--violet)}
+
+/* o que mudou */
+.chg{border-left:5px solid var(--green)}
+.chg b{display:block;margin-bottom:2px}
+
+/* diagramas */
+.mapwrap{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:12px;overflow-x:auto}
+svg{width:100%;height:auto;display:block}
+svg text{font-family:Quicksand,system-ui,sans-serif;fill:var(--ink)}
+.conn{stroke:var(--line);stroke-width:2.5;fill:none}
+.t-muted{fill:var(--muted)}
+@media (max-width:700px){ .mapwrap svg{min-width:720px} }
+
+/* ritmo */
+.lane{display:grid;grid-template-columns:170px 1fr;gap:12px;align-items:stretch;margin-bottom:12px}
+.lane .lbl{border-radius:14px;padding:14px;color:#fff;font-weight:700;display:flex;flex-direction:column;justify-content:center}
+.lane .lbl span{font-weight:500;font-size:13px;opacity:.9}
+.flow{display:flex;gap:8px;flex-wrap:wrap}
+.flow .card{flex:1 1 150px;padding:12px;position:relative}
+.flow .card .d{font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.03em}
+
+/* pessoas */
+.who{display:flex;gap:10px;align-items:flex-start}
+.av{width:38px;height:38px;border-radius:50%;flex:none;display:flex;align-items:center;justify-content:center;font-weight:700;color:#fff}
+
+/* fases */
+.phase{display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin-top:8px}
+.ph{padding:14px;border-top:5px solid var(--line);background:var(--card);border-right:1px solid var(--line)}
+.ph:first-child{border-radius:0 0 0 14px}.ph:last-child{border-right:0;border-radius:0 0 14px 0}
+.ph.now{border-top-color:var(--green)}
+.ph .when{font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase}
+
+@media (max-width:900px){
+  .g3,.g4,.phase{grid-template-columns:repeat(2,1fr)}
+  .lane{grid-template-columns:1fr}
+}
+@media (max-width:560px){ .g2,.g3,.g4,.phase{grid-template-columns:1fr} }
+</style>
+</head>
+<body>
+<main>
+<h1>Score da Franquia: o processo</h1>
+<p class="sub">Gestão de Manutenção · v1 de 06/10/2026 · redesenhado com a weekly com a Ray de 05/10/2026</p>
+<div class="legend">
+  <span><span class="dot" style="background:var(--green)"></span>Decidido</span>
+  <span><span class="dot" style="background:var(--amber)"></span>Proposta, falta confirmar</span>
+  <span><span class="dot" style="background:var(--coral)"></span>Bloqueado</span>
+  <span><span class="dot" style="background:var(--violet)"></span>Depende de outra área</span>
+</div>
+
+<h2><span class="n">1</span>O que mudou depois da reunião</h2>
+<div class="grid g3">
+  <div class="card chg"><b>Ficou interno por um mês</b><span class="small">Roda outubro inteiro sem divulgar, para não atrapalhar quem já está rodando. Depois a gente decide se vira a nota de manutenção da franquia.</span></div>
+  <div class="card chg"><b>Tem que estar alinhado</b><span class="small">Cada régua precisa ser a mesma usada pelo dono do assunto: SLA da UTI, pontos de ocorrência da Central de Qualidade, corte de crítico da UTI.</span></div>
+  <div class="card chg"><b>Entrou o volume</b><span class="small">Uma franquia pode estar crítica só em volume. Precisamos enxergar isso antes de ela bater na UTI e no stop de crescimento.</span></div>
+  <div class="card chg"><b>Régua mais alta</b><span class="small">Hoje há "franquia excelente demais", porque a régua de 4,7 está abaixo da exigência da rede (4,8, que vem do Airbnb). O "Referência" do score não pode repetir esse erro.</span></div>
+  <div class="card chg"><b>Rotina mensal (dia 10)</b><span class="small">Relatório do mês e reunião 360 de 1h com as áreas que sentem a manutenção.</span></div>
+  <div class="card chg"><b>Novo input: relatório da Nat</b><span class="small">Problemas que o hóspede relata no atendimento. Serve para cruzar com o fluxo de manutenção: são as mesmas franquias e os mesmos problemas?</span></div>
+</div>
+
+<h2><span class="n">2</span>Regra de ouro: cada régua tem um dono</h2>
+<p class="lead">O cálculo é fácil. O difícil, como a Ray disse, é não criar um segundo parâmetro para a mesma coisa.</p>
+<div class="mapwrap">
+<svg viewBox="0 0 1060 470" role="img" aria-label="Alinhamento dos parâmetros do score com os processos donos">
+  <path class="conn" d="M530 235 C 400 235, 330 90, 215 85"/>
+  <path class="conn" d="M530 235 C 400 235, 330 380, 215 385"/>
+  <path class="conn" d="M530 235 C 660 235, 730 90, 845 85"/>
+  <path class="conn" d="M530 235 C 660 235, 730 380, 845 385"/>
+  <path class="conn" d="M530 235 L 530 420"/>
+  <circle cx="530" cy="235" r="82" fill="var(--green)"/>
+  <text x="530" y="228" text-anchor="middle" font-size="21" font-weight="700" style="fill:#fff">Score da</text>
+  <text x="530" y="253" text-anchor="middle" font-size="21" font-weight="700" style="fill:#fff">Franquia</text>
+
+  <rect x="30" y="20" width="260" height="130" rx="16" fill="var(--violet-soft)" stroke="var(--violet)" stroke-width="2"/>
+  <text x="50" y="52" font-size="17" font-weight="700" style="fill:var(--violet)">SLA</text>
+  <text x="50" y="78" font-size="13.5">2 dias urgente · 7 não urgente</text>
+  <text x="50" y="98" font-size="13.5">21 recorrente</text>
+  <text x="50" y="126" font-size="13" class="t-muted">tem que bater com o SLA da UTI</text>
+
+  <rect x="30" y="320" width="260" height="130" rx="16" fill="var(--violet-soft)" stroke="var(--violet)" stroke-width="2"/>
+  <text x="50" y="352" font-size="17" font-weight="700" style="fill:var(--violet)">Crítico abaixo de 40</text>
+  <text x="50" y="378" font-size="13.5">mesmo corte da UTI</text>
+  <text x="50" y="398" font-size="13.5">o que é crítico e deixa de ser</text>
+  <text x="50" y="426" font-size="13" class="t-muted">dono: UTI de Franquias</text>
+
+  <rect x="770" y="20" width="260" height="130" rx="16" fill="var(--violet-soft)" stroke="var(--violet)" stroke-width="2"/>
+  <text x="790" y="52" font-size="17" font-weight="700" style="fill:var(--violet)">Ocorrência</text>
+  <text x="790" y="78" font-size="13.5">pontos que crescem com</text>
+  <text x="790" y="98" font-size="13.5">o acúmulo (2, 5, 6 pontos…)</text>
+  <text x="790" y="126" font-size="13" class="t-muted">dono: Central de Qualidade (Vic)</text>
+
+  <rect x="770" y="320" width="260" height="130" rx="16" fill="var(--violet-soft)" stroke="var(--violet)" stroke-width="2"/>
+  <text x="790" y="352" font-size="17" font-weight="700" style="fill:var(--violet)">Volume</text>
+  <text x="790" y="378" font-size="13.5">cards por imóvel ativo</text>
+  <text x="790" y="398" font-size="13.5">liga no stop de crescimento</text>
+  <text x="790" y="426" font-size="13" class="t-muted">régua do stop: a confirmar</text>
+
+  <rect x="395" y="400" width="270" height="62" rx="14" fill="var(--grey-soft)" stroke="var(--line)" stroke-width="2"/>
+  <text x="530" y="427" text-anchor="middle" font-size="15" font-weight="700">Régua da rede: 4,8</text>
+  <text x="530" y="448" text-anchor="middle" font-size="12.5" class="t-muted">"Referência" tem que ser difícil</text>
+</svg>
+</div>
+
+<h2><span class="n">3</span>O score v1: quatro pilares</h2>
+<p class="lead">Os três de antes, mais o volume. Os pesos novos são proposta minha.</p>
+<div class="grid g4">
+  <div class="card" style="border-top:5px solid var(--blue)"><h3>SLA · 30%</h3><ul class="small"><li>% de cards fechados no prazo</li><li>2 / 7 / 21 dias</li></ul><span class="tag ok">Prazos decididos</span></div>
+  <div class="card" style="border-top:5px solid var(--blue)"><h3>Lead time · 20%</h3><ul class="small"><li>Do envio até a evidência</li><li>3 dias = 100 · 21 dias = 0</li></ul><span class="tag ok">Decidido</span></div>
+  <div class="card" style="border-top:5px solid var(--violet)"><h3>Reincidência e ocorrência · 30%</h3><ul class="small"><li>Card que volta em 15 dias</li><li>+ pontos de ocorrência de manutenção e limpeza</li></ul><span class="tag no">Ocorrências sem acesso</span></div>
+  <div class="card" style="border-top:5px solid var(--amber)"><h3>Volume · 20%</h3><ul class="small"><li>Cards por imóvel ativo em 90 dias</li><li>Igual à mediana da rede = 100 · 3× a mediana = 0</li></ul><span class="tag pr">Novo, proposta</span></div>
+</div>
+<div class="grid g2" style="margin-top:12px">
+  <div class="card"><h3>Alerta por pilar</h3><p class="small" style="margin:0">Se qualquer pilar ficar abaixo de 40, a franquia aparece no relatório mesmo com a nota geral boa. É o "crítica só em volume" que a Ray citou: olhar antes de bater na UTI.</p><span class="tag pr">Proposta</span></div>
+  <div class="card"><h3>Faixas mais exigentes</h3><p class="small" style="margin:0">Hoje 33 de 62 franquias com nota cairiam em Referência (80+), o mesmo "excelente demais" do 4,7. Proposta: Referência a partir de 90. Com o v0 de 05/10, isso deixa 16 em Referência e 25 em Atenção.</p><span class="tag pr">Proposta</span></div>
+</div>
+
+<h2><span class="n">4</span>O ritmo</h2>
+<p class="lead">Três velocidades: a semana corrige, o mês decide, a emergência estanca.</p>
+
+<div class="lane">
+  <div class="lbl" style="background:var(--blue)">Semanal<span>interno · Vinicius</span></div>
+  <div class="flow">
+    <div class="card"><div class="d">Segunda</div>Score recalculado</div>
+    <div class="card"><div class="d">Segunda</div>Relatório do score: quem caiu, quem subiu, alertas por pilar</div>
+    <div class="card"><div class="d">Terça</div>Triagem de Recuperação: Plano · Ação · Resultado</div>
+    <div class="card"><div class="d">Toda semana</div>Calibração com a Ray (outubro)</div>
+  </div>
+</div>
+
+<div class="lane">
+  <div class="lbl" style="background:var(--green)">Mensal<span>dia 10 · 1h · 360</span></div>
+  <div class="flow">
+    <div class="card"><div class="d">Dia 1–3</div>Fecha o mês na Central: concluídos, abertos, quem não finaliza</div>
+    <div class="card"><div class="d">Dia 3–5</div>Recebe os inputs: relatório da Nat, ocorrências (Vic), despesas (Isa)</div>
+    <div class="card"><div class="d">Dia 5–7</div>Cruza: mesmas franquias? mesmos problemas? é recorrente?</div>
+    <div class="card"><div class="d">Dia 8</div>Envia o relatório para pré-leitura</div>
+    <div class="card"><div class="d">Dia 10</div>Reunião: resultados bons e ruins + encaminhamentos</div>
+  </div>
+</div>
+
+<div class="lane">
+  <div class="lbl" style="background:var(--coral)">Emergência<span>30 min · quando precisar</span></div>
+  <div class="flow">
+    <div class="card"><div class="d">Gatilho</div>Franquia entra em Crítica de uma semana para outra, ou um pilar despenca</div>
+    <div class="card"><div class="d">Em até 48h</div>Reunião de 30 min: "identifiquei isso, precisamos estancar"</div>
+    <div class="card"><div class="d">Saída</div>Vai para a UTI ou não, e quem age</div>
+  </div>
+</div>
+<p class="small">Os gatilhos de emergência são proposta minha.</p>
+
+<h2><span class="n">5</span>Quem senta na mensal, e por quê</h2>
+<p class="lead">Vinicius apresenta resultados e encaminhamentos. A sala confere se bate com o que cada área vê.</p>
+<div class="grid g3">
+  <div class="card who"><div class="av" style="background:var(--green)">R</div><div><h3>Ray</h3><span class="small">Dona da área. Visibilidade de tudo.</span></div></div>
+  <div class="card who"><div class="av" style="background:var(--blue)">Vi</div><div><h3>Vivi</h3><span class="small">Gerente de relacionamento. Precisa ver o mesmo que a Ray.</span></div></div>
+  <div class="card who"><div class="av" style="background:var(--violet)">Vc</div><div><h3>Vic</h3><span class="small">Ocorrências, comentários e avaliações de hóspede. Tudo de manutenção bate nela.</span></div></div>
+  <div class="card who"><div class="av" style="background:var(--amber)">I</div><div><h3>Isa</h3><span class="small">Despesas. Traz a visão financeira das franquias e dos imóveis.</span></div></div>
+  <div class="card who"><div class="av" style="background:var(--coral)">L</div><div><h3>Lari</h3><span class="small">Suporte. Muita coisa de manutenção chega por lá.</span></div></div>
+  <div class="card who"><div class="av" style="background:#8A93A3">C</div><div><h3>Coord. de consultoria</h3><span class="small">Decide com a gente quem vai para a UTI e quem não vai.</span></div></div>
+</div>
+<p class="small">Também: Carol (opcional), lideranças e especialistas.</p>
+
+<h2><span class="n">6</span>O que entra e o que sai</h2>
+<div class="grid g2">
+  <div class="card"><h3>Entra</h3>
+    <ul class="small">
+      <li><b>Cards da Central de Manutenção</b> (Sapron) <span class="tag ok">funcionando</span></li>
+      <li><b>Ocorrências</b> da Central de Qualidade <span class="tag no">sem acesso desde 01/10</span></li>
+      <li><b>Relatório da Nat</b>, com o que o hóspede relata no atendimento <span class="tag vi">Ray vai pedir</span></li>
+      <li><b>Despesas</b> de manutenção (Isa) <span class="tag vi">mensal</span></li>
+      <li><b>Réguas da UTI e do stop de crescimento</b> <span class="tag vi">a buscar</span></li>
+    </ul></div>
+  <div class="card"><h3>Sai</h3>
+    <ul class="small">
+      <li><b>Relatório semanal do score</b>, que ordena a triagem</li>
+      <li><b>Relatório mensal</b>: onde dói, quem dá mais trabalho, quem não finaliza</li>
+      <li><b>Encaminhamentos</b>: UTI, recuperação, emergência</li>
+      <li><b>Canvas da área</b> com o link deste visual, como a Ray pediu</li>
+      <li><b>Depois:</b> a nota de manutenção na mão do futuro consultor de manutenção, para educar e reciclar a franquia</li>
+    </ul></div>
+</div>
+
+<h2><span class="n">7</span>Como colocar no ar</h2>
+<div class="phase">
+  <div class="ph now"><div class="when">Out/26</div><h3>Roda interno</h3><span class="small">Score toda segunda, calibrado com a Ray. Ninguém de fora vê.</span></div>
+  <div class="ph"><div class="when">Até 10/10</div><h3>Buscar as réguas</h3><span class="small">SLA e corte da UTI, pontos de ocorrência, stop de crescimento.</span></div>
+  <div class="ph"><div class="when">10/11</div><h3>1ª mensal 360</h3><span class="small">Já com um mês de score e o relatório da Nat cruzado.</span></div>
+  <div class="ph"><div class="when">Dez/26</div><h3>Decidir divulgação</h3><span class="small">Vira a nota de manutenção da franquia? Leva para o David?</span></div>
+</div>
+
+<h2><span class="n">8</span>O que falta</h2>
+<div class="grid g3">
+  <div class="card" style="border-left:5px solid var(--coral)"><h3>Acesso a Ocorrências</h3><p class="small" style="margin:0">Sem ele, o pilar de reincidência fica cego: média de 2% no v0.</p></div>
+  <div class="card" style="border-left:5px solid var(--violet)"><h3>As réguas dos donos</h3><p class="small" style="margin:0">SLA e corte da UTI, tabela de pontos de ocorrência, número do stop de crescimento.</p></div>
+  <div class="card" style="border-left:5px solid var(--amber)"><h3>Confirmar propostas</h3><p class="small" style="margin:0">Pesos 30/20/30/20, Referência a partir de 90, alerta por pilar e gatilhos de emergência.</p></div>
+</div>
+
+<h2><span class="n">9</span>Também saiu da reunião (outros processos)</h2>
+<div class="card">
+<ul class="small">
+  <li><b>Validador × auditor:</b> 2h por dia validando. Melhorar um agente por dia e depois comparar o que cada um vê, porque eles ainda discordam muito.</li>
+  <li><b>Antifraude:</b> ir anotando as regras desde já. Exemplo: duas fotos iguais em menos de 30 dias.</li>
+  <li><b>Evidência:</b> aceitar Pix, transferência e conversa com proprietário ou prestador sobre serviço feito. Combinado com data futura não vale.</li>
+  <li><b>Card que volta para a franquia</b> com sugestão de prova (ex.: vídeo da TV ligada trocando de canal), só depois que o validador estiver confiável.</li>
+  <li><b>Liberar o agente de despesa</b> aos poucos, começando pelo ar-condicionado da recorrente, e destravar na mão os cards parados há mais de 30 dias.</li>
+</ul>
+</div>
+<p class="small" style="margin-top:24px">Fontes: transcrição "Weekly Prioridades - Manutenções" de 05/10/2026 · Sapron, consulta do score v0 de 05/10/2026 (janela de 90 dias, 62 franquias com nota) · /root/manutencao/score-franquias/score.sql</p>
+</main>
+</body>
+</html>

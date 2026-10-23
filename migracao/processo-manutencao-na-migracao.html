@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Manutenção na migração</title>
+<style>
+  :root{
+    --tinta:#0f172a; --texto:#334155; --fraco:#64748b; --fraquinho:#94a3b8;
+    --linha:#e2e8f0; --fundo:#f1f5f9; --papel:#ffffff; --azul:#0055ff; --azul-f:rgba(0,85,255,.07);
+    --ambar-b:#e8d3b0; --ambar-f:#fdfaf5; --ambar-t:#7a4800;
+    --verde-b:#bbe5d5; --verde-f:#f3faf7; --verde-t:#1f7a5c;
+    --verm-b:#f5c2c2; --verm-f:#fef5f5; --verm-t:#b91c1c; --cinza-f:#f8fafc;
+    --foto-a:#cbd5e1; --foto-b:#94a3b8;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{--tinta:#f1f5f9;--texto:#cbd5e1;--fraco:#94a3b8;--fraquinho:#64748b;--linha:#1e293b;--fundo:#0b1220;--papel:#111a2e;
+      --cinza-f:#0f172a;--azul:#6f9bff;--azul-f:rgba(111,155,255,.12);--ambar-f:#2a2110;--ambar-b:#5a4620;--ambar-t:#f3cf8a;
+      --verde-f:#0f2a22;--verde-b:#1f5a46;--verde-t:#7fd9b4;--verm-f:#2a1212;--verm-b:#6b2a2a;--verm-t:#fca5a5;--foto-a:#334155;--foto-b:#475569}
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--fundo);color:var(--texto);font:14px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+  .folha{max-width:1120px;margin:0 auto;padding:36px 16px 80px}
+  h1{font-size:26px;line-height:1.2;color:var(--tinta);margin:0 0 6px;font-weight:800}
+  .sub{color:var(--fraco);font-size:14px;margin:0 0 4px;max-width:76ch}
+  .data{color:var(--fraquinho);font-size:12px;margin:0 0 20px}
+  h2{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--fraco);font-weight:700;margin:40px 0 12px;padding-bottom:8px;border-bottom:1px solid var(--linha)}
+  p{margin:0 0 12px;max-width:80ch}
+  code{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12px;background:var(--cinza-f);padding:1px 5px;border-radius:4px;border:1px solid var(--linha);color:var(--tinta)}
+  .aviso{border:1px solid var(--ambar-b);background:var(--ambar-f);color:var(--ambar-t);border-radius:10px;padding:10px 14px;font-size:13px;margin:0 0 18px;max-width:84ch}
+  .nota{font-size:12.5px;color:var(--fraco);max-width:84ch}
+
+  .tela{background:var(--papel);border:1px solid var(--linha);border-radius:12px;overflow:hidden;margin:14px 0 6px;box-shadow:0 1px 2px rgba(15,23,42,.05)}
+  .tela-barra{display:flex;align-items:center;gap:8px;padding:8px 14px;background:var(--cinza-f);border-bottom:1px solid var(--linha);font-size:11.5px;color:var(--fraquinho)}
+  .bolinhas{display:flex;gap:5px}.bolinhas i{width:9px;height:9px;border-radius:50%;background:var(--linha);display:block}
+  .tela-corpo{padding:16px}
+
+  .layout{display:grid;grid-template-columns:220px minmax(0,1fr);gap:16px;align-items:start}
+  @media (max-width:820px){.layout{grid-template-columns:minmax(0,1fr)}}
+  .rail{border:1px solid var(--linha);border-radius:10px;padding:9px;display:flex;flex-direction:column;gap:3px;background:var(--papel)}
+  @media (max-width:820px){.rail{flex-direction:row;overflow-x:auto}.rail-titulo{display:none}.rail-item{flex:none}}
+  .rail-titulo{font-size:10.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--fraquinho);padding:4px 8px 8px}
+  .rail-item{display:flex;align-items:center;gap:9px;padding:8px 9px;border-radius:8px;font-size:12.5px;color:var(--texto);background:none;border:0;text-align:left;font-family:inherit;width:100%}
+  .rail-item.on{background:var(--azul-f);color:var(--azul);font-weight:700}
+  .rail-txt{display:flex;flex-direction:column;line-height:1.28;min-width:0;flex:1}
+  .rail-est{font-size:10.5px;font-weight:500;color:var(--fraco)}
+  .ponto{width:8px;height:8px;border-radius:50%;flex:none}
+  .p-ok{background:#22c55e}.p-at{background:#f59e0b}.p-off{background:#94a3b8}
+  .novo{font-size:9.5px;font-weight:800;background:var(--azul);color:#fff;border-radius:4px;padding:0 5px;margin-left:4px}
+  .contador{flex:none;min-width:20px;height:20px;padding:0 6px;border-radius:999px;background:#fee2e2;color:#b91c1c;font-size:11px;font-weight:800;display:inline-flex;align-items:center;justify-content:center}
+
+  .painel{border:1px solid var(--linha);border-radius:10px;padding:16px;background:var(--papel)}
+  .cab{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+  .cab h4{margin:0;font-size:17px;font-weight:800;color:var(--tinta)}
+  .pergunta{font-size:13px;color:var(--fraco);margin:2px 0 14px}.pergunta b{color:var(--tinta)}
+  .selo{display:inline-flex;align-items:center;gap:6px;font-size:11.5px;font-weight:700;padding:3px 10px;border-radius:999px}
+  .s-som{background:rgba(245,158,11,.14);color:#b45309}
+  .cad{font-size:11.5px;color:var(--fraco)}
+  .saude{display:flex;gap:12px;border-radius:10px;padding:12px 14px;margin:0 0 14px;font-size:13px;border:1px solid var(--ambar-b);background:var(--ambar-f);color:var(--ambar-t)}
+  .saude b{display:block;font-size:13.5px}.saude .passos{font-size:12.5px;margin-top:4px}
+
+  .numeros{display:grid;grid-template-columns:repeat(auto-fit,minmax(138px,1fr));gap:1px;background:var(--linha);border:1px solid var(--linha);border-radius:8px;overflow:hidden}
+  .num{background:var(--papel);padding:11px 13px}
+  .rot{font-size:10.5px;font-weight:600;letter-spacing:.03em;text-transform:uppercase;color:var(--fraco);margin-bottom:4px}
+  .val{font-size:22px;font-weight:800;color:var(--tinta);line-height:1.15;font-variant-numeric:tabular-nums}
+  .val.verm{color:var(--verm-t)}.val.amb{color:#b45309}.val.bom{color:var(--verde-t)}
+  .pe{font-size:11px;color:var(--fraco);margin-top:3px;line-height:1.4}
+
+  .secao{margin-top:22px}
+  .secao-tit{font-size:11.5px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;color:var(--fraco);margin:0 0 10px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .secao-tit .conta{background:#fee2e2;color:#b91c1c;border-radius:999px;padding:1px 8px;font-size:11px}
+  .secao-tit .dica{font-weight:500;text-transform:none;letter-spacing:0;color:var(--fraquinho);font-size:11.5px}
+
+  .filtros{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+  .pilula{font:inherit;font-size:12px;border:1px solid var(--linha);background:var(--papel);color:var(--texto);border-radius:999px;padding:4px 11px;cursor:pointer}
+  .pilula.on{border-color:var(--azul);color:var(--azul);background:var(--azul-f);font-weight:700}
+
+  .caso{border:1px solid var(--linha);border-radius:10px;padding:12px 14px;margin-bottom:10px;transition:opacity .25s}
+  .caso.feito{opacity:.5}
+  .caso-topo{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:6px}
+  .nivel{font-size:10.5px;font-weight:800;letter-spacing:.04em;padding:2px 8px;border-radius:5px}
+  .n-forte{background:#fee2e2;color:#b91c1c}.n-susp{background:#fef3c7;color:#92400e}.n-info{background:var(--linha);color:var(--fraco)}
+  .caso .t{font-weight:700;color:var(--tinta);font-size:13px}
+  .caso .m{font-size:12px;color:var(--fraco)}
+  .comparar{display:grid;grid-template-columns:1fr auto 1fr;gap:10px;align-items:center;margin:10px 0}
+  @media (max-width:640px){.comparar{grid-template-columns:1fr}}
+  .lado{border:1px solid var(--linha);border-radius:8px;overflow:hidden;background:var(--cinza-f)}
+  .foto{height:96px;background:linear-gradient(135deg,var(--foto-a),var(--foto-b));display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--tinta);opacity:.8}
+  .lado .leg{padding:6px 9px;font-size:11.5px;color:var(--fraco);line-height:1.4}
+  .lado .leg b{color:var(--tinta)}
+  .dist{text-align:center;font-size:11px;color:var(--fraco)}
+  .dist b{display:block;font-size:18px;color:var(--tinta);font-variant-numeric:tabular-nums}
+  .porque{font-size:12px;color:var(--texto);margin:2px 0 8px}
+  .acoes{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+  .bt{font:inherit;font-size:12px;font-weight:700;border-radius:7px;padding:6px 11px;cursor:pointer;border:1px solid var(--linha);background:var(--papel);color:var(--texto)}
+  .bt:hover{border-color:var(--fraquinho)}
+  .bt.perigo{color:var(--verm-t);border-color:var(--verm-b)}
+  .bt.ok{color:var(--verde-t);border-color:var(--verde-b)}
+  select.motivo{font:inherit;font-size:12px;border:1px solid var(--linha);background:var(--papel);color:var(--texto);border-radius:7px;padding:5px 8px}
+  .resultado{font-size:12px;font-weight:700;color:var(--verde-t)}
+
+  .nunca{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:8px}
+  .nunca div{border:1px solid var(--linha);border-radius:8px;padding:9px 12px;font-size:12.5px;background:var(--cinza-f)}
+  .nunca b{color:var(--tinta);display:block;font-size:12.5px}
+  .rodape-aba{margin-top:18px;font-size:11.5px;color:var(--fraquinho)}
+
+  /* selo no card */
+  .cardmock{border:1px solid var(--linha);border-radius:10px;padding:14px;background:var(--papel);max-width:560px}
+  .cardmock h5{margin:0 0 4px;font-size:14px;color:var(--tinta)}
+  .selos{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0}
+  .selo2{font-size:11.5px;font-weight:700;padding:3px 9px;border-radius:999px;border:1px solid var(--linha);color:var(--texto);background:var(--cinza-f)}
+  .selo2.f{border-color:var(--verm-b);background:var(--verm-f);color:var(--verm-t)}
+  .selo2.v{border-color:var(--verde-b);background:var(--verde-f);color:var(--verde-t)}
+  .detalhe{font-size:12px;color:var(--fraco);border-top:1px solid var(--linha);padding-top:8px;margin-top:8px}
+
+  table.t{width:100%;border-collapse:collapse;font-size:13px;background:var(--papel);border:1px solid var(--linha);border-radius:10px;overflow:hidden}
+  table.t th{text-align:left;font-size:10.5px;text-transform:uppercase;letter-spacing:.05em;color:var(--fraco);padding:8px 12px;border-bottom:1px solid var(--linha);background:var(--cinza-f)}
+  table.t td{padding:9px 12px;border-bottom:1px solid var(--linha);vertical-align:top}
+  table.t tr:last-child td{border-bottom:0}
+  .tw{overflow-x:auto}
+  .ok{color:var(--verde-t);font-weight:700}.pend{color:#b45309;font-weight:700}
+  .fluxo{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:8px;margin:10px 0}
+  .passo{border:1px solid var(--linha);border-radius:10px;padding:11px 13px;background:var(--papel)}
+  .passo .n{font-size:10.5px;font-weight:800;color:var(--azul);letter-spacing:.05em;text-transform:uppercase}
+  .passo b{display:block;color:var(--tinta);font-size:13.5px;margin:2px 0 3px}
+  .passo span{font-size:12.3px;color:var(--fraco)}
+  .passo.chave{border-color:var(--ambar-b);background:var(--ambar-f)}
+  .tag{display:inline-block;font-size:11.5px;font-weight:700;border:1px solid var(--linha);border-radius:999px;padding:1px 9px;background:var(--cinza-f);color:var(--tinta)}
+</style>
+</head>
+<body>
+<div class="folha">
+  <h1>Manutenção na migração de franquia</h1>
+  <p class="sub">Como os cards de manutenção acompanham o imóvel quando ele troca de franquia, e por que a franquia que entra ganha mais prazo. Proposta para validação.</p>
+  <p class="data">v1 · 13/10/2026 · Vinicius Satores · base: reunião "Alinhamento" de 09/10 (Ray, Larissa, Vinicius) e decisões de 13/10</p>
+
+  <div class="aviso"><b>A regra que manda em tudo:</b> a manutenção é do <b>imóvel</b>, não da franquia. Quando o imóvel migra, o card aberto vai junto. A franquia que entra não pode ser punida pelo que a anterior deixou: ela ganha <b>30 dias corridos</b> contados da troca e, <b>depois disso, o card volta a contar no score</b>.</div>
+
+  <h2>O problema hoje</h2>
+  <p>Hoje o card fica preso à franquia que saiu. Em 13/10 havia <b>94 cards abertos</b> em imóveis que já eram de outra franquia (banco de produção do Sapron): 30 de consultor, 27 de danos, 17 de recorrente, 15 de migração, 3 de review e 2 manuais. A franquia nova não vê esses cards, e a antiga continua sendo cobrada por eles. O card de migração também nasce com o prazo padrão de 7 dias e entra no score como qualquer outro.</p>
+
+  <h2>Como fica</h2>
+  <div class="fluxo">
+    <div class="passo"><div class="n">1 · troca</div><b>Imóvel muda de franquia</b><span>Pelo hub de migrações, pela troca agendada ou pelo admin. Vale qualquer caminho.</span></div>
+    <div class="passo chave"><div class="n">2 · Sapron, até 15 min</div><b>Card aberto vai junto</b><span>Passa para a franquia nova com o chat. A antiga sai da conversa e a nova recebe o aviso.</span></div>
+    <div class="passo chave"><div class="n">3 · prazo</div><b>30 dias da troca</b><span>Vale para o card herdado, para o card de migração e para card novo em imóvel migrado há menos de 15 dias.</span></div>
+    <div class="passo"><div class="n">4 · depois</div><b>Volta ao normal</b><span>Passou dos 30 dias sem evidência, o card conta no score como fora do prazo.</span></div>
+  </div>
+
+  <h2>As regras</h2>
+  <div class="tw"><table class="t">
+    <thead><tr><th>#</th><th>Regra</th><th>Estado</th></tr></thead>
+    <tbody>
+      <tr><td>M1</td><td><b>O card aberto acompanha o imóvel.</b> Na troca de franquia, todo card que não está concluído nem cancelado passa para a franquia que entra, com a conversa.</td><td class="ok">construída · PR #5238</td></tr>
+      <tr><td>M2</td><td><b>A franquia nova é avisada no próprio card:</b> de qual franquia ele veio, a data da troca e o prazo. Se a anterior já tinha resolvido, basta responder com a evidência.</td><td class="ok">construída · PR #5238</td></tr>
+      <tr><td>M3</td><td><b>Prazo de 30 dias corridos contados da troca</b> para o card herdado (<span class="tag">Herdado na migração</span>) e para o card de origem Migração.</td><td class="ok">construída · PR #5238</td></tr>
+      <tr><td>M4</td><td><b>Card novo em imóvel migrado há menos de 15 dias</b> recebe <span class="tag">Imóvel migrado há menos de 15 dias</span> e o mesmo prazo. O caso típico é o dano lançado pela franquia anterior, que cai para a nova.</td><td class="ok">construída · PR #5238</td></tr>
+      <tr><td>M5</td><td><b>Score:</b> o card de migração não conta enquanto está dentro dos 30 dias. Passado o prazo, entra como qualquer outro (no prazo se a evidência chegou até lá, fora do prazo se não chegou).</td><td class="ok">construída · PR #5238</td></tr>
+      <tr><td>M6</td><td><b>Itens faltantes da vistoria de migração viram dois cards:</b> o que a nova franquia paga e lança para o proprietário, e o que é pendência financeira, descontada da franquia que sai, com a recompra feita pela Seazone.</td><td class="pend">a definir com a Isa (pendências financeiras)</td></tr>
+      <tr><td>M7</td><td><b>Franquia que recebe imóveis de migração entra em monitoramento.</b> Acompanhamento mais perto no começo, porque costuma ser franquia nova, sem estoque e sem caixa.</td><td class="pend">a definir: quem acompanha e por quanto tempo</td></tr>
+      <tr><td>M8</td><td><b>Comunicação clara na vistoria:</b> a franquia que recebe o imóvel e não aponta item faltante passa a responder por ele.</td><td class="pend">texto a combinar com a Larissa</td></tr>
+    </tbody>
+  </table></div>
+
+  <h2>Para validar</h2>
+  <ol>
+    <li>Os 30 dias contam da <b>data da troca</b> registrada no Sapron, e não da abertura do card. Está certo?</li>
+    <li>A franquia que sai <b>deixa de ver</b> a conversa do card transferido. Ela não deveria acompanhar, nem para mandar evidência do que já fez?</li>
+    <li>O card recorrente herdado também ganha os 30 dias, no lugar dos 15 dias úteis da recorrente. Está certo?</li>
+    <li>Quem responde por M6, M7 e M8?</li>
+  </ol>
+
+  <h2>Como ligar</h2>
+  <p>O código vai para a develop no PR <code>sapron-backend#5238</code>. A transferência fica atrás da flag <code>ff_sapron_backend_enable_maintenance_migration_inherit</code>, fechada por padrão, porque ela fala com a franquia. O prazo de 30 dias e o score valem assim que o PR chega em produção. Na primeira passada com a flag ligada, os 94 cards presos de hoje mudam de franquia de uma vez.</p>
+  <p class="nota">Antes disso, a produção precisa sair do incidente aberto em 13/10, em que nenhum card novo é criado desde 08/10.</p>
+</div>
+</body>
+</html>

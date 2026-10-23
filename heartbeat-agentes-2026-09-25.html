@@ -1,0 +1,213 @@
+<title>Heartbeat dos Agentes</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&amp;family=Newsreader:opsz,wght@6..72,500;6..72,600&amp;family=Source+Sans+3:wght@400;600&amp;display=swap">
+<style>
+:root{
+  --ground:#F6F6F3; --surface:#FFFFFF; --line:#DEDFD8; --line-soft:#EAEBE4;
+  --ink:#17201C; --ink-2:#4A574F; --ink-3:#7D8981;
+  --accent:#0B6B62; --accent-soft:rgba(11,107,98,.09);
+  --ok-fg:#15803D; --ok-bg:rgba(22,163,74,.12);
+  --wait-fg:#B45309; --wait-bg:rgba(217,119,6,.13);
+  --stop-fg:#B91C1C; --stop-bg:rgba(220,38,38,.11);
+  --code-bg:#EDEEE8;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --ground:#0E1311; --surface:#161D1A; --line:#2A3531; --line-soft:#1F2825;
+    --ink:#E9EEEA; --ink-2:#A9B6AF; --ink-3:#74837B;
+    --accent:#4FB3A6; --accent-soft:rgba(79,179,166,.13);
+    --ok-fg:#5FD68A; --ok-bg:rgba(22,163,74,.17);
+    --wait-fg:#F0B429; --wait-bg:rgba(217,119,6,.17);
+    --stop-fg:#FCA5A5; --stop-bg:rgba(220,38,38,.17);
+    --code-bg:#1E2622;
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#0E1311; --surface:#161D1A; --line:#2A3531; --line-soft:#1F2825;
+  --ink:#E9EEEA; --ink-2:#A9B6AF; --ink-3:#74837B;
+  --accent:#4FB3A6; --accent-soft:rgba(79,179,166,.13);
+  --ok-fg:#5FD68A; --ok-bg:rgba(22,163,74,.17);
+  --wait-fg:#F0B429; --wait-bg:rgba(217,119,6,.17);
+  --stop-fg:#FCA5A5; --stop-bg:rgba(220,38,38,.17);
+  --code-bg:#1E2622;
+}
+body{background:var(--ground);color:var(--ink);font-family:'Source Sans 3',system-ui,-apple-system,sans-serif;font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased;}
+.wrap{max-width:760px;margin:0 auto;padding:0 16px;padding-block:40px 72px;}
+.eyebrow{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);font-weight:600;margin:0 0 10px;}
+h1{font-family:'Newsreader',Georgia,serif;font-weight:600;font-size:clamp(30px,6vw,42px);line-height:1.12;margin:0 0 14px;text-wrap:balance;letter-spacing:-.01em;}
+.lede{font-size:18px;color:var(--ink-2);margin:0 0 28px;max-width:62ch;}
+h2{font-family:'Newsreader',Georgia,serif;font-weight:600;font-size:24px;line-height:1.25;margin:0 0 14px;text-wrap:balance;}
+h3{font-size:15px;font-weight:600;margin:22px 0 8px;letter-spacing:-.005em;}
+p{margin:0 0 14px;max-width:66ch;}
+section{margin-top:38px;}
+.rule{height:1px;background:var(--line);border:0;margin:0 0 26px;}
+.sec-head{display:flex;align-items:baseline;gap:12px;margin-bottom:14px;}
+.sec-head h2{margin:0;}
+.sec-n{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--ink-3);padding-top:4px;}
+code,.mono{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:.88em;background:var(--code-bg);padding:.12em .38em;border-radius:3px;}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:18px 20px;}
+.meta{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:6px;overflow:hidden;margin-bottom:34px;}
+.meta div{background:var(--surface);padding:12px 14px;}
+.meta dt{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3);margin:0 0 4px;}
+.meta dd{margin:0;font-size:14px;font-weight:600;}
+.tag{display:inline-block;font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;padding:3px 8px;border-radius:3px;vertical-align:1px;}
+.t-ok{color:var(--ok-fg);background:var(--ok-bg);}
+.t-wait{color:var(--wait-fg);background:var(--wait-bg);}
+.t-stop{color:var(--stop-fg);background:var(--stop-bg);}
+.tbl-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:6px;background:var(--surface);}
+table{width:100%;border-collapse:collapse;font-size:14.5px;}
+th{text-align:left;font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-3);font-weight:600;padding:11px 14px;border-bottom:1px solid var(--line);white-space:nowrap;}
+td{padding:11px 14px;border-bottom:1px solid var(--line-soft);vertical-align:top;}
+tr:last-child td{border-bottom:0;}
+td.num{font-variant-numeric:tabular-nums;white-space:nowrap;}
+.flow{list-style:none;counter-reset:s;margin:0;padding:0;}
+.flow li{counter-increment:s;position:relative;padding:0 0 20px 44px;border-left:1px solid var(--line);margin-left:13px;}
+.flow li:last-child{border-left-color:transparent;padding-bottom:0;}
+.flow li::before{content:counter(s);position:absolute;left:-13px;top:-2px;width:26px;height:26px;border-radius:50%;background:var(--accent-soft);color:var(--accent);border:1px solid var(--accent);display:grid;place-items:center;font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:500;}
+.flow b{display:block;font-size:15px;margin-bottom:3px;}
+.flow p{margin:0;color:var(--ink-2);font-size:14.5px;}
+.callout{border-left:3px solid var(--accent);background:var(--accent-soft);padding:14px 16px;border-radius:0 5px 5px 0;margin:20px 0;}
+.callout.warn{border-left-color:var(--wait-fg);background:var(--wait-bg);}
+.callout.stop{border-left-color:var(--stop-fg);background:var(--stop-bg);}
+.callout p:last-child{margin-bottom:0;}
+.callout b{font-weight:600;}
+ul.plain{margin:0 0 14px;padding-left:20px;}
+ul.plain li{margin-bottom:7px;max-width:64ch;}
+pre{background:var(--code-bg);border:1px solid var(--line);border-radius:5px;padding:13px 15px;overflow-x:auto;font-family:'IBM Plex Mono',monospace;font-size:13px;line-height:1.55;margin:0 0 16px;}
+pre code{background:none;padding:0;font-size:inherit;}
+.foot{margin-top:48px;padding-top:18px;border-top:1px solid var(--line);font-size:13px;color:var(--ink-3);}
+.foot p{max-width:none;margin-bottom:6px;}
+@media (max-width:520px){.flow li{padding-left:36px;}}
+</style>
+<style>
+.t-mute{color:var(--ink-3);background:var(--code-bg);}
+</style>
+<div class="wrap">
+
+<p class="eyebrow">Central de Manutenção · Heartbeat da semana</p>
+<h1>Agentes de IA: semana de 22 a 25/09</h1>
+<p class="lede">Semana em que os agentes saíram do papel. Em 21/09 <b>nenhum</b> rodava em produção. Hoje o classificador, a triagem e o verificador de duplicata rodam desde 22–23/09, e o validador e o auditor de evidência foram ligados hoje, com pedido e finalização. A causa do atraso foi a mesma nas três vezes: <b>flag criada só no PostHog de staging</b>.</p>
+
+<dl class="meta">
+  <div><dt>Data</dt><dd>25/09/2026</dd></div>
+  <div><dt>Rodando em produção</dt><dd>3 de 5 agentes confirmados</dd></div>
+  <div><dt>Ligados hoje</dt><dd>validador + auditor</dd></div>
+  <div><dt>Front de produção</dt><dd>parado em 23/09</dd></div>
+</dl>
+
+<section>
+  <div class="sec-head"><span class="sec-n">01</span><h2>Pulso de cada agente</h2></div>
+  <div class="tbl-wrap"><table>
+    <thead><tr><th>Agente</th><th>Estado</th><th>Ligado em prd</th><th>Sinal mais recente</th></tr></thead>
+    <tbody>
+      <tr><td>Classificador de urgência</td><td><span class="tag t-ok">rodando</span></td><td class="num">22/09 11:33</td><td>flag consultada às 10:15 de hoje, a cada 15 min</td></tr>
+      <tr><td>Triagem automática</td><td><span class="tag t-ok">rodando</span></td><td class="num">23/09 11:59</td><td>flag consultada às 09:50 de hoje</td></tr>
+      <tr><td>Verificador de duplicata</td><td><span class="tag t-ok">rodando</span></td><td class="num">23/09 11:59</td><td>flag consultada às 10:17 de hoje · 8 cards retidos esperando gente</td></tr>
+      <tr><td>Validador de evidência</td><td><span class="tag t-wait">ligado, sem confirmação</span></td><td class="num">25/09 09:24</td><td>nenhum sinal da tarefa agendada desde que foi ligado</td></tr>
+      <tr><td>Auditor do parecer<br><small>pede e finaliza</small></td><td><span class="tag t-wait">ligado, sem confirmação</span></td><td class="num">25/09 09:24<br><small>pedir/finalizar 09:35</small></td><td>idem</td></tr>
+    </tbody>
+  </table></div>
+  <p>Horários de Brasília. Fonte: eventos de consulta de flag no PostHog, projeto Sapron Production, lidos em 25/09 às 10:25.</p>
+
+  <div class="callout warn"><p><b>Por que validador e auditor estão "sem confirmação".</b> A única prova de que um agente rodou é o card ganhar o parecer gravado no banco, e hoje não consigo ler o banco nem os registros do servidor:</p>
+  <ul class="plain">
+    <li>a conexão do Claude com o Sapron está recusada na porta de entrada (Cloudflare devolve 302, credencial de serviço expirada ou revogada);</li>
+    <li>o console do EKS responde que o usuário do Vinicius "ainda não tem acesso a nenhuma app".</li>
+  </ul>
+  <p>O PostHog registra só parte das consultas de flag (cerca de uma por hora por agente, mesmo rodando a cada 15–30 min). Por isso a ausência de sinal entre 09:40 e 10:20 é pouco para dizer que parou. <b>A confirmação mais rápida é abrir a aba Agentes de IA:</b> validador e auditor têm de mostrar "Rodando" e uma "última execução" depois das 09:40.</p></div>
+
+  <p><b>"Última execução há 14h" no verificador de duplicata não é defeito.</b> A flag dele foi consultada de hora em hora a noite toda, então a tarefa roda. A "última execução" da tela é tirada do último card que ele conferiu, e card novo não entra de madrugada.</p>
+</section>
+
+<section>
+  <div class="sec-head"><span class="sec-n">02</span><h2>O defeito da semana: flag que não chega em produção</h2></div>
+  <p>Cada ambiente tem o próprio projeto no PostHog: <b>Sapron Production (127887)</b> e <b>Sapron Staging (125066)</b>. O backend pergunta a flag usando o nome do ambiente. Flag criada só em staging responde "desligada" em produção, sem erro nenhum, e o agente fica inerte.</p>
+  <div class="tbl-wrap"><table>
+    <thead><tr><th>Flag</th><th>Faltava em produção até</th><th>Custo</th></tr></thead>
+    <tbody>
+      <tr><td>classificador</td><td class="num">22/09</td><td>0 de 5.917 cards com nota até então</td></tr>
+      <tr><td>triagem e duplicata</td><td class="num">23/09</td><td>um dia de fila parada</td></tr>
+      <tr><td>as 4 de evidência</td><td class="num">25/09</td><td>um dia com a aba mostrando "Desligado"</td></tr>
+      <tr><td><span class="mono">classify_with_images</span></td><td><b>ainda hoje</b>, e também não existe em staging</td><td>o classificador em produção não lê as fotos do chamado (#4861)</td></tr>
+      <tr><td><span class="mono">duplicate_autoclose</span></td><td><b>ainda hoje</b>, e também não existe em staging</td><td>o verificador em produção só marca a suspeita e não fecha o duplicado (#4890)</td></tr>
+    </tbody>
+  </table></div>
+  <div class="callout stop"><p><b>Regra que fica:</b> toda flag nova nasce nos dois projetos no mesmo dia, mesmo que em produção fique pausada. A flag pausada aparece na lista e ninguém esquece dela. A que não existe, some.</p></div>
+</section>
+
+<section>
+  <div class="sec-head"><span class="sec-n">03</span><h2>O que fechou nesta semana</h2></div>
+  <div class="tbl-wrap"><table>
+    <thead><tr><th>Entrega</th><th>PR</th><th>Onde está</th></tr></thead>
+    <tbody>
+      <tr><td>Classificador sugere itens a cobrar e lê fotos; triagem move o card</td><td>#4858 #4860 #4861 #4862</td><td>main</td></tr>
+      <tr><td>Verificador de duplicata, e depois ele fecha o duplicado</td><td>#4880 #4890 #4895</td><td>main</td></tr>
+      <tr><td>A aba de agentes diz <b>por que</b> o agente não roda</td><td>#4902 · front #3563</td><td>main</td></tr>
+      <tr><td>Uma linha quebrada para de derrubar a aba inteira</td><td>#4892 · front #3555</td><td>main</td></tr>
+      <tr><td>Recorrente: elegibilidade por imóvel, card só nasce com confirmação</td><td>#4898</td><td>main</td></tr>
+      <tr><td><b>Validador de evidência e auditor do parecer</b></td><td>#4916</td><td>main desde 24/09</td></tr>
+      <tr><td>Tela de decisão dos pares de duplicata (back)</td><td>#4937</td><td>main</td></tr>
+      <tr><td>Parecer do validador na gaveta do card</td><td>front #3575</td><td><span class="tag t-wait">só staging</span></td></tr>
+      <tr><td>Comparar e decidir os pares de duplicata na aba</td><td>front #3581</td><td><span class="tag t-wait">só staging</span></td></tr>
+    </tbody>
+  </table></div>
+  <p>Fonte: histórico do <span class="mono">main</span> e do <span class="mono">staging</span> no GitHub (sapron-backend e sapron-frontend), lido em 25/09/2026.</p>
+  <div class="callout warn"><p><b>O front de produção parou na promoção de 23/09 às 11:40.</b> Com os agentes de evidência ligados, isso agora pesa. O auditor finaliza e pede itens, mas quem abre o card em produção não vê o parecer que justificou a ação. E os 8 cards retidos pelo verificador esperam uma decisão cuja tela ainda não chegou. A promoção leva junto #3580, #3569 e #3576, de outros times.</p></div>
+</section>
+
+<section>
+  <div class="sec-head"><span class="sec-n">04</span><h2>O que a evidência mostrou antes de ligar</h2></div>
+  <ul class="plain">
+    <li><b>Teste com cards já decididos por gente (23/09):</b> veredito certo em 3 de 3 e item certo em 8 de 9. O erro caro, inventar falta em card que uma pessoa aceitou, não aconteceu.</li>
+    <li><b>Fila real (101 cards, 23/09 à noite):</b> 62 pediriam itens, 29 finalizariam, 5 inconclusivos, 5 travados em item contestado. Os <b>29 foram baixados</b> naquela noite, com os agentes rodando fora do servidor e a baixa feita pela API. A fila caiu de 101 para 73.</li>
+    <li><b>Dois terços da fila pedem cobrança, não baixa.</b> É daí que deve vir a maior parte das ações de hoje: mensagens de "ainda não localizamos evidência de…" nos chamados.</li>
+  </ul>
+</section>
+
+<section>
+  <div class="sec-head"><span class="sec-n">05</span><h2>As linhas da Fase 3</h2></div>
+  <div class="tbl-wrap"><table>
+    <thead><tr><th>Linha do quadro</th><th>21/09</th><th>25/09</th></tr></thead>
+    <tbody>
+      <tr><td>Auto-classificação de categoria e urgência</td><td><span class="tag t-mute">pronto, inerte</span></td><td><span class="tag t-ok">rodando</span></td></tr>
+      <tr><td>Agente de triagem e priorização</td><td><span class="tag t-mute">pronto, inerte</span></td><td><span class="tag t-ok">rodando</span></td></tr>
+      <tr><td>Agente que verifica cards duplicados</td><td><span class="tag t-mute">não iniciada</span></td><td><span class="tag t-ok">rodando</span> fecha-duplicado sem flag em prd</td></tr>
+      <tr><td>Agente de encerramento inteligente</td><td><span class="tag t-mute">não iniciada</span></td><td><span class="tag t-wait">ligado hoje</span> falta confirmar</td></tr>
+      <tr><td>Agente de preenchimento automático</td><td><span class="tag t-wait">parcial</span></td><td><span class="tag t-wait">parcial</span> leitura de fotos sem flag em prd</td></tr>
+      <tr><td>Auditoria amostral dos agentes</td><td><span class="tag t-mute">não iniciada</span></td><td><span class="tag t-mute">não iniciada</span> o auditor cobre só a evidência</td></tr>
+      <tr><td>Finaliza quando a despesa foi lançada</td><td><span class="tag t-mute">não iniciada</span></td><td><span class="tag t-mute">não iniciada</span></td></tr>
+      <tr><td>Score da franquia</td><td><span class="tag t-mute">não iniciada</span></td><td><span class="tag t-mute">não iniciada</span></td></tr>
+      <tr><td>Anti-fraude na evidência</td><td><span class="tag t-mute">não iniciada</span></td><td><span class="tag t-mute">não iniciada</span></td></tr>
+    </tbody>
+  </table></div>
+  <p>Linhas do quadro "Projeto Central de manutenção" como estavam no FUP de 21/09. A situação de 25/09 vem do código em <span class="mono">main</span> e das flags no PostHog. O quadro no TaskDex não foi alterado.</p>
+</section>
+
+<section>
+  <div class="sec-head"><span class="sec-n">06</span><h2>Decisões que dependem de gente</h2></div>
+  <div class="tbl-wrap"><table>
+    <thead><tr><th>Decisão</th><th>Por que agora</th></tr></thead>
+    <tbody>
+      <tr><td>Promover o front de <span class="mono">staging</span> para <span class="mono">main</span></td><td>o auditor já age em produção sem a tela do parecer, e os 8 retidos não têm onde ser decididos</td></tr>
+      <tr><td>Criar <span class="mono">classify_with_images</span> e <span class="mono">duplicate_autoclose</span> em produção, ligadas ou pausadas</td><td>entregas prontas desde 21–22/09 cuja flag não foi criada em nenhum dos dois projetos</td></tr>
+      <tr><td>Renovar o acesso do Claude ao Sapron e pedir acesso ao EKS</td><td>sem os dois, o heartbeat mede consulta de flag, e não trabalho feito</td></tr>
+      <tr><td>Quem olha os primeiros dias do auditor</td><td>pedido e finalização foram ligados sem a semana de observação. Três números: cards finalizados que alguém reabriu, reclamação de franquia sobre pedido automático e taxa de discordância</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section>
+  <div class="sec-head"><span class="sec-n">07</span><h2>Próxima semana</h2></div>
+  <ol class="flow">
+    <li><b>Confirmar que validador e auditor rodaram</b><p>Na aba Agentes de IA, ou por consulta assim que o acesso ao Sapron voltar: cards com <span class="mono">ai_evidence_checked_at</span> preenchido, pedidos (<span class="mono">ai_evidence_asked_at</span>) e baixas do agente (<span class="mono">ai_audit_closed_at</span>).</p></li>
+    <li><b>Promover o front</b><p>Parecer na gaveta e decisão de pares. Prefixo <span class="mono">chore</span>, branch atualizada e 16–18 min de CI.</p></li>
+    <li><b>Subir a correção do teto de vídeo</b><p>O código aceita vídeo de até 100 MB, mas o AI Hub recusa acima de ~60 MB. Baixar para 50 MB evita chamada perdida. Branch <span class="mono">fix/anexo-sem-upload-e-teto-de-video</span>.</p></li>
+    <li><b>Primeira leitura da taxa de discordância</b><p>Com uma semana de auditor em produção, é o número que diz se a finalização automática fica ligada.</p></li>
+  </ol>
+</section>
+
+<div class="foot">
+  <p>Fontes: PostHog (projetos Sapron Production 127887 e Sapron Staging 125066), eventos de consulta de flag de 18 a 25/09/2026 · GitHub, <span class="mono">main</span> e <span class="mono">staging</span> do sapron-backend e do sapron-frontend, lidos em 25/09/2026 · ensaio da fila de evidência de 23/09/2026 no banco de produção.</p>
+  <p>Heartbeat anterior: <span class="mono">fup-agentes-manutencao.html</span> (21/09/2026) · Vinicius Satores · Manutenção / Tecnologia</p>
+</div>
+
+</div>

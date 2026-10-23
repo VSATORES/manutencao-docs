@@ -1,0 +1,203 @@
+<title>Contagem por Regra</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap">
+<style>
+  :root{
+    --bg:#F3F6F9; --card:#FFFFFF; --linha:#E6EBF1; --linha-suave:#EFF2F6;
+    --ink:#151B26; --ink-2:#51626F; --ink-3:#8A98A5;
+    --azul:#0055FF; --azul-fraco:#EAF0FF;
+    --verde:#137C4B; --verde-fraco:#E4F5EC;
+    --ambar:#9A6A14; --ambar-fraco:#FDF3E2;
+    --vermelho:#B4232B; --vermelho-fraco:#FCECEC;
+    --cinza-fraco:#EFF2F6;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#0F141A; --card:#161C24; --linha:#252E38; --linha-suave:#1D242C;
+      --ink:#E8EDF3; --ink-2:#AAB7C4; --ink-3:#7A8794;
+      --azul:#6699FF; --azul-fraco:#16233B;
+      --verde:#5FD69B; --verde-fraco:#12291F;
+      --ambar:#E0AE55; --ambar-fraco:#2A2314;
+      --vermelho:#F08A8A; --vermelho-fraco:#2C1719;
+      --cinza-fraco:#1D242C;
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#0F141A; --card:#161C24; --linha:#252E38; --linha-suave:#1D242C;
+    --ink:#E8EDF3; --ink-2:#AAB7C4; --ink-3:#7A8794;
+    --azul:#6699FF; --azul-fraco:#16233B;
+    --verde:#5FD69B; --verde-fraco:#12291F;
+    --ambar:#E0AE55; --ambar-fraco:#2A2314;
+    --vermelho:#F08A8A; --vermelho-fraco:#2C1719;
+    --cinza-fraco:#1D242C;
+  }
+
+  body{background:var(--bg);color:var(--ink);font-family:Quicksand,'Segoe UI',system-ui,sans-serif;font-size:14px;line-height:1.55;}
+  .tela{max-width:74rem;margin:0 auto;padding-inline:16px;padding-block:24px 56px;}
+
+  .abas{display:flex;gap:22px;border-bottom:1px solid var(--linha);overflow-x:auto;margin-bottom:22px;}
+  .abas span{padding:10px 2px;font-size:13.5px;font-weight:600;color:var(--ink-3);white-space:nowrap;}
+  .abas .ativa{color:var(--azul);box-shadow:inset 0 -2px 0 var(--azul);}
+
+  h1{font-size:22px;font-weight:700;margin:0 0 4px;letter-spacing:-.01em;}
+  .sub{color:var(--ink-2);margin:0 0 6px;max-width:70ch;}
+  .carimbo{font-size:12.5px;color:var(--ink-3);margin:0 0 20px;}
+  .carimbo b{color:var(--ambar);font-weight:600;}
+
+  .faixa{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:1px;background:var(--linha);border:1px solid var(--linha);border-radius:8px;overflow:hidden;margin-bottom:22px;}
+  .faixa div{background:var(--card);padding:13px 15px;}
+  .faixa dt{font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:var(--ink-3);font-weight:600;margin:0 0 3px;}
+  .faixa dd{margin:0;font-size:21px;font-weight:700;font-variant-numeric:tabular-nums;}
+  .faixa .nota{font-size:11.5px;color:var(--ink-3);font-weight:500;display:block;line-height:1.35;}
+  .faixa .alerta dd{color:var(--vermelho);}
+
+  .painel{background:var(--card);border:1px solid var(--linha);border-radius:8px;overflow:hidden;margin-bottom:22px;}
+  .painel h2{font-size:14px;font-weight:700;margin:0;padding:14px 16px;border-bottom:1px solid var(--linha);}
+  .painel h2 small{font-weight:500;color:var(--ink-3);font-size:12.5px;margin-left:8px;}
+
+  .rolo{overflow-x:auto;}
+  table{border-collapse:collapse;width:100%;}
+  th{background:var(--cinza-fraco);text-align:left;font-size:11px;letter-spacing:.06em;text-transform:uppercase;font-weight:700;color:var(--ink-3);padding:10px 14px;border-bottom:1px solid var(--linha);white-space:nowrap;}
+  td{padding:10px 14px;font-size:13px;border-bottom:1px solid var(--linha-suave);vertical-align:middle;}
+  tr:last-child td{border-bottom:none;}
+  td.n{font-variant-numeric:tabular-nums;white-space:nowrap;font-weight:600;}
+  td.item{font-weight:600;}
+  .pct{font-weight:500;color:var(--ink-3);font-size:12px;margin-left:5px;}
+
+  .selo{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.03em;padding:3px 8px;border-radius:20px;white-space:nowrap;}
+  .s-ev{color:var(--verde);background:var(--verde-fraco);}
+  .s-todos{color:var(--ink-2);background:var(--cinza-fraco);}
+  .s-tipo{color:var(--azul);background:var(--azul-fraco);}
+  .s-sem{color:var(--vermelho);background:var(--vermelho-fraco);}
+  .s-dec{color:var(--ambar);background:var(--ambar-fraco);}
+
+  .funil{padding:4px 16px 16px;}
+  .passo{display:grid;grid-template-columns:26px 1fr auto;gap:12px;align-items:start;padding:12px 0;border-bottom:1px solid var(--linha-suave);}
+  .passo:last-child{border-bottom:none;}
+  .passo .num{width:24px;height:24px;border-radius:50%;background:var(--azul-fraco);color:var(--azul);display:grid;place-items:center;font-size:12px;font-weight:700;}
+  .passo .q{font-weight:600;}
+  .passo .exp{color:var(--ink-2);font-size:12.5px;}
+  .passo .res{text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums;}
+  .passo .barra{font-size:12.5px;color:var(--vermelho);font-weight:700;}
+  .passo .segue{font-size:12px;color:var(--ink-3);display:block;}
+  .fecho{background:var(--azul-fraco);padding:13px 16px;font-weight:600;color:var(--azul);display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;}
+
+  .aviso{border-left:3px solid var(--ambar);background:var(--ambar-fraco);padding:12px 15px;border-radius:0 6px 6px 0;margin-bottom:22px;color:var(--ink-2);}
+  .aviso b{color:var(--ink);}
+  .aviso.grave{border-left-color:var(--vermelho);background:var(--vermelho-fraco);}
+  .aviso p{margin:0 0 8px;} .aviso p:last-child{margin:0;}
+
+  .rodape{font-size:12px;color:var(--ink-3);border-top:1px solid var(--linha);padding-top:14px;line-height:1.7;}
+  code{font-family:ui-monospace,Menlo,monospace;font-size:.88em;background:var(--cinza-fraco);padding:.06em .3em;border-radius:3px;}
+  @media (max-width:640px){ .passo{grid-template-columns:24px 1fr;} .passo .res{grid-column:2;text-align:left;} }
+</style>
+
+<div class="tela">
+
+  <div class="abas">
+    <span>Dashboard</span><span>Central de Cards</span><span>Por imóvel</span>
+    <span>UTI de imóveis</span><span class="ativa">Recorrentes</span>
+    <span>KPIs diários</span><span>Guia operacional</span><span>Agentes de IA</span>
+  </div>
+
+  <h1>Contagem por regra</h1>
+  <p class="sub">Quantos imóveis cada regra pegaria se rodasse hoje, sem gerar card nenhum. É a resposta que não existia justamente antes de ligar — que é quando alguém decide se liga.</p>
+  <p class="carimbo">Retrato do anúncio de <b>25/08/2026 · 28 dias atrás</b> · 3.513 imóveis ativos · 3.338 anúncios casados (95%) · as 18 regras estão em rascunho</p>
+
+  <dl class="faixa">
+    <div><dt>Regras</dt><dd>18</dd><span class="nota">todas em rascunho</span></div>
+    <div><dt>Com fonte por imóvel</dt><dd>9</dd><span class="nota">lidas do anúncio</span></div>
+    <div><dt>Valem para todos</dt><dd>6</dd><span class="nota">serviço ou item universal</span></div>
+    <div class="alerta"><dt>Sem fonte</dt><dd>1</dd><span class="nota">não gera card e aparece aqui todo dia</span></div>
+    <div class="alerta"><dt>Esperando decisão</dt><dd>2</dd><span class="nota">split e caixa d'água</span></div>
+  </dl>
+
+  <div class="aviso grave">
+    <p><b>O que esta tela conserta.</b> Até hoje a pergunta "o imóvel tem esse item?" era feita ao cadastro de amenidades do Sapron, e ele não responde: de 3.493 fichas de imóvel ativo, só <b>76</b> dizem ter máquina de lavar, 68 piscina e 112 ar-condicionado. Ficha nova nasce com tudo em <code>false</code>, então o banco não separa "não tem" de "ninguém preencheu".</p>
+    <p>Ativar piscina, jardim, lareira ou churrasqueira em cima disso geraria quase nada — e pareceria estar funcionando.</p>
+  </div>
+
+  <div class="painel">
+    <h2>As 18 regras <small>ordenadas por quantos imóveis entram</small></h2>
+    <div class="rolo">
+      <table>
+        <thead>
+          <tr><th>Item</th><th>A cada</th><th>Como decide quem entra</th><th>Entram</th><th>Antes, pelo cadastro</th></tr>
+        </thead>
+        <tbody>
+          <tr><td class="item">Enxoval</td><td>24 m</td><td><span class="selo s-todos">todos</span></td><td class="n">3.513</td><td>3.513</td></tr>
+          <tr><td class="item">Dedetização</td><td>12 m</td><td><span class="selo s-todos">todos</span> <span class="pct">serviço, não item</span></td><td class="n">3.513</td><td>3.513</td></tr>
+          <tr><td class="item">Paredes e teto</td><td>24 m</td><td><span class="selo s-todos">todos</span></td><td class="n">3.513</td><td>3.513</td></tr>
+          <tr><td class="item">Travesseiros</td><td>12 m</td><td><span class="selo s-todos">todos</span></td><td class="n">3.513</td><td>3.513</td></tr>
+          <tr><td class="item">Filtro de água</td><td>6 m</td><td><span class="selo s-todos">todos</span> <span class="pct">sua decisão de 21/09</span></td><td class="n">3.513</td><td>3.513</td></tr>
+          <tr><td class="item">Pilhas (controles e fechaduras)</td><td>3 m</td><td><span class="selo s-todos">todos</span> <span class="pct">sua decisão de 21/09</span></td><td class="n">3.513</td><td>3.513</td></tr>
+          <tr><td class="item">Sofás e estofados</td><td>12 m</td><td><span class="selo s-todos">todos</span> <span class="pct">sua decisão de 21/09</span></td><td class="n">3.513</td><td>3.513</td></tr>
+          <tr><td class="item">Ar-condicionado</td><td>12 m</td><td><span class="selo s-ev">evidência</span></td><td class="n">3.316 <span class="pct">99%</span></td><td>112</td></tr>
+          <tr><td class="item">Cortinas</td><td>12 m</td><td><span class="selo s-ev">evidência</span></td><td class="n">2.313 <span class="pct">69%</span></td><td>—</td></tr>
+          <tr><td class="item">Piscina</td><td>3 m</td><td><span class="selo s-ev">evidência</span></td><td class="n">1.853 <span class="pct">55%</span></td><td>68</td></tr>
+          <tr><td class="item">Máquina de lavar</td><td>12 m</td><td><span class="selo s-ev">evidência</span></td><td class="n">1.816 <span class="pct">54%</span></td><td>76</td></tr>
+          <tr><td class="item">Senha da fechadura eletrônica</td><td>1 m</td><td><span class="selo s-ev">evidência</span></td><td class="n">1.586 <span class="pct">48%</span></td><td>—</td></tr>
+          <tr><td class="item">Churrasqueira</td><td>3 m</td><td><span class="selo s-ev">evidência</span></td><td class="n">1.292 <span class="pct">39%</span></td><td>—</td></tr>
+          <tr><td class="item">Jardim</td><td>1 m</td><td><span class="selo s-ev">evidência</span></td><td class="n">306 <span class="pct">9%</span></td><td>—</td></tr>
+          <tr><td class="item">Caixa d'água</td><td>12 m</td><td><span class="selo s-tipo">tipo: casa</span> <span class="pct">apartamento fica fora</span></td><td class="n">238 <span class="pct">7%</span></td><td>238</td></tr>
+          <tr><td class="item">Lareira e chaminé</td><td>12 m</td><td><span class="selo s-ev">evidência</span></td><td class="n">124 <span class="pct">4%</span></td><td>—</td></tr>
+          <tr><td class="item">Ar-condicionado Split</td><td>6 m</td><td><span class="selo s-dec">esperando decisão</span></td><td class="n">—</td><td>—</td></tr>
+          <tr><td class="item">Filtro do exaustor</td><td>3 m</td><td><span class="selo s-sem">sem fonte</span></td><td class="n">—</td><td>—</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="painel">
+    <h2>Ar-condicionado <small>as quatro perguntas, na ordem — a mais barata primeiro</small></h2>
+    <div class="funil">
+      <div class="passo">
+        <span class="num">1</span>
+        <span>
+          <span class="q">O imóvel está ativo há mais tempo que o ciclo?</span>
+          <span class="exp">Mais de 1 ano de ativação, que é a periodicidade deste item.</span>
+        </span>
+        <span class="res"><span class="barra">1.782 barrados</span><span class="segue">seguem 1.714</span></span>
+      </div>
+      <div class="passo">
+        <span class="num">2</span>
+        <span>
+          <span class="q">O imóvel tem esse item?</span>
+          <span class="exp">Agora pela evidência do anúncio, não pelo cadastro de amenidades.</span>
+        </span>
+        <span class="res"><span class="barra">20 barrados</span><span class="segue">seguem 1.694</span></span>
+      </div>
+      <div class="passo">
+        <span class="num">3</span>
+        <span>
+          <span class="q">Já existe despesa lançada deste item, neste ciclo?</span>
+          <span class="exp">Despesa aprovada ou paga, dentro da janela. É aqui que a manutenção espontânea da franquia aparece.</span>
+        </span>
+        <span class="res"><span class="barra">526 barrados</span><span class="segue">seguem 1.168</span></span>
+      </div>
+      <div class="passo">
+        <span class="num">4</span>
+        <span>
+          <span class="q">Já existe manutenção registrada, mesmo sem despesa?</span>
+          <span class="exp">Cobre o proprietário que pagou por conta própria.</span>
+        </span>
+        <span class="res"><span class="barra">4 barrados</span><span class="segue">seguem 1.164</span></span>
+      </div>
+    </div>
+    <div class="fecho">
+      <span>1.091 cards abririam neste ciclo</span>
+      <span>73 indefinidos — sem anúncio para conferir</span>
+    </div>
+  </div>
+
+  <div class="aviso">
+    <p><b>Duas decisões suas travam duas regras.</b></p>
+    <p><b>Ar-condicionado Split.</b> São duas regras separadas — higienização anual e preventiva semestral — e o anúncio não distingue o tipo de aparelho. Ou as duas valem para os mesmos 3.316 imóveis, ou a Split precisa de um cadastro que não existe, e aí vira <b>sem fonte</b> como o exaustor.</p>
+    <p><b>Caixa d'água.</b> Hoje a regra é "tipo: casa", e casa são <b>238</b> dos 3.513 ativos. Apartamento são 3.106. Você disse que "casas" para você inclui apartamento — se for para incluir aqui, a regra passa de 238 para 3.344 imóveis. Em apartamento a caixa costuma ser do prédio, e é por isso que eu não mudei por conta própria.</p>
+  </div>
+
+  <div class="rodape">
+    <p>Contagem simulada: percorre as mesmas peneiras da varredura diária, na mesma ordem, sem gerar card nem semear agenda. Não chama IA — a camada de IA do dedup fica fora, então "já lançado" é piso e "abriria card" é teto.</p>
+    <p>Imóveis ativos e tipos: banco de produção, 22/09/2026. Cobertura por item: partição de 25/08/2026 de <code>internal_airbnb_details</code>, 3.338 anúncios, medida em 22/09/2026. Funil do ar-condicionado: medido em 16/09/2026 sobre 3.496 ativos.</p>
+  </div>
+
+</div>
